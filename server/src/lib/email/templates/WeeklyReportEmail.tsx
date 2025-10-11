@@ -60,6 +60,27 @@ const safeToFixed = (num: number | null | undefined, decimals: number = 1): stri
   return num.toFixed(decimals);
 };
 
+const regionNamesInEnglish = new Intl.DisplayNames(["en"], { type: "region" });
+
+const getCountryFlag = (countryCode: string): string => {
+  if (!countryCode || countryCode.length !== 2) return "";
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
+
+const getCountryDisplay = (countryCode: string): string => {
+  try {
+    const flag = getCountryFlag(countryCode);
+    const name = regionNamesInEnglish.of(countryCode.toUpperCase()) || countryCode;
+    return `${flag} ${name}`;
+  } catch (error) {
+    return countryCode;
+  }
+};
+
 export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReportEmailProps) => {
   const currentYear = new Date().getFullYear();
 
@@ -118,7 +139,7 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
                 <div className="grid grid-cols-2 gap-3 mb-6">
                   {/* Sessions Card */}
                   <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-                    <Text className="text-mutedText text-xs mb-1">Sessions</Text>
+                    <Text className="text-mutedText text-xs mb-1 mt-0">Sessions</Text>
                     <div className="flex items-baseline gap-2">
                       <Text className="text-darkText text-2xl font-bold m-0">
                         {formatNumber(site.currentWeek.sessions)}
@@ -135,7 +156,7 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
 
                   {/* Pageviews Card */}
                   <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-                    <Text className="text-mutedText text-xs mb-1">Pageviews</Text>
+                    <Text className="text-mutedText text-xs mb-1 mt-0">Pageviews</Text>
                     <div className="flex items-baseline gap-2">
                       <Text className="text-darkText text-2xl font-bold m-0">
                         {formatNumber(site.currentWeek.pageviews)}
@@ -152,7 +173,7 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
 
                   {/* Users Card */}
                   <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-                    <Text className="text-mutedText text-xs mb-1">Unique Users</Text>
+                    <Text className="text-mutedText text-xs mb-1 mt-0">Unique Users</Text>
                     <div className="flex items-baseline gap-2">
                       <Text className="text-darkText text-2xl font-bold m-0">{formatNumber(site.currentWeek.users)}</Text>
                       <Text
@@ -167,7 +188,7 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
 
                   {/* Avg Duration Card */}
                   <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-                    <Text className="text-mutedText text-xs mb-1">Avg Duration</Text>
+                    <Text className="text-mutedText text-xs mb-1 mt-0">Avg Duration</Text>
                     <div className="flex items-baseline gap-2">
                       <Text className="text-darkText text-2xl font-bold m-0">
                         {formatDuration(site.currentWeek.session_duration)}
@@ -186,7 +207,7 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
 
                   {/* Pages/Session Card */}
                   <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-                    <Text className="text-mutedText text-xs mb-1">Pages/Session</Text>
+                    <Text className="text-mutedText text-xs mb-1 mt-0">Pages/Session</Text>
                     <div className="flex items-baseline gap-2">
                       <Text className="text-darkText text-2xl font-bold m-0">
                         {safeToFixed(site.currentWeek.pages_per_session, 1)}
@@ -205,7 +226,7 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
 
                   {/* Bounce Rate Card */}
                   <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-                    <Text className="text-mutedText text-xs mb-1">Bounce Rate</Text>
+                    <Text className="text-mutedText text-xs mb-1 mt-0">Bounce Rate</Text>
                     <div className="flex items-baseline gap-2">
                       <Text className="text-darkText text-2xl font-bold m-0">
                         {safeToFixed(site.currentWeek.bounce_rate, 1)}%
@@ -228,84 +249,228 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
                   {/* Top Countries */}
                   {site.topCountries.length > 0 && (
                     <div className="bg-cardBg border border-borderColor rounded-lg p-4 mb-4">
-                      <Text className="text-darkText text-sm font-semibold mb-3">Top Countries</Text>
-                      {site.topCountries.map((country, index) => (
-                        <div
-                          key={index}
-                          className={`flex justify-between items-center py-2 ${
-                            index < site.topCountries.length - 1 ? "border-b border-borderColor" : ""
-                          }`}
-                        >
-                          <Text className="text-darkText text-sm m-0">{country.value}</Text>
-                          <div className="flex items-center gap-3">
-                            <Text className="text-mutedText text-xs m-0">{safeToFixed(country.percentage, 1)}%</Text>
-                            <Text className="text-darkText text-sm font-medium m-0">{formatNumber(country.count)}</Text>
+                      <Text className="text-darkText text-sm font-semibold mb-3 mt-0">Top Countries</Text>
+                      {site.topCountries.map((country, index) => {
+                        const ratio = site.topCountries[0]?.percentage ? 100 / site.topCountries[0].percentage : 1;
+                        const barWidth = (country.percentage ?? 0) * ratio;
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              position: "relative",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: index < site.topCountries.length - 1 ? "8px" : "0",
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: `${barWidth}%`,
+                                backgroundColor: "#10b981",
+                                opacity: 0.25,
+                                borderRadius: "6px",
+                                paddingTop: "8px",
+                                paddingBottom: "8px",
+                              }}
+                            />
+                            <div
+                              style={{
+                                position: "relative",
+                                zIndex: 10,
+                                marginLeft: "8px",
+                                marginRight: "8px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%",
+                              }}
+                            >
+                              <Text className="text-darkText text-sm m-0">{getCountryDisplay(country.value)}</Text>
+                              <div className="flex items-center gap-3">
+                                <Text className="text-mutedText text-xs m-0">{safeToFixed(country.percentage, 1)}%</Text>
+                                <Text className="text-darkText text-sm font-medium m-0">{formatNumber(country.count)}</Text>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
 
                   {/* Top Pages */}
                   {site.topPages.length > 0 && (
                     <div className="bg-cardBg border border-borderColor rounded-lg p-4 mb-4">
-                      <Text className="text-darkText text-sm font-semibold mb-3">Top Pages</Text>
-                      {site.topPages.map((page, index) => (
-                        <div
-                          key={index}
-                          className={`flex justify-between items-center py-2 ${
-                            index < site.topPages.length - 1 ? "border-b border-borderColor" : ""
-                          }`}
-                        >
-                          <Text className="text-darkText text-sm m-0 truncate max-w-[280px]">{page.value}</Text>
-                          <div className="flex items-center gap-3">
-                            <Text className="text-mutedText text-xs m-0">{safeToFixed(page.percentage, 1)}%</Text>
-                            <Text className="text-darkText text-sm font-medium m-0">{formatNumber(page.count)}</Text>
+                      <Text className="text-darkText text-sm font-semibold mb-3 mt-0">Top Pages</Text>
+                      {site.topPages.map((page, index) => {
+                        const ratio = site.topPages[0]?.percentage ? 100 / site.topPages[0].percentage : 1;
+                        const barWidth = (page.percentage ?? 0) * ratio;
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              position: "relative",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: index < site.topPages.length - 1 ? "8px" : "0",
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: `${barWidth}%`,
+                                backgroundColor: "#10b981",
+                                opacity: 0.25,
+                                borderRadius: "6px",
+                                paddingTop: "8px",
+                                paddingBottom: "8px",
+                              }}
+                            />
+                            <div
+                              style={{
+                                position: "relative",
+                                zIndex: 10,
+                                marginLeft: "8px",
+                                marginRight: "8px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%",
+                              }}
+                            >
+                              <Text className="text-darkText text-sm m-0 truncate max-w-[280px]">{page.value}</Text>
+                              <div className="flex items-center gap-3">
+                                <Text className="text-mutedText text-xs m-0">{safeToFixed(page.percentage, 1)}%</Text>
+                                <Text className="text-darkText text-sm font-medium m-0">{formatNumber(page.count)}</Text>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
 
                   {/* Top Referrers */}
                   {site.topReferrers.length > 0 && (
                     <div className="bg-cardBg border border-borderColor rounded-lg p-4 mb-4">
-                      <Text className="text-darkText text-sm font-semibold mb-3">Top Referrers</Text>
-                      {site.topReferrers.map((referrer, index) => (
-                        <div
-                          key={index}
-                          className={`flex justify-between items-center py-2 ${
-                            index < site.topReferrers.length - 1 ? "border-b border-borderColor" : ""
-                          }`}
-                        >
-                          <Text className="text-darkText text-sm m-0 truncate max-w-[280px]">{referrer.value}</Text>
-                          <div className="flex items-center gap-3">
-                            <Text className="text-mutedText text-xs m-0">{safeToFixed(referrer.percentage, 1)}%</Text>
-                            <Text className="text-darkText text-sm font-medium m-0">{formatNumber(referrer.count)}</Text>
+                      <Text className="text-darkText text-sm font-semibold mb-3 mt-0">Top Referrers</Text>
+                      {site.topReferrers.map((referrer, index) => {
+                        const ratio = site.topReferrers[0]?.percentage ? 100 / site.topReferrers[0].percentage : 1;
+                        const barWidth = (referrer.percentage ?? 0) * ratio;
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              position: "relative",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: index < site.topReferrers.length - 1 ? "8px" : "0",
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: `${barWidth}%`,
+                                backgroundColor: "#10b981",
+                                opacity: 0.25,
+                                borderRadius: "6px",
+                                paddingTop: "8px",
+                                paddingBottom: "8px",
+                              }}
+                            />
+                            <div
+                              style={{
+                                position: "relative",
+                                zIndex: 10,
+                                marginLeft: "8px",
+                                marginRight: "8px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%",
+                              }}
+                            >
+                              <Text className="text-darkText text-sm m-0 truncate max-w-[280px]">{referrer.value}</Text>
+                              <div className="flex items-center gap-3">
+                                <Text className="text-mutedText text-xs m-0">{safeToFixed(referrer.percentage, 1)}%</Text>
+                                <Text className="text-darkText text-sm font-medium m-0">{formatNumber(referrer.count)}</Text>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
 
                   {/* Device Breakdown */}
                   {site.deviceBreakdown.length > 0 && (
                     <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-                      <Text className="text-darkText text-sm font-semibold mb-3">Device Breakdown</Text>
-                      {site.deviceBreakdown.map((device, index) => (
-                        <div
-                          key={index}
-                          className={`flex justify-between items-center py-2 ${
-                            index < site.deviceBreakdown.length - 1 ? "border-b border-borderColor" : ""
-                          }`}
-                        >
-                          <Text className="text-darkText text-sm m-0 capitalize">{device.value}</Text>
-                          <div className="flex items-center gap-3">
-                            <Text className="text-mutedText text-xs m-0">{safeToFixed(device.percentage, 1)}%</Text>
-                            <Text className="text-darkText text-sm font-medium m-0">{formatNumber(device.count)}</Text>
+                      <Text className="text-darkText text-sm font-semibold mb-3 mt-0">Device Breakdown</Text>
+                      {site.deviceBreakdown.map((device, index) => {
+                        const ratio = site.deviceBreakdown[0]?.percentage ? 100 / site.deviceBreakdown[0].percentage : 1;
+                        const barWidth = (device.percentage ?? 0) * ratio;
+                        return (
+                          <div
+                            key={index}
+                            style={{
+                              position: "relative",
+                              height: "24px",
+                              display: "flex",
+                              alignItems: "center",
+                              marginBottom: index < site.deviceBreakdown.length - 1 ? "8px" : "0",
+                            }}
+                          >
+                            <div
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                width: `${barWidth}%`,
+                                backgroundColor: "#10b981",
+                                opacity: 0.25,
+                                borderRadius: "6px",
+                                paddingTop: "8px",
+                                paddingBottom: "8px",
+                              }}
+                            />
+                            <div
+                              style={{
+                                position: "relative",
+                                zIndex: 10,
+                                marginLeft: "8px",
+                                marginRight: "8px",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%",
+                              }}
+                            >
+                              <Text className="text-darkText text-sm m-0 capitalize">{device.value}</Text>
+                              <div className="flex items-center gap-3">
+                                <Text className="text-mutedText text-xs m-0">{safeToFixed(device.percentage, 1)}%</Text>
+                                <Text className="text-darkText text-sm font-medium m-0">{formatNumber(device.count)}</Text>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
