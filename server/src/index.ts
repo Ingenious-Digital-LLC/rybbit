@@ -347,40 +347,40 @@ server.post("/api/user/account-settings", updateAccountSettings);
 
 // UPTIME MONITORING
 // Only register uptime routes when IS_CLOUD is true (Redis is available)
-if (IS_CLOUD) {
-  // Dynamically import uptime modules only when needed
-  const { getMonitors } = await import("./api/uptime/getMonitors.js");
-  const { getMonitor } = await import("./api/uptime/getMonitor.js");
-  const { createMonitor } = await import("./api/uptime/createMonitor.js");
-  const { updateMonitor } = await import("./api/uptime/updateMonitor.js");
-  const { deleteMonitor } = await import("./api/uptime/deleteMonitor.js");
-  const { getMonitorEvents } = await import("./api/uptime/getMonitorEvents.js");
-  const { getMonitorStats } = await import("./api/uptime/getMonitorStats.js");
-  const { getMonitorUptimeBuckets } = await import("./api/uptime/getMonitorUptimeBuckets.js");
-  const { getMonitorStatus } = await import("./api/uptime/getMonitorStatus.js");
-  const { getMonitorUptime } = await import("./api/uptime/getMonitorUptime.js");
-  const { getRegions } = await import("./api/uptime/getRegions.js");
-  const { incidentsRoutes } = await import("./api/uptime/incidents.js");
-  const { notificationRoutes } = await import("./api/uptime/notifications.js");
+// if (IS_CLOUD) {
+//   // Dynamically import uptime modules only when needed
+//   const { getMonitors } = await import("./api/uptime/getMonitors.js");
+//   const { getMonitor } = await import("./api/uptime/getMonitor.js");
+//   const { createMonitor } = await import("./api/uptime/createMonitor.js");
+//   const { updateMonitor } = await import("./api/uptime/updateMonitor.js");
+//   const { deleteMonitor } = await import("./api/uptime/deleteMonitor.js");
+//   const { getMonitorEvents } = await import("./api/uptime/getMonitorEvents.js");
+//   const { getMonitorStats } = await import("./api/uptime/getMonitorStats.js");
+//   const { getMonitorUptimeBuckets } = await import("./api/uptime/getMonitorUptimeBuckets.js");
+//   const { getMonitorStatus } = await import("./api/uptime/getMonitorStatus.js");
+//   const { getMonitorUptime } = await import("./api/uptime/getMonitorUptime.js");
+//   const { getRegions } = await import("./api/uptime/getRegions.js");
+//   const { incidentsRoutes } = await import("./api/uptime/incidents.js");
+//   const { notificationRoutes } = await import("./api/uptime/notifications.js");
 
-  server.get("/api/uptime/monitors", getMonitors);
-  server.get("/api/uptime/monitors/:monitorId", getMonitor);
-  server.post("/api/uptime/monitors", createMonitor);
-  server.put("/api/uptime/monitors/:monitorId", updateMonitor);
-  server.delete("/api/uptime/monitors/:monitorId", deleteMonitor);
-  server.get("/api/uptime/monitors/:monitorId/events", getMonitorEvents);
-  server.get("/api/uptime/monitors/:monitorId/stats", getMonitorStats);
-  server.get("/api/uptime/monitors/:monitorId/status", getMonitorStatus);
-  server.get("/api/uptime/monitors/:monitorId/uptime", getMonitorUptime);
-  server.get("/api/uptime/monitors/:monitorId/buckets", getMonitorUptimeBuckets);
-  server.get("/api/uptime/regions", getRegions);
+//   server.get("/api/uptime/monitors", getMonitors);
+//   server.get("/api/uptime/monitors/:monitorId", getMonitor);
+//   server.post("/api/uptime/monitors", createMonitor);
+//   server.put("/api/uptime/monitors/:monitorId", updateMonitor);
+//   server.delete("/api/uptime/monitors/:monitorId", deleteMonitor);
+//   server.get("/api/uptime/monitors/:monitorId/events", getMonitorEvents);
+//   server.get("/api/uptime/monitors/:monitorId/stats", getMonitorStats);
+//   server.get("/api/uptime/monitors/:monitorId/status", getMonitorStatus);
+//   server.get("/api/uptime/monitors/:monitorId/uptime", getMonitorUptime);
+//   server.get("/api/uptime/monitors/:monitorId/buckets", getMonitorUptimeBuckets);
+//   server.get("/api/uptime/regions", getRegions);
 
-  // Register incidents routes
-  server.register(incidentsRoutes);
+//   // Register incidents routes
+//   server.register(incidentsRoutes);
 
-  // Register notification routes
-  server.register(notificationRoutes);
-}
+//   // Register notification routes
+//   server.register(notificationRoutes);
+// }
 
 // STRIPE & ADMIN
 

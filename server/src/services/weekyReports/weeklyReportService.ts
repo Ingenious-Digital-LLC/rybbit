@@ -245,13 +245,11 @@ class WeeklyReportService {
       ]);
 
       if (!currentWeek) {
-        this.logger.warn({ siteId }, "No data for current week, skipping site");
         return null;
       }
 
       // Skip sites with no pageviews
       if (!currentWeek.pageviews || currentWeek.pageviews === 0) {
-        this.logger.info({ siteId }, "Site has no pageviews, skipping site");
         return null;
       }
 
@@ -279,46 +277,43 @@ class WeeklyReportService {
     }
   }
 
-  private async generateOrganizationReports(): Promise<OrganizationReport[]> {
+  private async generateOrganizationReport(organizationId: string): Promise<OrganizationReport | null> {
     try {
-      // Fetch all organizations
-      const organizations = await db.select().from(organization);
+      // Fetch organization details
+      const [org] = await db.select().from(organization).where(eq(organization.id, organizationId));
 
-      const reports: OrganizationReport[] = [];
+      if (!org) {
+        return null;
+      }
 
-      for (const org of organizations) {
-        // Fetch all sites for this organization
-        const orgSites = await db.select().from(sites).where(eq(sites.organizationId, org.id));
+      // Fetch all sites for this organization
+      const orgSites = await db.select().from(sites).where(eq(sites.organizationId, org.id));
 
-        if (orgSites.length === 0) {
-          this.logger.info({ organizationId: org.id }, "No sites for organization, skipping");
-          continue;
-        }
+      if (orgSites.length === 0) {
+        return null;
+      }
 
-        const siteReports: SiteReport[] = [];
+      const siteReports: SiteReport[] = [];
 
-        for (const site of orgSites) {
-          const report = await this.generateSiteReport(site.siteId, site.name, site.domain);
-          if (report) {
-            siteReports.push(report);
-          }
-        }
-
-        if (siteReports.length > 0) {
-          reports.push({
-            organizationId: org.id,
-            organizationName: org.name,
-            sites: siteReports,
-          });
-        } else {
-          this.logger.info({ organizationId: org.id }, "No sites with data for organization, skipping email");
+      for (const site of orgSites) {
+        const report = await this.generateSiteReport(site.siteId, site.name, site.domain);
+        if (report) {
+          siteReports.push(report);
         }
       }
 
-      return reports;
+      if (siteReports.length === 0) {
+        return null;
+      }
+
+      return {
+        organizationId: org.id,
+        organizationName: org.name,
+        sites: siteReports,
+      };
     } catch (error) {
-      this.logger.error({ error }, "Error generating organization reports");
-      return [];
+      this.logger.error({ error, organizationId }, "Error generating organization report");
+      return null;
     }
   }
 
@@ -336,19 +331,10 @@ class WeeklyReportService {
         .innerJoin(user, eq(member.userId, user.id))
         .where(eq(member.organizationId, report.organizationId));
 
-      this.logger.info(
-        { organizationId: report.organizationId, memberCount: members.length, siteCount: report.sites.length },
-        "Sending reports to organization members"
-      );
-
       // Send a separate email for each site to each member
       for (const memberData of members) {
         // Skip users who have disabled email reports
         if (memberData.sendAutoEmailReports === false) {
-          this.logger.info(
-            { email: memberData.email, organizationId: report.organizationId },
-            "Skipping user with email reports disabled"
-          );
           continue;
         }
 
@@ -390,18 +376,45 @@ class WeeklyReportService {
       return;
     }
 
-    this.logger.info("Starting weekly report generation");
+    this.logger.info("Starting weekly report generation and sending");
 
     try {
-      const reports = await this.generateOrganizationReports();
+      // Fetch all organizations
+      const organizations = await db.select().from(organization);
+      const totalOrgs = organizations.length;
 
-      this.logger.info({ reportCount: reports.length }, "Generated organization reports");
+      this.logger.info({ totalOrganizations: totalOrgs }, "Processing organizations");
 
-      for (const report of reports) {
-        await this.sendReportsToOrganization(report);
+      let processedCount = 0;
+      let sentCount = 0;
+
+      for (let i = 0; i < organizations.length; i++) {
+        const org = organizations[i];
+
+        // Generate report for this organization
+        const report = await this.generateOrganizationReport(org.id);
+
+        if (report) {
+          // Send reports immediately after generation
+          await this.sendReportsToOrganization(report);
+          sentCount++;
+        }
+
+        processedCount++;
+
+        // Log progress every 10 organizations
+        if (processedCount % 10 === 0 || processedCount === totalOrgs) {
+          this.logger.info(
+            { processed: processedCount, total: totalOrgs, sent: sentCount },
+            `Progress: ${processedCount}/${totalOrgs} organizations processed, ${sentCount} reports sent`
+          );
+        }
       }
 
-      this.logger.info("Completed weekly report generation and sending");
+      this.logger.info(
+        { totalProcessed: processedCount, totalSent: sentCount },
+        "Completed weekly report generation and sending"
+      );
     } catch (error) {
       this.logger.error({ error }, "Error in weekly report generation");
     }
@@ -414,8 +427,6 @@ class WeeklyReportService {
     }
 
     this.logger.info("Initializing weekly report cron");
-
-    this.generateAndSendReports();
 
     // Schedule weekly reports to run every Monday at midnight UTC
     this.cronTask = cron.schedule(

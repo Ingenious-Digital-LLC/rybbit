@@ -108,67 +108,99 @@ const getCountryDisplay = (countryCode: string): string => {
 };
 
 const MetricCard = ({ label, currentValue, growth, isPositive }: MetricCardProps) => (
-  <div className="bg-cardBg border border-borderColor rounded-lg p-4">
-    <Text className="text-mutedText text-xs mb-1 mt-0">{label}</Text>
-    <div className="flex items-baseline gap-2">
-      <Text className="text-darkText text-2xl font-bold m-0">{currentValue}</Text>
-      <Text className={`text-xs font-medium m-0 ${isPositive ? "text-positive" : "text-negative"}`}>{growth}</Text>
+  <div
+    style={{
+      backgroundColor: "#f9fafb",
+      border: "1px solid #e5e7eb",
+      borderRadius: "8px",
+      padding: "16px",
+    }}
+  >
+    <Text style={{ color: "#6b7280", fontSize: "12px", marginBottom: "4px", marginTop: 0 }}>{label}</Text>
+    <div>
+      <span style={{ color: "#111827", fontSize: "24px", fontWeight: "bold", lineHeight: "1", marginRight: "8px" }}>
+        {currentValue}
+      </span>
+      <span
+        style={{
+          color: isPositive ? "#10b981" : "#ef4444",
+          fontSize: "12px",
+          fontWeight: 500,
+          lineHeight: "1",
+          verticalAlign: "baseline",
+        }}
+      >
+        {growth}
+      </span>
     </div>
   </div>
 );
 
-const TopListItem = ({ value, percentage, count, barWidth, isLast, favicon, labelClassName }: TopListItemProps) => (
-  <div
-    style={{
-      position: "relative",
-      height: "24px",
-      display: "flex",
-      alignItems: "center",
-      marginBottom: isLast ? "0" : "8px",
-    }}
-  >
-    <div
+const TopListItem = ({ value, percentage, count, barWidth, isLast, favicon, labelClassName }: TopListItemProps) => {
+  const barStyle: React.CSSProperties = {
+    background: `linear-gradient(to right, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.25) ${barWidth}%, transparent ${barWidth}%, transparent 100%)`,
+    borderRadius: "6px",
+  };
+
+  return (
+    <table
       style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        width: `${barWidth}%`,
-        backgroundColor: "#10b981",
-        opacity: 0.25,
-        borderRadius: "6px",
-        paddingTop: "8px",
-        paddingBottom: "8px",
-      }}
-    />
-    <div
-      style={{
-        position: "relative",
-        zIndex: 10,
-        marginLeft: "8px",
-        marginRight: "8px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
         width: "100%",
+        marginBottom: isLast ? "0" : "8px",
+        borderCollapse: "separate",
+        borderSpacing: "0",
+        ...barStyle,
       }}
     >
-      {favicon ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", overflow: "hidden" }}>
-          <img src={favicon} alt="" width="16" height="16" style={{ flexShrink: 0 }} />
-          <Text className={labelClassName || "text-darkText text-sm m-0 truncate"}>{value}</Text>
-        </div>
-      ) : (
-        <Text className={labelClassName || "text-darkText text-sm m-0"}>{value}</Text>
-      )}
-      <div className="flex items-center gap-3" style={{ flexShrink: 0 }}>
-        <Text className="text-mutedText text-xs m-0">{safeToFixed(percentage, 1)}%</Text>
-        <Text className="text-darkText text-sm font-medium m-0">{formatNumber(count)}</Text>
-      </div>
-    </div>
-  </div>
-);
+      <tbody>
+        <tr>
+          <td style={{ padding: "4px 8px", verticalAlign: "middle" }}>
+            {favicon ? (
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: "16px", paddingRight: "4px", verticalAlign: "middle" }}>
+                      <img src={favicon} alt="" width="16" height="16" style={{ display: "block" }} />
+                    </td>
+                    <td style={{ verticalAlign: "middle" }}>
+                      <Text
+                        style={{
+                          color: "#111827",
+                          fontSize: "14px",
+                          margin: 0,
+                          lineHeight: "1.2",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {value}
+                      </Text>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            ) : (
+              <Text style={{ color: "#111827", fontSize: "14px", margin: 0, lineHeight: "1.2" }}>{value}</Text>
+            )}
+          </td>
+          <td style={{ padding: "8px", textAlign: "right", verticalAlign: "middle", whiteSpace: "nowrap" }}>
+            <Text style={{ color: "#6b7280", fontSize: "12px", margin: 0, marginRight: "12px", lineHeight: "1.2" }}>
+              {safeToFixed(percentage, 1)}%
+            </Text>
+          </td>
+          <td
+            style={{ padding: "8px", textAlign: "right", verticalAlign: "middle", whiteSpace: "nowrap", width: "40px" }}
+          >
+            <Text style={{ color: "#111827", fontSize: "14px", fontWeight: 500, margin: 0, lineHeight: "1.2" }}>
+              {formatNumber(count)}
+            </Text>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
 
 const TopListSection = ({ title, items, renderLabel, showFavicon, labelClassName, className }: TopListSectionProps) => {
   if (items.length === 0) return null;
@@ -176,8 +208,18 @@ const TopListSection = ({ title, items, renderLabel, showFavicon, labelClassName
   const ratio = items[0]?.percentage ? 100 / items[0].percentage : 1;
 
   return (
-    <div className={className || "bg-cardBg border border-borderColor rounded-lg p-4 mb-4"}>
-      <Text className="text-darkText text-sm font-semibold mb-3 mt-0">{title}</Text>
+    <div
+      style={{
+        backgroundColor: "#f9fafb",
+        border: "1px solid #e5e7eb",
+        borderRadius: "8px",
+        padding: "16px",
+        marginBottom: "16px",
+      }}
+    >
+      <Text style={{ color: "#111827", fontSize: "14px", fontWeight: 600, marginBottom: "12px", marginTop: 0 }}>
+        {title}
+      </Text>
       {items.map((item, index) => {
         const barWidth = (item.percentage ?? 0) * ratio;
         const favicon = showFavicon ? `https://www.google.com/s2/favicons?domain=${item.value}&sz=16` : undefined;
@@ -232,18 +274,57 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
               <div className="inline-block bg-brand/10 text-brand px-3 py-1.5 rounded-full text-sm font-medium mb-4">
                 Weekly Report
               </div>
-              <div className="flex items-center justify-center gap-3 mb-2">
-                <img
-                  src={`https://www.google.com/s2/favicons?domain=${organizationReport.sites[0].siteDomain}&sz=32`}
-                  alt=""
-                  width="24"
-                  height="24"
-                  className="rounded"
-                />
-                <Heading className="text-darkText text-3xl font-semibold m-0">
-                  {organizationReport.sites[0].siteName}
-                </Heading>
-              </div>
+              <table
+                style={{
+                  width: "100%",
+                  marginBottom: "8px",
+                }}
+              >
+                <tbody>
+                  <tr>
+                    <td style={{ textAlign: "center" }}>
+                      <table
+                        style={{
+                          display: "inline-block",
+                          verticalAlign: "middle",
+                        }}
+                      >
+                        <tbody>
+                          <tr>
+                            <td
+                              style={{
+                                verticalAlign: "middle",
+                                paddingRight: "12px",
+                              }}
+                            >
+                              <img
+                                src={`https://www.google.com/s2/favicons?domain=${organizationReport.sites[0].siteDomain}&sz=32`}
+                                alt=""
+                                width="24"
+                                height="24"
+                                style={{ borderRadius: "4px", display: "block" }}
+                              />
+                            </td>
+                            <td style={{ verticalAlign: "middle" }}>
+                              <Heading
+                                style={{
+                                  color: "#111827",
+                                  fontSize: "30px",
+                                  fontWeight: 600,
+                                  margin: 0,
+                                  lineHeight: "1.2",
+                                }}
+                              >
+                                {organizationReport.sites[0].siteName}
+                              </Heading>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
               <Text className="text-mutedText text-base">Hi {userName}, here's your weekly analytics summary</Text>
             </Section>
 
@@ -251,44 +332,72 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
             {organizationReport.sites.map(site => (
               <Section key={site.siteId} className="mb-10">
                 {/* Metrics Cards */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <MetricCard
-                    label="Sessions"
-                    currentValue={formatNumber(site.currentWeek.sessions)}
-                    growth={calculateGrowth(site.currentWeek.sessions, site.previousWeek.sessions)}
-                    isPositive={site.currentWeek.sessions >= site.previousWeek.sessions}
-                  />
-                  <MetricCard
-                    label="Pageviews"
-                    currentValue={formatNumber(site.currentWeek.pageviews)}
-                    growth={calculateGrowth(site.currentWeek.pageviews, site.previousWeek.pageviews)}
-                    isPositive={site.currentWeek.pageviews >= site.previousWeek.pageviews}
-                  />
-                  <MetricCard
-                    label="Unique Users"
-                    currentValue={formatNumber(site.currentWeek.users)}
-                    growth={calculateGrowth(site.currentWeek.users, site.previousWeek.users)}
-                    isPositive={site.currentWeek.users >= site.previousWeek.users}
-                  />
-                  <MetricCard
-                    label="Avg Duration"
-                    currentValue={formatDuration(site.currentWeek.session_duration)}
-                    growth={calculateGrowth(site.currentWeek.session_duration, site.previousWeek.session_duration)}
-                    isPositive={site.currentWeek.session_duration >= site.previousWeek.session_duration}
-                  />
-                  <MetricCard
-                    label="Pages/Session"
-                    currentValue={safeToFixed(site.currentWeek.pages_per_session, 1)}
-                    growth={calculateGrowth(site.currentWeek.pages_per_session, site.previousWeek.pages_per_session)}
-                    isPositive={(site.currentWeek.pages_per_session ?? 0) >= (site.previousWeek.pages_per_session ?? 0)}
-                  />
-                  <MetricCard
-                    label="Bounce Rate"
-                    currentValue={`${safeToFixed(site.currentWeek.bounce_rate, 1)}%`}
-                    growth={calculateGrowth(site.currentWeek.bounce_rate, site.previousWeek.bounce_rate)}
-                    isPositive={(site.currentWeek.bounce_rate ?? 0) <= (site.previousWeek.bounce_rate ?? 0)}
-                  />
-                </div>
+                <table style={{ width: "100%", marginBottom: "24px" }}>
+                  <tbody>
+                    <tr>
+                      <td style={{ width: "50%", paddingRight: "6px", paddingBottom: "12px" }}>
+                        <MetricCard
+                          label="Sessions"
+                          currentValue={formatNumber(site.currentWeek.sessions)}
+                          growth={calculateGrowth(site.currentWeek.sessions, site.previousWeek.sessions)}
+                          isPositive={site.currentWeek.sessions >= site.previousWeek.sessions}
+                        />
+                      </td>
+                      <td style={{ width: "50%", paddingLeft: "6px", paddingBottom: "12px" }}>
+                        <MetricCard
+                          label="Pageviews"
+                          currentValue={formatNumber(site.currentWeek.pageviews)}
+                          growth={calculateGrowth(site.currentWeek.pageviews, site.previousWeek.pageviews)}
+                          isPositive={site.currentWeek.pageviews >= site.previousWeek.pageviews}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "50%", paddingRight: "6px", paddingBottom: "12px" }}>
+                        <MetricCard
+                          label="Unique Users"
+                          currentValue={formatNumber(site.currentWeek.users)}
+                          growth={calculateGrowth(site.currentWeek.users, site.previousWeek.users)}
+                          isPositive={site.currentWeek.users >= site.previousWeek.users}
+                        />
+                      </td>
+                      <td style={{ width: "50%", paddingLeft: "6px", paddingBottom: "12px" }}>
+                        <MetricCard
+                          label="Avg Duration"
+                          currentValue={formatDuration(site.currentWeek.session_duration)}
+                          growth={calculateGrowth(
+                            site.currentWeek.session_duration,
+                            site.previousWeek.session_duration
+                          )}
+                          isPositive={site.currentWeek.session_duration >= site.previousWeek.session_duration}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ width: "50%", paddingRight: "6px" }}>
+                        <MetricCard
+                          label="Pages/Session"
+                          currentValue={safeToFixed(site.currentWeek.pages_per_session, 1)}
+                          growth={calculateGrowth(
+                            site.currentWeek.pages_per_session,
+                            site.previousWeek.pages_per_session
+                          )}
+                          isPositive={
+                            (site.currentWeek.pages_per_session ?? 0) >= (site.previousWeek.pages_per_session ?? 0)
+                          }
+                        />
+                      </td>
+                      <td style={{ width: "50%", paddingLeft: "6px" }}>
+                        <MetricCard
+                          label="Bounce Rate"
+                          currentValue={`${safeToFixed(site.currentWeek.bounce_rate, 1)}%`}
+                          growth={calculateGrowth(site.currentWeek.bounce_rate, site.previousWeek.bounce_rate)}
+                          isPositive={(site.currentWeek.bounce_rate ?? 0) <= (site.previousWeek.bounce_rate ?? 0)}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
 
                 {/* Top Lists Section */}
                 <div className="mb-6">
