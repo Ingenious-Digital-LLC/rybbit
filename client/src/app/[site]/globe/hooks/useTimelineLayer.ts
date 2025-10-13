@@ -30,6 +30,7 @@ import { generateName } from "../../../../components/Avatar";
 import { formatShortDuration, hour12, userLocale } from "../../../../lib/dateTimeUtils";
 import type { GetSessionsResponse } from "../../../../api/analytics/userSessions";
 import { useTimelineStore } from "../timelineStore";
+import { extractDomain, getDisplayName } from "../../../../components/Channel";
 
 // Generate avatar SVG using boring-avatars
 function generateAvatarSVG(userId: string, size: number): string {
@@ -59,9 +60,51 @@ function renderDeviceIcon(deviceType: string): string {
   return renderToStaticMarkup(iconElement);
 }
 
-// Render referrer icon
-function renderReferrerIcon(): string {
-  const iconElement = createElement(Link, { size: 14, className: "inline-block" });
+// Get channel icon component
+function getChannelIconComponent(channel: string) {
+  switch (channel) {
+    case "Direct":
+      return Link;
+    case "Organic Search":
+      return Search;
+    case "Referral":
+      return ExternalLink;
+    case "Organic Social":
+      return Users;
+    case "Email":
+      return Mail;
+    case "Unknown":
+      return HelpCircle;
+    case "Paid Search":
+      return Search;
+    case "Paid Unknown":
+      return DollarSign;
+    case "Paid Social":
+      return Users;
+    case "Display":
+      return Monitor;
+    case "Organic Video":
+      return Video;
+    case "Affiliate":
+      return Handshake;
+    case "Content":
+      return FileText;
+    case "Organic Shopping":
+      return ShoppingCart;
+    case "Event":
+      return Calendar;
+    case "Audio":
+      return Headphones;
+    default:
+      return null;
+  }
+}
+
+// Render channel icon
+function renderChannelIcon(channel: string): string {
+  const IconComponent = getChannelIconComponent(channel);
+  if (!IconComponent) return "";
+  const iconElement = createElement(IconComponent, { size: 14, className: "inline-block" });
   return renderToStaticMarkup(iconElement);
 }
 
@@ -93,97 +136,6 @@ function getOSIconPath(os: string): string {
     "Chrome OS": "Chrome.svg",
   };
   return OS_TO_LOGO[os] ? `/operating-systems/${OS_TO_LOGO[os]}` : "";
-}
-
-// Get channel icon based on channel type
-function getChannelIcon(channel: string): string {
-  let Icon;
-  switch (channel) {
-    case "Direct":
-      Icon = Link;
-      break;
-    case "Organic Search":
-    case "Paid Search":
-      Icon = Search;
-      break;
-    case "Referral":
-      Icon = ExternalLink;
-      break;
-    case "Organic Social":
-    case "Paid Social":
-      Icon = Users;
-      break;
-    case "Email":
-      Icon = Mail;
-      break;
-    case "Organic Video":
-      Icon = Video;
-      break;
-    case "Affiliate":
-      Icon = Handshake;
-      break;
-    case "Content":
-      Icon = FileText;
-      break;
-    case "Organic Shopping":
-      Icon = ShoppingCart;
-      break;
-    case "Event":
-      Icon = Calendar;
-      break;
-    case "Audio":
-      Icon = Headphones;
-      break;
-    case "Display":
-    case "Paid Unknown":
-      Icon = DollarSign;
-      break;
-    case "Unknown":
-    default:
-      Icon = HelpCircle;
-      break;
-  }
-  const iconElement = createElement(Icon, { size: 14, className: "inline-block" });
-  return renderToStaticMarkup(iconElement);
-}
-
-// Extract domain from referrer URL
-function extractDomain(url: string): string | null {
-  try {
-    if (!url || url === "direct") return null;
-    if (url.startsWith("android-app://")) {
-      const match = url.match(/android-app:\/\/([^/]+)/);
-      return match ? match[1] : null;
-    }
-    const urlObj = new URL(url);
-    return urlObj.hostname;
-  } catch {
-    return null;
-  }
-}
-
-// Get display name for domain
-function getDisplayName(hostname: string): string {
-  if (hostname.startsWith("google.") || hostname.startsWith("www.google.")) return "Google";
-  if (hostname === "accounts.google.com") return "Google";
-  if (hostname === "mail.google.com") return "Gmail";
-
-  const commonSites: Record<string, string> = {
-    "bing.com": "Bing",
-    "facebook.com": "Facebook",
-    "www.facebook.com": "Facebook",
-    "instagram.com": "Instagram",
-    "youtube.com": "YouTube",
-    "reddit.com": "Reddit",
-    "twitter.com": "Twitter",
-    "x.com": "X",
-    "t.co": "X",
-    "linkedin.com": "LinkedIn",
-    "github.com": "GitHub",
-    "tiktok.com": "TikTok",
-  };
-
-  return commonSites[hostname] || hostname;
 }
 
 export function useTimelineLayer({
@@ -258,105 +210,103 @@ export function useTimelineLayer({
     toRemove.forEach(id => markersMap.delete(id));
 
     // Create or update markers for active sessions
-    activeSessions
-      .filter(session => session.lat && session.lon)
-      .forEach(session => {
-        if (!map.current) return;
+    activeSessions.forEach(session => {
+      if (!map.current) return;
 
-        const roundedLat = round(session.lat, 4);
-        const roundedLon = round(session.lon, 4);
-        const existing = markersMap.get(session.session_id);
+      const roundedLat = round(session.lat, 4);
+      const roundedLon = round(session.lon, 4);
+      const existing = markersMap.get(session.session_id);
 
-        if (existing) {
-          // Update existing marker position if needed
-          const currentLngLat = existing.marker.getLngLat();
-          if (currentLngLat.lng !== roundedLon || currentLngLat.lat !== roundedLat) {
-            existing.marker.setLngLat([roundedLon, roundedLat]);
+      if (existing) {
+        // Update existing marker position if needed
+        const currentLngLat = existing.marker.getLngLat();
+        if (currentLngLat.lng !== roundedLon || currentLngLat.lat !== roundedLat) {
+          existing.marker.setLngLat([roundedLon, roundedLat]);
+        }
+        // Re-add marker if it was removed
+        if (!existing.marker.getElement().isConnected) {
+          existing.marker.addTo(map.current);
+        }
+      } else {
+        // Create new marker
+        const avatarContainer = document.createElement("div");
+        avatarContainer.className = "timeline-avatar-marker";
+        avatarContainer.style.cursor = "pointer";
+        avatarContainer.style.borderRadius = "50%";
+        avatarContainer.style.overflow = "hidden";
+        avatarContainer.style.width = "32px";
+        avatarContainer.style.height = "32px";
+        avatarContainer.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
+
+        // Generate avatar SVG
+        const avatarSVG = generateAvatarSVG(session.user_id, 32);
+        avatarContainer.innerHTML = avatarSVG;
+
+        // Create marker
+        const marker = new mapboxgl.Marker({
+          element: avatarContainer,
+          anchor: "center",
+        })
+          .setLngLat([roundedLon, roundedLat])
+          .addTo(map.current);
+
+        // Add click event for tooltip
+        const toggleTooltip = (e: MouseEvent) => {
+          e.stopPropagation();
+          if (!map.current || !popupRef.current) return;
+
+          // If clicking the same marker that has the tooltip open, close it
+          if (popupRef.current.isOpen() && openTooltipSessionIdRef.current === session.session_id) {
+            popupRef.current.remove();
+            openTooltipSessionIdRef.current = null;
+            return;
           }
-          // Re-add marker if it was removed
-          if (!existing.marker.getElement().isConnected) {
-            existing.marker.addTo(map.current);
+
+          // If clicking a different marker (or no tooltip is open), show this one
+          if (popupRef.current.isOpen()) {
+            popupRef.current.remove();
           }
-        } else {
-          // Create new marker
-          const avatarContainer = document.createElement("div");
-          avatarContainer.className = "timeline-avatar-marker";
-          avatarContainer.style.cursor = "pointer";
-          avatarContainer.style.borderRadius = "50%";
-          avatarContainer.style.overflow = "hidden";
-          avatarContainer.style.width = "32px";
-          avatarContainer.style.height = "32px";
-          avatarContainer.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
 
-          // Generate avatar SVG
-          const avatarSVG = generateAvatarSVG(session.user_id, 32);
-          avatarContainer.innerHTML = avatarSVG;
+          const avatarSVG = generateAvatarSVG(session.user_id, 36);
+          const countryCode = session.country?.length === 2 ? session.country : "";
+          const flagSVG = renderCountryFlag(countryCode);
+          const deviceIconSVG = renderDeviceIcon(session.device_type || "");
+          const browserIconPath = getBrowserIconPath(session.browser || "");
+          const osIconPath = getOSIconPath(session.operating_system || "");
 
-          // Create marker
-          const marker = new mapboxgl.Marker({
-            element: avatarContainer,
-            anchor: "center",
-          })
-            .setLngLat([roundedLon, roundedLat])
-            .addTo(map.current);
+          // Duration formatting
+          const durationDisplay = formatShortDuration(session.session_duration || 0);
 
-          // Add click event for tooltip
-          const toggleTooltip = (e: MouseEvent) => {
-            e.stopPropagation();
-            if (!map.current || !popupRef.current) return;
+          // Start time formatting
+          const startTime = DateTime.fromSQL(session.session_start, { zone: "utc" })
+            .setLocale(userLocale)
+            .toLocal()
+            .toFormat(hour12 ? "MMM d, h:mm a" : "dd MMM, HH:mm");
 
-            // If clicking the same marker that has the tooltip open, close it
-            if (popupRef.current.isOpen() && openTooltipSessionIdRef.current === session.session_id) {
-              popupRef.current.remove();
-              openTooltipSessionIdRef.current = null;
-              return;
-            }
+          // Pageview and event icons
+          const pageviewIconSVG = renderToStaticMarkup(
+            createElement(Eye, { size: 14, className: "inline-block text-blue-400" })
+          );
+          const eventIconSVG = renderToStaticMarkup(
+            createElement(MousePointerClick, { size: 14, className: "inline-block text-amber-400" })
+          );
 
-            // If clicking a different marker (or no tooltip is open), show this one
-            if (popupRef.current.isOpen()) {
-              popupRef.current.remove();
-            }
+          // Referrer/Channel display
+          const domain = extractDomain(session.referrer);
+          let referrerIconSVG = "";
+          let referrerText = "";
 
-            const avatarSVG = generateAvatarSVG(session.user_id, 36);
-            const countryCode = session.country?.length === 2 ? session.country : "";
-            const flagSVG = renderCountryFlag(countryCode);
-            const deviceIconSVG = renderDeviceIcon(session.device_type || "");
-            const browserIconPath = getBrowserIconPath(session.browser || "");
-            const osIconPath = getOSIconPath(session.operating_system || "");
+          if (domain) {
+            referrerText = getDisplayName(domain);
+            referrerIconSVG = renderChannelIcon(session.channel);
+          } else {
+            referrerText = session.channel;
+            referrerIconSVG = renderChannelIcon(session.channel);
+          }
 
-            // Duration formatting
-            const durationDisplay = formatShortDuration(session.session_duration || 0);
+          const name = generateName(session.user_id);
 
-            // Start time formatting
-            const startTime = DateTime.fromSQL(session.session_start, { zone: "utc" })
-              .setLocale(userLocale)
-              .toLocal()
-              .toFormat(hour12 ? "MMM d, h:mm a" : "dd MMM, HH:mm");
-
-            // Pageview and event icons
-            const pageviewIconSVG = renderToStaticMarkup(
-              createElement(Eye, { size: 14, className: "inline-block text-blue-400" })
-            );
-            const eventIconSVG = renderToStaticMarkup(
-              createElement(MousePointerClick, { size: 14, className: "inline-block text-amber-400" })
-            );
-
-            // Referrer/Channel display
-            const domain = extractDomain(session.referrer);
-            let referrerIconSVG = "";
-            let referrerText = "";
-
-            if (domain) {
-              referrerText = getDisplayName(domain);
-              referrerIconSVG = getChannelIcon(session.channel);
-            } else {
-              referrerText = session.channel;
-              referrerIconSVG = getChannelIcon(session.channel);
-            }
-
-            const name = generateName(session.user_id);
-
-            const html = `
+          const html = `
               <div class="flex flex-col gap-3 p-3 bg-neutral-850 border border-neutral-750 rounded-lg">
                 <div class="flex items-start gap-2.5">
                   <div class="flex-shrink-0 w-9 h-9 rounded-full overflow-hidden">
@@ -402,27 +352,27 @@ export function useTimelineLayer({
               </div>
             `;
 
-            popupRef.current.setLngLat([roundedLon, roundedLat]).setHTML(html).addTo(map.current);
-            openTooltipSessionIdRef.current = session.session_id;
+          popupRef.current.setLngLat([roundedLon, roundedLat]).setHTML(html).addTo(map.current);
+          openTooltipSessionIdRef.current = session.session_id;
 
-            // Add click handler to the button
-            const button = document.querySelector(`[data-session-id="${session.session_id}"]`);
-            if (button) {
-              button.addEventListener("click", e => {
-                e.stopPropagation();
-                setSelectedSession(session);
-                popupRef.current?.remove();
-                openTooltipSessionIdRef.current = null;
-              });
-            }
-          };
+          // Add click handler to the button
+          const button = document.querySelector(`[data-session-id="${session.session_id}"]`);
+          if (button) {
+            button.addEventListener("click", e => {
+              e.stopPropagation();
+              setSelectedSession(session);
+              popupRef.current?.remove();
+              openTooltipSessionIdRef.current = null;
+            });
+          }
+        };
 
-          avatarContainer.addEventListener("click", toggleTooltip);
+        avatarContainer.addEventListener("click", toggleTooltip);
 
-          // Store marker
-          markersMap.set(session.session_id, { marker, element: avatarContainer });
-        }
-      });
+        // Store marker
+        markersMap.set(session.session_id, { marker, element: avatarContainer });
+      }
+    });
 
     // Cleanup function
     return () => {
