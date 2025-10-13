@@ -154,7 +154,7 @@ export function useCoordinatesLayer({
 
           const coordinates = e.lngLat;
           const html = `
-            <div class="bg-neutral-850 border border-neutral-700 rounded-lg p-3">
+            <div class="bg-neutral-850 border border-neutral-750 rounded-lg p-2">
               <div class="flex items-center gap-1 mb-1">
                 <span class="text-sm font-medium text-white">${city}</span>
               </div>

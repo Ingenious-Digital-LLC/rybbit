@@ -29,6 +29,7 @@ import { useTimelineSessions } from "./useTimelineSessions";
 import { generateName } from "../../../../components/Avatar";
 import { formatShortDuration, hour12, userLocale } from "../../../../lib/dateTimeUtils";
 import type { GetSessionsResponse } from "../../../../api/analytics/userSessions";
+import { useTimelineStore } from "../timelineStore";
 
 // Generate avatar SVG using boring-avatars
 function generateAvatarSVG(userId: string, size: number): string {
@@ -195,9 +196,17 @@ export function useTimelineLayer({
   mapView: string;
 }) {
   const { activeSessions } = useTimelineSessions();
+  const { currentTime } = useTimelineStore();
   const popupRef = useRef<mapboxgl.Popup | null>(null);
   const markersMapRef = useRef<Map<string, { marker: mapboxgl.Marker; element: HTMLDivElement }>>(new Map());
   const [selectedSession, setSelectedSession] = useState<GetSessionsResponse[number] | null>(null);
+
+  // Close tooltip when timeline time changes
+  useEffect(() => {
+    if (popupRef.current && popupRef.current.isOpen()) {
+      popupRef.current.remove();
+    }
+  }, [currentTime]);
 
   useEffect(() => {
     if (!map.current || !mapLoaded) return;
@@ -339,7 +348,7 @@ export function useTimelineLayer({
             const name = generateName(session.user_id);
 
             const html = `
-              <div class="flex flex-col gap-3 p-3 bg-neutral-850 border border-neutral-700 rounded-lg">
+              <div class="flex flex-col gap-3 p-3 bg-neutral-850 border border-neutral-750 rounded-lg">
                 <div class="flex items-start gap-2.5">
                   <div class="flex-shrink-0 w-9 h-9 rounded-full overflow-hidden">
                     ${avatarSVG}

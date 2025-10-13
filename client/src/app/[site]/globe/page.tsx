@@ -7,7 +7,7 @@ import "./globe.css";
 import { DisabledOverlay } from "../../../components/DisabledOverlay";
 import { NothingFound } from "../../../components/NothingFound";
 import { SessionCard } from "../../../components/Sessions/SessionCard";
-import { Dialog, DialogContent } from "../../../components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../../../components/ui/dialog";
 import { useSetPageTitle } from "../../../hooks/useSetPageTitle";
 import { SubHeader } from "../components/SubHeader/SubHeader";
 import { GlobeSessions } from "./components/GlobeSessions";
@@ -20,6 +20,7 @@ import { useLayerVisibility } from "./hooks/useLayerVisibility";
 import { useMapbox } from "./hooks/useMapbox";
 import { useSubdivisionsLayer } from "./hooks/useSubdivisionsLayer";
 import { useTimelineLayer } from "./hooks/useTimelineLayer";
+import { VisuallyHidden } from "radix-ui";
 
 export default function GlobePage() {
   useSetPageTitle("Rybbit · Globe");
@@ -99,6 +100,9 @@ export default function GlobePage() {
       </div>
 
       <Dialog open={!!selectedSession} onOpenChange={open => !open && setSelectedSession(null)}>
+        <VisuallyHidden.Root>
+          <DialogTitle>Session Details</DialogTitle>
+        </VisuallyHidden.Root>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           {selectedSession && <SessionCard session={selectedSession} />}
         </DialogContent>
