@@ -1,147 +1,35 @@
-import BoringAvatar from "boring-avatars";
 import { round } from "lodash";
 import { DateTime } from "luxon";
 import mapboxgl from "mapbox-gl";
 import { createElement, useEffect, useRef, useState } from "react";
 // @ts-ignore - React 19 has built-in types
 import { renderToStaticMarkup } from "react-dom/server";
-import * as CountryFlags from "country-flag-icons/react/3x2";
+import { Eye, MousePointerClick } from "lucide-react";
+import { useTimelineSessions } from "../useTimelineSessions";
+import { generateName } from "../../../../../components/Avatar";
+import { formatShortDuration, hour12, userLocale } from "../../../../../lib/dateTimeUtils";
+import type { GetSessionsResponse } from "../../../../../api/analytics/userSessions";
+import { useTimelineStore } from "../../timelineStore";
+import { extractDomain, getDisplayName } from "../../../../../components/Channel";
 import {
-  Monitor,
-  Smartphone,
-  Link,
-  Eye,
-  MousePointerClick,
-  Search,
-  ExternalLink,
-  Users,
-  Mail,
-  HelpCircle,
-  DollarSign,
-  Video,
-  Handshake,
-  FileText,
-  ShoppingCart,
-  Calendar,
-  Headphones,
-} from "lucide-react";
-import { useTimelineSessions } from "./useTimelineSessions";
-import { generateName } from "../../../../components/Avatar";
-import { formatShortDuration, hour12, userLocale } from "../../../../lib/dateTimeUtils";
-import type { GetSessionsResponse } from "../../../../api/analytics/userSessions";
-import { useTimelineStore } from "../timelineStore";
-import { extractDomain, getDisplayName } from "../../../../components/Channel";
-
-// Generate avatar SVG using boring-avatars
-function generateAvatarSVG(userId: string, size: number): string {
-  const avatarElement = createElement(BoringAvatar, {
-    size,
-    name: userId,
-    variant: "beam",
-    colors: ["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"],
-  });
-  return renderToStaticMarkup(avatarElement);
-}
-
-// Render country flag to static SVG
-function renderCountryFlag(countryCode: string): string {
-  if (!countryCode || countryCode.length !== 2) return "";
-  const FlagComponent = CountryFlags[countryCode.toUpperCase() as keyof typeof CountryFlags];
-  if (!FlagComponent) return "";
-  const flagElement = createElement(FlagComponent, { className: "w-4 h-3 inline-block" });
-  return renderToStaticMarkup(flagElement);
-}
-
-// Render device icon based on device type
-function renderDeviceIcon(deviceType: string): string {
-  const type = deviceType?.toLowerCase() || "";
-  const Icon = type.includes("mobile") || type.includes("tablet") ? Smartphone : Monitor;
-  const iconElement = createElement(Icon, { size: 14, className: "inline-block" });
-  return renderToStaticMarkup(iconElement);
-}
-
-// Get channel icon component
-function getChannelIconComponent(channel: string) {
-  switch (channel) {
-    case "Direct":
-      return Link;
-    case "Organic Search":
-      return Search;
-    case "Referral":
-      return ExternalLink;
-    case "Organic Social":
-      return Users;
-    case "Email":
-      return Mail;
-    case "Unknown":
-      return HelpCircle;
-    case "Paid Search":
-      return Search;
-    case "Paid Unknown":
-      return DollarSign;
-    case "Paid Social":
-      return Users;
-    case "Display":
-      return Monitor;
-    case "Organic Video":
-      return Video;
-    case "Affiliate":
-      return Handshake;
-    case "Content":
-      return FileText;
-    case "Organic Shopping":
-      return ShoppingCart;
-    case "Event":
-      return Calendar;
-    case "Audio":
-      return Headphones;
-    default:
-      return null;
-  }
-}
-
-// Render channel icon
-function renderChannelIcon(channel: string): string {
-  const IconComponent = getChannelIconComponent(channel);
-  if (!IconComponent) return "";
-  const iconElement = createElement(IconComponent, { size: 14, className: "inline-block" });
-  return renderToStaticMarkup(iconElement);
-}
-
-// Get browser icon path
-function getBrowserIconPath(browser: string): string {
-  const BROWSER_TO_LOGO: Record<string, string> = {
-    Chrome: "Chrome.svg",
-    "Mobile Chrome": "Chrome.svg",
-    Firefox: "Firefox.svg",
-    "Mobile Firefox": "Firefox.svg",
-    Safari: "Safari.svg",
-    "Mobile Safari": "Safari.svg",
-    Edge: "Edge.svg",
-    Opera: "Opera.svg",
-    Brave: "Brave.svg",
-  };
-  return BROWSER_TO_LOGO[browser] ? `/browsers/${BROWSER_TO_LOGO[browser]}` : "";
-}
-
-// Get OS icon path
-function getOSIconPath(os: string): string {
-  const OS_TO_LOGO: Record<string, string> = {
-    Windows: "Windows.svg",
-    Android: "Android.svg",
-    android: "Android.svg",
-    Linux: "Tux.svg",
-    macOS: "macOS.svg",
-    iOS: "Apple.svg",
-    "Chrome OS": "Chrome.svg",
-  };
-  return OS_TO_LOGO[os] ? `/operating-systems/${OS_TO_LOGO[os]}` : "";
-}
-
-const SOURCE_ID = "timeline-sessions";
-const CLUSTER_LAYER_ID = "timeline-clusters";
-const CLUSTER_COUNT_LAYER_ID = "timeline-cluster-count";
-const UNCLUSTERED_LAYER_ID = "timeline-unclustered-point";
+  generateAvatarSVG,
+  renderCountryFlag,
+  renderDeviceIcon,
+  renderChannelIcon,
+  getBrowserIconPath,
+  getOSIconPath,
+} from "./timelineMarkerHelpers";
+import { getUnclusteredFeatures, initializeClusterSource, setupClusterClickHandler } from "./timelineClusterUtils";
+import {
+  SOURCE_ID,
+  CLUSTER_LAYER_ID,
+  CLUSTER_COUNT_LAYER_ID,
+  UNCLUSTERED_LAYER_ID,
+  CLUSTER_MAX_ZOOM,
+  CLUSTER_RADIUS,
+  MIN_CLUSTER_SIZE,
+  CLUSTERING_THRESHOLD,
+} from "./timelineLayerConstants";
 
 export function useTimelineLayer({
   map,
@@ -155,9 +43,9 @@ export function useTimelineLayer({
   const { activeSessions } = useTimelineSessions();
   const { currentTime } = useTimelineStore();
   const popupRef = useRef<mapboxgl.Popup | null>(null);
-  const markersMapRef = useRef<
-    Map<string, { marker: mapboxgl.Marker; element: HTMLDivElement; cleanup: () => void }>
-  >(new Map());
+  const markersMapRef = useRef<Map<string, { marker: mapboxgl.Marker; element: HTMLDivElement; cleanup: () => void }>>(
+    new Map()
+  );
   const openTooltipSessionIdRef = useRef<string | null>(null);
   const [selectedSession, setSelectedSession] = useState<GetSessionsResponse[number] | null>(null);
 
@@ -188,23 +76,14 @@ export function useTimelineLayer({
 
     // Add source if it doesn't exist
     if (!mapInstance.getSource(SOURCE_ID)) {
-      mapInstance.addSource(SOURCE_ID, {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [],
-        },
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 30, // Less aggressive clustering
-      });
+      initializeClusterSource(mapInstance, CLUSTER_MAX_ZOOM, CLUSTER_RADIUS);
 
       // Add cluster circle layer
       mapInstance.addLayer({
         id: CLUSTER_LAYER_ID,
         type: "circle",
         source: SOURCE_ID,
-        filter: ["all", ["has", "point_count"], [">=", ["get", "point_count"], 10]],
+        filter: ["all", ["has", "point_count"], [">=", ["get", "point_count"], MIN_CLUSTER_SIZE]],
         paint: {
           "circle-color": ["step", ["get", "point_count"], "#3b82f6", 10, "#2563eb", 30, "#1d4ed8"],
           "circle-radius": ["step", ["get", "point_count"], 20, 10, 25, 30, 30],
@@ -216,7 +95,7 @@ export function useTimelineLayer({
         id: CLUSTER_COUNT_LAYER_ID,
         type: "symbol",
         source: SOURCE_ID,
-        filter: ["all", ["has", "point_count"], [">=", ["get", "point_count"], 10]],
+        filter: ["all", ["has", "point_count"], [">=", ["get", "point_count"], MIN_CLUSTER_SIZE]],
         layout: {
           "text-field": ["get", "point_count_abbreviated"],
           "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
@@ -248,28 +127,8 @@ export function useTimelineLayer({
       mapInstance.setPaintProperty(CLUSTER_COUNT_LAYER_ID, "text-opacity-transition", { duration: 0 });
     }
 
-    // Handle cluster clicks
-    const handleClusterClick = (e: mapboxgl.MapMouseEvent) => {
-      const features = mapInstance.queryRenderedFeatures(e.point, {
-        layers: [CLUSTER_LAYER_ID],
-      });
-
-      if (!features.length) return;
-
-      const clusterId = features[0].properties?.cluster_id;
-      const source = mapInstance.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource;
-
-      source.getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err || !zoom) return;
-
-        const coordinates = (features[0].geometry as any).coordinates;
-        mapInstance.easeTo({
-          center: coordinates,
-          zoom: zoom,
-          duration: 500,
-        });
-      });
-    };
+    // Setup cluster click handler
+    const cleanupClusterClick = setupClusterClickHandler(mapInstance, CLUSTER_LAYER_ID);
 
     // Change cursor on cluster hover
     const handleClusterMouseEnter = () => {
@@ -280,12 +139,11 @@ export function useTimelineLayer({
       mapInstance.getCanvas().style.cursor = "";
     };
 
-    mapInstance.on("click", CLUSTER_LAYER_ID, handleClusterClick);
     mapInstance.on("mouseenter", CLUSTER_LAYER_ID, handleClusterMouseEnter);
     mapInstance.on("mouseleave", CLUSTER_LAYER_ID, handleClusterMouseLeave);
 
     return () => {
-      mapInstance.off("click", CLUSTER_LAYER_ID, handleClusterClick);
+      cleanupClusterClick();
       mapInstance.off("mouseenter", CLUSTER_LAYER_ID, handleClusterMouseEnter);
       mapInstance.off("mouseleave", CLUSTER_LAYER_ID, handleClusterMouseLeave);
     };
@@ -319,21 +177,13 @@ export function useTimelineLayer({
     }
 
     // Show/hide cluster layers based on number of sessions
-    const shouldShowClusters = activeSessions.length > 500;
+    const shouldShowClusters = activeSessions.length > CLUSTERING_THRESHOLD;
 
     if (mapInstance.getLayer(CLUSTER_LAYER_ID)) {
-      mapInstance.setLayoutProperty(
-        CLUSTER_LAYER_ID,
-        "visibility",
-        shouldShowClusters ? "visible" : "none"
-      );
+      mapInstance.setLayoutProperty(CLUSTER_LAYER_ID, "visibility", shouldShowClusters ? "visible" : "none");
     }
     if (mapInstance.getLayer(CLUSTER_COUNT_LAYER_ID)) {
-      mapInstance.setLayoutProperty(
-        CLUSTER_COUNT_LAYER_ID,
-        "visibility",
-        shouldShowClusters ? "visible" : "none"
-      );
+      mapInstance.setLayoutProperty(CLUSTER_COUNT_LAYER_ID, "visibility", shouldShowClusters ? "visible" : "none");
     }
 
     const source = mapInstance.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource;
@@ -360,64 +210,11 @@ export function useTimelineLayer({
     const updateMarkers = async () => {
       if (!mapInstance) return;
 
-      let unclusteredFeatures: any[] = [];
-
-      if (shouldShowClusters) {
-        // When clustering is enabled, show unclustered points and expand small clusters
-        const features = mapInstance.querySourceFeatures(SOURCE_ID, {
-          sourceLayer: undefined,
-        });
-
-        const source = mapInstance.getSource(SOURCE_ID) as mapboxgl.GeoJSONSource;
-
-        // Process features to handle small clusters
-        const promises: Promise<void>[] = [];
-
-        features.forEach(f => {
-          if (!f.properties) return;
-
-          if (!f.properties.cluster) {
-            // Regular unclustered point
-            unclusteredFeatures.push(f);
-          } else if (f.properties.point_count && f.properties.point_count < 10) {
-            // Small cluster - expand it to get individual points
-            const promise = new Promise<void>((resolve) => {
-              source.getClusterLeaves(
-                f.properties!.cluster_id,
-                f.properties!.point_count,
-                0,
-                (err, leaves) => {
-                  if (!err && leaves) {
-                    unclusteredFeatures.push(...leaves);
-                  }
-                  resolve();
-                }
-              );
-            });
-            promises.push(promise);
-          }
-          // Clusters with >= 10 points are shown as cluster circles, ignore them here
-        });
-
-        // Wait for all cluster expansions to complete
-        await Promise.all(promises);
-      } else {
-        // When clustering is disabled, show all sessions as individual markers
-        unclusteredFeatures = activeSessions
-          .filter(s => s.lat && s.lon)
-          .map(session => ({
-            properties: session,
-            geometry: {
-              type: "Point" as const,
-              coordinates: [round(session.lon, 4), round(session.lat, 4)],
-            },
-          }));
-      }
+      // Get unclustered features (including expanded small clusters)
+      const unclusteredFeatures = await getUnclusteredFeatures(mapInstance, shouldShowClusters, activeSessions);
 
       // Build set of current session IDs
-      const currentSessionIds = new Set(
-        unclusteredFeatures.map(f => f.properties?.session_id).filter(Boolean)
-      );
+      const currentSessionIds = new Set(unclusteredFeatures.map(f => f.properties?.session_id).filter(Boolean));
 
       // Remove markers that are no longer unclustered
       const toRemove: string[] = [];
@@ -469,61 +266,61 @@ export function useTimelineLayer({
 
           // Add click event for tooltip
           const toggleTooltip = (e: MouseEvent) => {
-          e.stopPropagation();
-          if (!map.current || !popupRef.current) return;
+            e.stopPropagation();
+            if (!map.current || !popupRef.current) return;
 
-          // If clicking the same marker that has the tooltip open, close it
-          if (popupRef.current.isOpen() && openTooltipSessionIdRef.current === session.session_id) {
-            popupRef.current.remove();
-            openTooltipSessionIdRef.current = null;
-            return;
-          }
+            // If clicking the same marker that has the tooltip open, close it
+            if (popupRef.current.isOpen() && openTooltipSessionIdRef.current === session.session_id) {
+              popupRef.current.remove();
+              openTooltipSessionIdRef.current = null;
+              return;
+            }
 
-          // If clicking a different marker (or no tooltip is open), show this one
-          if (popupRef.current.isOpen()) {
-            popupRef.current.remove();
-          }
+            // If clicking a different marker (or no tooltip is open), show this one
+            if (popupRef.current.isOpen()) {
+              popupRef.current.remove();
+            }
 
-          const avatarSVG = generateAvatarSVG(session.user_id, 36);
-          const countryCode = session.country?.length === 2 ? session.country : "";
-          const flagSVG = renderCountryFlag(countryCode);
-          const deviceIconSVG = renderDeviceIcon(session.device_type || "");
-          const browserIconPath = getBrowserIconPath(session.browser || "");
-          const osIconPath = getOSIconPath(session.operating_system || "");
+            const avatarSVG = generateAvatarSVG(session.user_id, 36);
+            const countryCode = session.country?.length === 2 ? session.country : "";
+            const flagSVG = renderCountryFlag(countryCode);
+            const deviceIconSVG = renderDeviceIcon(session.device_type || "");
+            const browserIconPath = getBrowserIconPath(session.browser || "");
+            const osIconPath = getOSIconPath(session.operating_system || "");
 
-          // Duration formatting
-          const durationDisplay = formatShortDuration(session.session_duration || 0);
+            // Duration formatting
+            const durationDisplay = formatShortDuration(session.session_duration || 0);
 
-          // Start time formatting
-          const startTime = DateTime.fromSQL(session.session_start, { zone: "utc" })
-            .setLocale(userLocale)
-            .toLocal()
-            .toFormat(hour12 ? "MMM d, h:mm a" : "dd MMM, HH:mm");
+            // Start time formatting
+            const startTime = DateTime.fromSQL(session.session_start, { zone: "utc" })
+              .setLocale(userLocale)
+              .toLocal()
+              .toFormat(hour12 ? "MMM d, h:mm a" : "dd MMM, HH:mm");
 
-          // Pageview and event icons
-          const pageviewIconSVG = renderToStaticMarkup(
-            createElement(Eye, { size: 14, className: "inline-block text-blue-400" })
-          );
-          const eventIconSVG = renderToStaticMarkup(
-            createElement(MousePointerClick, { size: 14, className: "inline-block text-amber-400" })
-          );
+            // Pageview and event icons
+            const pageviewIconSVG = renderToStaticMarkup(
+              createElement(Eye, { size: 14, className: "inline-block text-blue-400" })
+            );
+            const eventIconSVG = renderToStaticMarkup(
+              createElement(MousePointerClick, { size: 14, className: "inline-block text-amber-400" })
+            );
 
-          // Referrer/Channel display
-          const domain = extractDomain(session.referrer);
-          let referrerIconSVG = "";
-          let referrerText = "";
+            // Referrer/Channel display
+            const domain = extractDomain(session.referrer);
+            let referrerIconSVG = "";
+            let referrerText = "";
 
-          if (domain) {
-            referrerText = getDisplayName(domain);
-            referrerIconSVG = renderChannelIcon(session.channel);
-          } else {
-            referrerText = session.channel;
-            referrerIconSVG = renderChannelIcon(session.channel);
-          }
+            if (domain) {
+              referrerText = getDisplayName(domain);
+              referrerIconSVG = renderChannelIcon(session.channel);
+            } else {
+              referrerText = session.channel;
+              referrerIconSVG = renderChannelIcon(session.channel);
+            }
 
-          const name = generateName(session.user_id);
+            const name = generateName(session.user_id);
 
-          const html = `
+            const html = `
               <div class="flex flex-col gap-3 p-3 bg-neutral-850 border border-neutral-750 rounded-lg">
                 <div class="flex items-start gap-2.5">
                   <div class="flex-shrink-0 w-9 h-9 rounded-full overflow-hidden">
@@ -570,22 +367,22 @@ export function useTimelineLayer({
               </div>
             `;
 
-          popupRef.current.setLngLat([lng, lat]).setHTML(html).addTo(map.current);
-          openTooltipSessionIdRef.current = session.session_id;
+            popupRef.current.setLngLat([lng, lat]).setHTML(html).addTo(map.current);
+            openTooltipSessionIdRef.current = session.session_id;
 
-          // Add click handler to the button
-          const button = document.querySelector(`[data-session-id="${session.session_id}"]`);
-          if (button) {
-            button.addEventListener("click", e => {
-              e.stopPropagation();
-              setSelectedSession(session);
-              popupRef.current?.remove();
-              openTooltipSessionIdRef.current = null;
-            });
-          }
-        };
+            // Add click handler to the button
+            const button = document.querySelector(`[data-session-id="${session.session_id}"]`);
+            if (button) {
+              button.addEventListener("click", e => {
+                e.stopPropagation();
+                setSelectedSession(session);
+                popupRef.current?.remove();
+                openTooltipSessionIdRef.current = null;
+              });
+            }
+          };
 
-        avatarContainer.addEventListener("click", toggleTooltip);
+          avatarContainer.addEventListener("click", toggleTooltip);
 
           // Create cleanup function to remove event listener
           const cleanup = () => {

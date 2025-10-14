@@ -19,7 +19,7 @@ import { useCountriesLayer } from "./hooks/useCountriesLayer";
 import { useLayerVisibility } from "./hooks/useLayerVisibility";
 import { useMapbox } from "./hooks/useMapbox";
 import { useSubdivisionsLayer } from "./hooks/useSubdivisionsLayer";
-import { useTimelineLayer } from "./hooks/useTimelineLayer";
+import { useTimelineLayer } from "./hooks/timelineLayer/useTimelineLayer";
 import { VisuallyHidden } from "radix-ui";
 
 export default function GlobePage() {
