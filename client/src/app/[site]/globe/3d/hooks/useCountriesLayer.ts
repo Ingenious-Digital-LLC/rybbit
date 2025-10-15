@@ -42,7 +42,7 @@ export function useCountriesLayer({ map, mapLoaded, mapView }: UseCountriesLayer
         const code = feature.properties?.ISO_A2;
         const foundData = processedCountryData.find((d: any) => d.value === code);
         const count = foundData?.count || 0;
-        const color = count > 0 ? colorScale(count) : "rgba(100, 100, 100, 0.5)";
+        const color = count > 0 ? colorScale(count) : "rgba(0, 0, 0, 0)";
         feature.properties.fillColor = color;
         feature.properties.count = count;
       });
@@ -75,7 +75,7 @@ export function useCountriesLayer({ map, mapLoaded, mapView }: UseCountriesLayer
           paint: {
             "line-color": "#ffffff",
             "line-width": 0.5,
-            "line-opacity": 0.3,
+            "line-opacity": 0.2,
           },
           layout: {
             visibility: mapView === "countries" ? "visible" : "none",
