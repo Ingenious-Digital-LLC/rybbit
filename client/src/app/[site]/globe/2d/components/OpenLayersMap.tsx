@@ -47,7 +47,7 @@ export function OpenLayersMap({ mapView, onSessionSelect }: OpenLayersMapProps) 
         center: fromLonLat([0, 20]),
         zoom: 2,
         minZoom: 1,
-        maxZoom: 10,
+        maxZoom: 18,
       }),
       controls: [],
     });

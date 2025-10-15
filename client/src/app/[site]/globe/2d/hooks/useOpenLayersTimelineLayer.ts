@@ -1,11 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import OLMap from "ol/Map";
 import Overlay from "ol/Overlay";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import Cluster from "ol/source/Cluster";
+import Feature, { FeatureLike } from "ol/Feature";
+import Point from "ol/geom/Point";
+import { Circle, Fill, Stroke, Style, Text } from "ol/style";
 import { fromLonLat } from "ol/proj";
 import type { GetSessionsResponse } from "../../../../../api/analytics/userSessions";
 import { useTimelineStore, useActiveSessions } from "../../timelineStore";
 import { generateAvatarSVG } from "../../3d/hooks/timelineLayer/timelineMarkerHelpers";
 import { buildTooltipHTML } from "../../utils/timelineTooltipBuilder";
+import { CLUSTER_MAX_ZOOM, MIN_CLUSTER_SIZE, CLUSTERING_THRESHOLD } from "../../utils/clusteringConstants";
+
+// OpenLayers-specific clustering constants
+const CLUSTER_RADIUS = 50; // pixels (OpenLayers specific)
 
 interface TimelineLayerProps {
   mapInstanceRef: React.RefObject<OLMap | null>;
@@ -23,9 +33,11 @@ export function useOpenLayersTimelineLayer({ mapInstanceRef, mapViewRef, mapView
   const activeSessions = useActiveSessions();
   const { currentTime } = useTimelineStore();
   const overlaysMapRef = useRef<Map<string, OverlayData>>(new Map());
+  const clusterLayerRef = useRef<VectorLayer<Cluster> | null>(null);
   const tooltipOverlayRef = useRef<Overlay | null>(null);
   const [openTooltipSessionId, setOpenTooltipSessionId] = useState<string | null>(null);
   const [selectedSession, setSelectedSession] = useState<GetSessionsResponse[number] | null>(null);
+  const [currentZoom, setCurrentZoom] = useState<number>(2);
 
   // Close tooltip when timeline time changes
   useEffect(() => {
@@ -34,6 +46,26 @@ export function useOpenLayersTimelineLayer({ mapInstanceRef, mapViewRef, mapView
       setOpenTooltipSessionId(null);
     }
   }, [currentTime]);
+
+  // Track zoom level changes
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    const handleZoomChange = () => {
+      const zoom = map.getView().getZoom() || 2;
+      setCurrentZoom(zoom);
+    };
+
+    // Set initial zoom
+    handleZoomChange();
+
+    map.on("moveend", handleZoomChange);
+
+    return () => {
+      map.un("moveend", handleZoomChange);
+    };
+  }, [mapInstanceRef]);
 
   // Initialize tooltip overlay
   useEffect(() => {
@@ -65,34 +97,255 @@ export function useOpenLayersTimelineLayer({ mapInstanceRef, mapViewRef, mapView
     };
   }, [mapInstanceRef]);
 
-  // Update overlays when active sessions change
+  // Update clusters/overlays when active sessions change
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
 
     const overlaysMap = overlaysMapRef.current;
 
-    // Hide overlays if not in timeline view
+    // Hide everything if not in timeline view
     if (mapView !== "timeline") {
+      // Clear overlays
       overlaysMap.forEach(({ overlay }) => {
         map.removeOverlay(overlay);
       });
       overlaysMap.clear();
+
+      // Clear cluster layer
+      if (clusterLayerRef.current) {
+        map.removeLayer(clusterLayerRef.current);
+        clusterLayerRef.current = null;
+      }
       return;
     }
 
-    // Build set of current session IDs
-    const currentSessionIds = new Set(activeSessions.map(s => s.session_id));
+    // Determine if we should use clustering
+    const shouldCluster = activeSessions.length > CLUSTERING_THRESHOLD && currentZoom < CLUSTER_MAX_ZOOM;
 
-    // Remove overlays that are no longer active
-    const toRemove: string[] = [];
-    overlaysMap.forEach(({ overlay }, sessionId) => {
-      if (!currentSessionIds.has(sessionId)) {
-        map.removeOverlay(overlay);
-        toRemove.push(sessionId);
+    if (shouldCluster) {
+      // Create features for clustering
+      const features = activeSessions.map(session => {
+        if (!session.lat || !session.lon) return null;
+
+        const feature = new Feature({
+          geometry: new Point(fromLonLat([session.lon, session.lat])),
+        });
+
+        feature.setProperties({
+          session_id: session.session_id,
+          session,
+        });
+
+        return feature;
+      }).filter(Boolean) as Feature[];
+
+      // Create vector source
+      const vectorSource = new VectorSource({
+        features,
+      });
+
+      // Create cluster source
+      const clusterSource = new Cluster({
+        distance: CLUSTER_RADIUS,
+        source: vectorSource,
+      });
+
+      // Style function for clusters (only show clusters with size >= MIN_CLUSTER_SIZE)
+      const styleFunction = (feature: FeatureLike) => {
+        const clusterFeatures = feature.get("features");
+        const size = clusterFeatures ? clusterFeatures.length : 1;
+
+        if (size >= MIN_CLUSTER_SIZE) {
+          // Cluster style
+          const radius = Math.min(20 + size / 5, 40);
+          return new Style({
+            image: new Circle({
+              radius,
+              fill: new Fill({
+                color: "rgba(110, 231, 183, 0.6)",
+              }),
+              stroke: new Stroke({
+                color: "rgba(110, 231, 183, 1)",
+                width: 2,
+              }),
+            }),
+            text: new Text({
+              text: size.toString(),
+              fill: new Fill({
+                color: "#fff",
+              }),
+              font: "bold 12px sans-serif",
+            }),
+          });
+        } else {
+          // Small cluster - invisible (we'll use overlays for these)
+          return new Style({});
+        }
+      };
+
+      // Function to update unclustered overlays
+      const updateUnclusteredOverlays = () => {
+        // Get unclustered features (clusters with size < MIN_CLUSTER_SIZE) and create overlays for them
+        const extent = map.getView().calculateExtent(map.getSize());
+        const clusterFeatures = clusterSource.getFeaturesInExtent(extent);
+        const unclusteredSessions: GetSessionsResponse = [];
+
+        clusterFeatures.forEach(clusterFeature => {
+          const features = clusterFeature.get("features");
+          if (features && features.length < MIN_CLUSTER_SIZE) {
+            // Extract all sessions from small clusters
+            features.forEach((feature: Feature) => {
+              const session = feature.get("session");
+              if (session) {
+                unclusteredSessions.push(session);
+              }
+            });
+          }
+        });
+
+        // Update overlays for unclustered sessions
+        const currentSessionIds = new Set(unclusteredSessions.map(s => s.session_id));
+
+        // Remove overlays that are no longer unclustered
+        const toRemove: string[] = [];
+        overlaysMap.forEach(({ overlay }, sessionId) => {
+          if (!currentSessionIds.has(sessionId)) {
+            map.removeOverlay(overlay);
+            toRemove.push(sessionId);
+          }
+        });
+        toRemove.forEach(id => overlaysMap.delete(id));
+
+        // Create or update overlays for unclustered sessions
+        unclusteredSessions.forEach(session => {
+          if (!session?.session_id || !session.lat || !session.lon) return;
+
+          const existing = overlaysMap.get(session.session_id);
+
+          if (existing) {
+            // Update position if needed
+            const currentPos = existing.overlay.getPosition();
+            const newPos = fromLonLat([session.lon, session.lat]);
+            if (!currentPos || currentPos[0] !== newPos[0] || currentPos[1] !== newPos[1]) {
+              existing.overlay.setPosition(newPos);
+            }
+          } else {
+            // Create new overlay (same code as non-clustering case)
+            const avatarContainer = document.createElement("div");
+            avatarContainer.className = "timeline-avatar-marker";
+            avatarContainer.style.cursor = "pointer";
+            avatarContainer.style.borderRadius = "50%";
+            avatarContainer.style.overflow = "hidden";
+            avatarContainer.style.width = "32px";
+            avatarContainer.style.height = "32px";
+            avatarContainer.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
+            avatarContainer.style.transform = "translate(-50%, -50%)";
+
+            const avatarSVG = generateAvatarSVG(session.user_id, 32);
+            avatarContainer.innerHTML = avatarSVG;
+
+            const handleAvatarClick = (e: MouseEvent) => {
+              e.stopPropagation();
+
+              if (openTooltipSessionId === session.session_id && tooltipOverlayRef.current) {
+                tooltipOverlayRef.current.setPosition(undefined);
+                setOpenTooltipSessionId(null);
+                return;
+              }
+
+              if (tooltipOverlayRef.current) {
+                const html = buildTooltipHTML(session, session.lon, session.lat);
+                tooltipOverlayRef.current.getElement()!.innerHTML = html;
+                tooltipOverlayRef.current.setPosition(fromLonLat([session.lon, session.lat]));
+                setOpenTooltipSessionId(session.session_id);
+
+                setTimeout(() => {
+                  const button = document.querySelector(`[data-session-id="${session.session_id}"]`);
+                  if (button) {
+                    button.addEventListener("click", (e: Event) => {
+                      e.stopPropagation();
+                      setSelectedSession(session);
+                      if (tooltipOverlayRef.current) {
+                        tooltipOverlayRef.current.setPosition(undefined);
+                        setOpenTooltipSessionId(null);
+                      }
+                    });
+                  }
+                }, 0);
+              }
+            };
+
+            avatarContainer.addEventListener("click", handleAvatarClick);
+
+            const overlay = new Overlay({
+              element: avatarContainer,
+              positioning: "center-center",
+              stopEvent: false,
+            });
+
+            overlay.setPosition(fromLonLat([session.lon, session.lat]));
+            map.addOverlay(overlay);
+
+            overlaysMap.set(session.session_id, { overlay, element: avatarContainer, session });
+          }
+        });
+      };
+
+      // Create or update cluster layer
+      if (!clusterLayerRef.current) {
+        const clusterLayer = new VectorLayer({
+          source: clusterSource,
+          style: styleFunction,
+          zIndex: 100,
+        });
+
+        map.addLayer(clusterLayer);
+        clusterLayerRef.current = clusterLayer;
+      } else {
+        clusterLayerRef.current.setSource(clusterSource);
+        clusterLayerRef.current.setStyle(styleFunction);
       }
-    });
-    toRemove.forEach(id => overlaysMap.delete(id));
+
+      // Wait for next render cycle to query cluster features
+      requestAnimationFrame(() => {
+        updateUnclusteredOverlays();
+      });
+
+      // Also update overlays when map moves/zooms (clusters change)
+      const handleMoveEndForClusters = () => {
+        updateUnclusteredOverlays();
+      };
+      map.on("moveend", handleMoveEndForClusters);
+
+      // Store handler for cleanup
+      (map as any).__clusterMoveEndHandler = handleMoveEndForClusters;
+    } else {
+      // Not clustering - use individual overlays
+      // Remove cluster layer
+      if (clusterLayerRef.current) {
+        map.removeLayer(clusterLayerRef.current);
+        clusterLayerRef.current = null;
+      }
+
+      // Remove cluster moveend handler if it exists
+      if ((map as any).__clusterMoveEndHandler) {
+        map.un("moveend", (map as any).__clusterMoveEndHandler);
+        delete (map as any).__clusterMoveEndHandler;
+      }
+
+      // Build set of current session IDs
+      const currentSessionIds = new Set(activeSessions.map(s => s.session_id));
+
+      // Remove overlays that are no longer active
+      const toRemove: string[] = [];
+      overlaysMap.forEach(({ overlay }, sessionId) => {
+        if (!currentSessionIds.has(sessionId)) {
+          map.removeOverlay(overlay);
+          toRemove.push(sessionId);
+        }
+      });
+      toRemove.forEach(id => overlaysMap.delete(id));
 
     // Create or update overlays for active sessions
     activeSessions.forEach(session => {
@@ -171,9 +424,41 @@ export function useOpenLayersTimelineLayer({ mapInstanceRef, mapViewRef, mapView
         overlaysMap.set(session.session_id, { overlay, element: avatarContainer, session });
       }
     });
+    }
+
+    // Handle cluster clicks to zoom in
+    const handleClusterClick = (event: any) => {
+      if (!shouldCluster || !clusterLayerRef.current) return;
+
+      const pixel = map.getEventPixel(event.originalEvent);
+      const features = map.getFeaturesAtPixel(pixel, {
+        layerFilter: layer => layer === clusterLayerRef.current,
+      });
+
+      if (features.length > 0) {
+        const feature = features[0] as Feature;
+        const clusterFeatures = feature.get("features");
+
+        if (clusterFeatures && clusterFeatures.length >= MIN_CLUSTER_SIZE) {
+          // Zoom in on the cluster
+          const extent = feature.getGeometry()?.getExtent();
+          if (extent) {
+            map.getView().fit(extent, {
+              duration: 500,
+              maxZoom: map.getView().getZoom()! + 2,
+              padding: [50, 50, 50, 50],
+            });
+          }
+        }
+      }
+    };
 
     // Handle map click to close tooltip
-    const handleMapClick = () => {
+    const handleMapClick = (event: any) => {
+      // First, check for cluster clicks
+      handleClusterClick(event);
+
+      // Then close tooltip
       if (tooltipOverlayRef.current && openTooltipSessionId) {
         tooltipOverlayRef.current.setPosition(undefined);
         setOpenTooltipSessionId(null);
@@ -186,12 +471,23 @@ export function useOpenLayersTimelineLayer({ mapInstanceRef, mapViewRef, mapView
     return () => {
       map.un("click", handleMapClick);
 
+      // Clean up cluster moveend handler if it exists
+      if ((map as any).__clusterMoveEndHandler) {
+        map.un("moveend", (map as any).__clusterMoveEndHandler);
+        delete (map as any).__clusterMoveEndHandler;
+      }
+
       overlaysMap.forEach(({ overlay }) => {
         map.removeOverlay(overlay);
       });
       overlaysMap.clear();
+
+      if (clusterLayerRef.current) {
+        map.removeLayer(clusterLayerRef.current);
+        clusterLayerRef.current = null;
+      }
     };
-  }, [activeSessions, mapView, mapInstanceRef, mapViewRef, openTooltipSessionId]);
+  }, [activeSessions, mapView, mapInstanceRef, mapViewRef, openTooltipSessionId, currentZoom]);
 
   return {
     selectedSession,
