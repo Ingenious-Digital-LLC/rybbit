@@ -27,11 +27,7 @@ interface TooltipData {
   y: number;
 }
 
-export function useOpenLayersCountriesLayer({
-  mapInstanceRef,
-  mapViewRef,
-  mapView,
-}: UseOpenLayersCountriesLayerProps) {
+export function useOpenLayersCountriesLayer({ mapInstanceRef, mapViewRef, mapView }: UseOpenLayersCountriesLayerProps) {
   const { data: countryData } = useSingleCol({ parameter: "country" });
   const { data: countriesGeoData } = useCountries();
   const processedCountryData = useMemo(() => processCountryData(countryData), [countryData]);
@@ -60,7 +56,7 @@ export function useOpenLayersCountriesLayer({
     // Create new vector layer with styling
     const vectorLayer = new VectorLayer({
       source: vectorSource,
-      style: (feature) => {
+      style: feature => {
         const code = feature.get("ISO_A2");
         const foundData = processedCountryData.find((d: any) => d.value === code);
         const count = foundData?.count || 0;
@@ -78,10 +74,10 @@ export function useOpenLayersCountriesLayer({
           } else {
             fillColor = baseColor;
           }
-          strokeColor = "rgba(255, 255, 255, 0.3)";
+          strokeColor = "rgba(110, 231, 183, 0.25)";
         } else {
-          fillColor = "rgba(140, 140, 140, 0.3)";
-          strokeColor = "rgba(255, 255, 255, 0.2)";
+          fillColor = "rgba(0, 0, 0, 0)";
+          strokeColor = "rgba(0, 0, 0, 0)";
         }
 
         return new Style({
@@ -105,13 +101,9 @@ export function useOpenLayersCountriesLayer({
       if (!mapInstanceRef.current) return;
 
       const pixel = mapInstanceRef.current.getEventPixel(evt.originalEvent);
-      const feature = mapInstanceRef.current.forEachFeatureAtPixel(
-        pixel,
-        (f) => f,
-        {
-          layerFilter: (layer) => layer === vectorLayerRef.current,
-        }
-      );
+      const feature = mapInstanceRef.current.forEachFeatureAtPixel(pixel, f => f, {
+        layerFilter: layer => layer === vectorLayerRef.current,
+      });
 
       if (feature && mapViewRef.current === "countries") {
         const code = feature.get("ISO_A2");
@@ -149,13 +141,9 @@ export function useOpenLayersCountriesLayer({
       if (!mapInstanceRef.current) return;
 
       const pixel = mapInstanceRef.current.getEventPixel(evt.originalEvent);
-      const feature = mapInstanceRef.current.forEachFeatureAtPixel(
-        pixel,
-        (f) => f,
-        {
-          layerFilter: (layer) => layer === vectorLayerRef.current,
-        }
-      );
+      const feature = mapInstanceRef.current.forEachFeatureAtPixel(pixel, f => f, {
+        layerFilter: layer => layer === vectorLayerRef.current,
+      });
 
       if (feature && mapViewRef.current === "countries") {
         const code = feature.get("ISO_A2");

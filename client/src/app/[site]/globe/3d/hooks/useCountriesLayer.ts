@@ -42,7 +42,7 @@ export function useCountriesLayer({ map, mapLoaded, mapView }: UseCountriesLayer
         const code = feature.properties?.ISO_A2;
         const foundData = processedCountryData.find((d: any) => d.value === code);
         const count = foundData?.count || 0;
-        const color = count > 0 ? colorScale(count) : "rgba(140, 140, 140, 0.5)";
+        const color = count > 0 ? colorScale(count) : "rgba(100, 100, 100, 0.5)";
         feature.properties.fillColor = color;
         feature.properties.count = count;
       });

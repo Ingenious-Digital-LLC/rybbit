@@ -3,6 +3,8 @@
 import { useRef, useEffect } from "react";
 import Map from "ol/Map";
 import View from "ol/View";
+import TileLayer from "ol/layer/Tile";
+import XYZ from "ol/source/XYZ";
 import { fromLonLat } from "ol/proj";
 import "ol/ol.css";
 import { useOpenLayersCountriesLayer } from "../hooks/useOpenLayersCountriesLayer";
@@ -26,8 +28,18 @@ export function OpenLayersMap({ mapView }: OpenLayersMapProps) {
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
+    // Create base tile layer with CartoDB Dark Matter (no labels)
+    const baseLayer = new TileLayer({
+      source: new XYZ({
+        url: "https://{a-d}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+        attributions:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      }),
+    });
+
     const map = new Map({
       target: mapRef.current,
+      layers: [baseLayer],
       view: new View({
         center: fromLonLat([0, 20]),
         zoom: 2,
@@ -58,13 +70,5 @@ export function OpenLayersMap({ mapView }: OpenLayersMapProps) {
     mapView,
   });
 
-  return (
-    <div
-      ref={mapRef}
-      className="w-full h-full"
-      style={{
-        background: "transparent",
-      }}
-    />
-  );
+  return <div ref={mapRef} className="w-full h-full" />;
 }

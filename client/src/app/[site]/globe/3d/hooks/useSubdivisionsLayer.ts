@@ -42,7 +42,7 @@ export function useSubdivisionsLayer({ map, mapLoaded, mapView }: UseSubdivision
         const code = feature.properties?.iso_3166_2;
         const foundData = processedSubdivisionData.find((d: any) => d.value === code);
         const count = foundData?.count || 0;
-        const color = count > 0 ? colorScale(count) : "rgba(140, 140, 140, 0.5)";
+        const color = count > 0 ? colorScale(count) : "rgba(100, 100, 100, 0.5)";
         feature.properties.fillColor = color;
         feature.properties.count = count;
       });

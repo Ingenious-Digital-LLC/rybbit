@@ -60,7 +60,7 @@ export function useOpenLayersSubdivisionsLayer({
     // Create new vector layer with styling
     const vectorLayer = new VectorLayer({
       source: vectorSource,
-      style: (feature) => {
+      style: feature => {
         const code = feature.get("iso_3166_2");
         const foundData = processedSubdivisionData.find((d: any) => d.value === code);
         const count = foundData?.count || 0;
@@ -78,10 +78,10 @@ export function useOpenLayersSubdivisionsLayer({
           } else {
             fillColor = baseColor;
           }
-          strokeColor = "rgba(255, 255, 255, 0.3)";
+          strokeColor = "rgba(110, 231, 183, 0.25)";
         } else {
-          fillColor = "rgba(140, 140, 140, 0.3)";
-          strokeColor = "rgba(255, 255, 255, 0.2)";
+          fillColor = "rgba(0, 0, 0, 0)";
+          strokeColor = "rgba(0, 0, 0, 0)";
         }
 
         return new Style({
@@ -105,13 +105,9 @@ export function useOpenLayersSubdivisionsLayer({
       if (!mapInstanceRef.current) return;
 
       const pixel = mapInstanceRef.current.getEventPixel(evt.originalEvent);
-      const feature = mapInstanceRef.current.forEachFeatureAtPixel(
-        pixel,
-        (f) => f,
-        {
-          layerFilter: (layer) => layer === vectorLayerRef.current,
-        }
-      );
+      const feature = mapInstanceRef.current.forEachFeatureAtPixel(pixel, f => f, {
+        layerFilter: layer => layer === vectorLayerRef.current,
+      });
 
       if (feature && mapViewRef.current === "subdivisions") {
         const code = feature.get("iso_3166_2");
@@ -149,13 +145,9 @@ export function useOpenLayersSubdivisionsLayer({
       if (!mapInstanceRef.current) return;
 
       const pixel = mapInstanceRef.current.getEventPixel(evt.originalEvent);
-      const feature = mapInstanceRef.current.forEachFeatureAtPixel(
-        pixel,
-        (f) => f,
-        {
-          layerFilter: (layer) => layer === vectorLayerRef.current,
-        }
-      );
+      const feature = mapInstanceRef.current.forEachFeatureAtPixel(pixel, f => f, {
+        layerFilter: layer => layer === vectorLayerRef.current,
+      });
 
       if (feature && mapViewRef.current === "subdivisions") {
         const code = feature.get("iso_3166_2");

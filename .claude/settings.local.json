@@ -3,7 +3,8 @@
     "allow": [
       "Bash(do sed -i '' 's|from \"\"../../../../../|from \"\"../../../../../../|g' \"$file\")",
       "Bash(do sed -i '' 's|from \"\"../../utils/|from \"\"../../../utils/|g' \"$file\")",
-      "Bash([ -d hooks ])"
+      "Bash([ -d hooks ])",
+      "WebFetch(domain:carto.com)"
     ],
     "deny": [],
     "ask": []
