@@ -235,6 +235,7 @@ export class UmamiImportMapper {
         inp: null,
         fcp: null,
         ttfb: null,
+        ip: null,
         import_id: importId,
       });
 

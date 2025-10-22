@@ -31,5 +31,6 @@ export interface RybbitEvent {
   inp: number | null;
   fcp: number | null;
   ttfb: number | null;
+  ip: string | null;
   import_id: string | null;
 }
