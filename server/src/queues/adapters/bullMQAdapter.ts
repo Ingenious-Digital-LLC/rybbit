@@ -1,40 +1,23 @@
 import { Job, Queue, QueueEvents, Worker } from "bullmq";
-import type { Redis as RedisType } from "ioredis";
-import RedisModule from "ioredis";
 import { IJobQueue, JobConfig, JobData, JobResult } from "../jobQueue.js";
 
-// Extract the Redis constructor for NodeNext module resolution
-const Redis = RedisModule.default || RedisModule;
-
 export class BullMQAdapter implements IJobQueue {
-  private connection: RedisType;
+  private readonly connection: { host: string; port: number; password?: string };
   private queues: Map<string, Queue> = new Map();
   private workers: Map<string, Worker> = new Map();
   private queueEvents: Map<string, QueueEvents> = new Map();
 
   constructor() {
-    this.connection = new Redis({
+    this.connection = {
       host: process.env.REDIS_HOST || "localhost",
       port: parseInt(process.env.REDIS_PORT || "6379", 10),
-      password: process.env.REDIS_PASSWORD,
-      maxRetriesPerRequest: null,
-      retryStrategy: (times: number) => {
-        return Math.min(times * 50, 2000);
-      },
-    });
+      ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
+    };
 
-    this.connection.on("error", (error: Error) => {
-      console.error("[BullMQ] Redis connection error:", error);
-    });
-
-    this.connection.on("connect", () => {
-      console.info("[BullMQ] Connected to Redis");
-    });
+    console.info(`[BullMQ] Configuration: Redis at ${this.connection.host}:${this.connection.port}`);
   }
 
   async start(): Promise<void> {
-    // Verify Redis connection
-    await this.connection.ping();
     console.info("[BullMQ] Started successfully");
   }
 
@@ -49,12 +32,10 @@ export class BullMQAdapter implements IJobQueue {
     await Promise.all(Array.from(this.queueEvents.values()).map(qe => qe.close()));
     this.queueEvents.clear();
 
-    // Close all queues
+    // Close all queues (this closes their Redis connections)
     await Promise.all(Array.from(this.queues.values()).map(queue => queue.close()));
     this.queues.clear();
 
-    // Close Redis connection
-    await this.connection.quit();
     console.info("[BullMQ] Stopped successfully");
   }
 
