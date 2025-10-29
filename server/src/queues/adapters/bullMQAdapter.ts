@@ -1,5 +1,5 @@
 import { Job, Queue, QueueEvents, Worker } from "bullmq";
-import { IJobQueue, JobConfig, JobData, JobResult } from "../jobQueue.js";
+import { IJobQueue } from "../jobQueue.js";
 
 export class BullMQAdapter implements IJobQueue {
   private readonly connection: { host: string; port: number; password?: string };
@@ -78,7 +78,6 @@ export class BullMQAdapter implements IJobQueue {
       let queueEvents: QueueEvents | undefined;
 
       try {
-        // Create Queue
         queue = new Queue(queueName, {
           connection: this.connection,
           defaultJobOptions: {
@@ -90,14 +89,12 @@ export class BullMQAdapter implements IJobQueue {
 
         this.queues.set(queueName, queue);
 
-        // Create QueueEvents for monitoring
         queueEvents = new QueueEvents(queueName, {
           connection: this.connection,
         });
 
         this.queueEvents.set(queueName, queueEvents);
 
-        // Log job events
         queueEvents.on("completed", ({ jobId }) => {
           console.info(`[BullMQ] Job ${jobId} completed in queue ${queueName}`);
         });
@@ -108,7 +105,6 @@ export class BullMQAdapter implements IJobQueue {
       } catch (error) {
         console.error(`[BullMQ] Failed to create queue ${queueName}:`, error);
 
-        // Clean up any partially created resources
         const cleanupPromises: Promise<void>[] = [];
 
         if (queueEvents) {
@@ -129,7 +125,6 @@ export class BullMQAdapter implements IJobQueue {
           );
         }
 
-        // Wait for cleanup to complete before rethrowing
         await Promise.all(cleanupPromises);
 
         throw error;
@@ -137,20 +132,14 @@ export class BullMQAdapter implements IJobQueue {
     }
   }
 
-  async send<T>(queueName: string, data: T): Promise<string> {
+  async send<T>(queueName: string, data: T): Promise<void> {
     const queue = this.queues.get(queueName);
     if (!queue) {
       throw new Error(`Queue ${queueName} not found. Call createQueue first.`);
     }
 
     try {
-      const job = await queue.add(queueName, data);
-
-      if (!job.id) {
-        throw new Error(`Failed to enqueue job to ${queueName}`);
-      }
-
-      return job.id;
+      await queue.add(queueName, data);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`[BullMQ] Failed to enqueue job to ${queueName}:`, error);
@@ -158,31 +147,16 @@ export class BullMQAdapter implements IJobQueue {
     }
   }
 
-  async work<T>(
-    queueName: string,
-    config: JobConfig,
-    handler: (jobs: JobData<T>[]) => Promise<void | JobResult>
-  ): Promise<void> {
+  async work<T>(queueName: string, handler: (job: T) => Promise<void>): Promise<void> {
     try {
       const worker = new Worker(
         queueName,
         async (job: Job<T>) => {
-          const normalizedJob: JobData<T> = {
-            id: job.id!,
-            data: job.data,
-          };
-
-          // NOTE: Interface Impedance Mismatch
-          // BullMQ processes one job at a time per worker, while pg-boss can batch jobs.
-          // The IJobQueue interface expects handlers to accept arrays to support pg-boss batching.
-          // Here we wrap single BullMQ jobs in an array to maintain interface compatibility.
-          // This is an acceptable tradeoff: pg-boss gets true batching, BullMQ gets array of 1 item.
-          await handler([normalizedJob]);
+          await handler(job.data);
         },
         {
           connection: this.connection,
-          concurrency: config.concurrency ?? config.batchSize ?? 1,
-          limiter: config.limiter,
+          concurrency: 1,
         }
       );
 
@@ -196,11 +170,7 @@ export class BullMQAdapter implements IJobQueue {
 
       this.workers.set(queueName, worker);
     } catch (error) {
-      console.error(
-        `[BullMQ] Failed to create worker for queue ${queueName} with config:`,
-        { concurrency: config.concurrency ?? config.batchSize ?? 1, limiter: config.limiter },
-        error
-      );
+      console.error(`[BullMQ] Failed to create worker for queue ${queueName}`, error);
       throw error;
     }
   }

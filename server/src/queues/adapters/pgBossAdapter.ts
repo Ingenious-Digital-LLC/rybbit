@@ -1,5 +1,5 @@
 import PgBoss, { Job } from "pg-boss";
-import { IJobQueue, JobConfig, JobData, JobResult } from "../jobQueue.js";
+import { IJobQueue } from "../jobQueue.js";
 
 export class PgBossAdapter implements IJobQueue {
   private boss: PgBoss;
@@ -35,34 +35,19 @@ export class PgBossAdapter implements IJobQueue {
     await this.boss.createQueue(queueName);
   }
 
-  async send<T>(queueName: string, data: T): Promise<string> {
-    const jobId = await this.boss.send(queueName, data as object);
-
-    if (!jobId) {
-      throw new Error(`Failed to enqueue job to ${queueName}`);
-    }
-
-    return jobId;
+  async send<T>(queueName: string, data: T): Promise<void> {
+    await this.boss.send(queueName, data as object);
   }
 
-  async work<T>(
-    queueName: string,
-    config: JobConfig,
-    handler: (jobs: JobData<T>[]) => Promise<void | JobResult>
-  ): Promise<void> {
+  async work<T>(queueName: string, handler: (job: T) => Promise<void>): Promise<void> {
     await this.boss.work(
       queueName,
       {
-        batchSize: config.batchSize ?? 1,
-        pollingIntervalSeconds: config.pollingIntervalSeconds ?? 2,
+        batchSize: 1,
+        pollingIntervalSeconds: 3,
       },
-      async (jobs: Job<T>[]) => {
-        const normalizedJobs: JobData<T>[] = jobs.map(job => ({
-          id: job.id,
-          data: job.data,
-        }));
-
-        await handler(normalizedJobs);
+      async ([job]: Job<T>[]) => {
+        await handler(job.data);
       }
     );
   }

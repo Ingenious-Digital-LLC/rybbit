@@ -78,8 +78,8 @@ const createDateRangeFilter = (startDateStr?: string, endDateStr?: string) => {
 export async function registerCsvParseWorker() {
   const jobQueue = getJobQueue();
 
-  await jobQueue.work<CsvParseJob>(CSV_PARSE_QUEUE, { batchSize: 1, pollingIntervalSeconds: 10 }, async ([job]) => {
-    const { site, importId, platform, storageLocation, isR2Storage, organization, startDate, endDate } = job.data;
+  await jobQueue.work<CsvParseJob>(CSV_PARSE_QUEUE, async job => {
+    const { site, importId, platform, storageLocation, isR2Storage, organization, startDate, endDate } = job;
 
     let stream: ReturnType<typeof parse> | null = null;
     let processingTimeout: NodeJS.Timeout | null = null;

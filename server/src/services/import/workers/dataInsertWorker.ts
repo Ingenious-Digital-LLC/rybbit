@@ -16,8 +16,8 @@ const getImportDataMapping = (platform: string) => {
 export async function registerDataInsertWorker() {
   const jobQueue = getJobQueue();
 
-  await jobQueue.work<DataInsertJob>(DATA_INSERT_QUEUE, { batchSize: 1, pollingIntervalSeconds: 2 }, async ([job]) => {
-    const { site, importId, platform, chunk, chunkNumber, totalChunks, allChunksSent } = job.data;
+  await jobQueue.work<DataInsertJob>(DATA_INSERT_QUEUE, async job => {
+    const { site, importId, platform, chunk, chunkNumber, totalChunks, allChunksSent } = job;
 
     // Handle finalization signal
     if (allChunksSent) {
