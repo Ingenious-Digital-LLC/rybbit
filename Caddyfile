@@ -6,7 +6,7 @@
     # Special handling for import endpoint with custom size limit
     handle /api/import-site-data/* {
         request_body {
-            max_size {$MAX_IMPORT_SIZE:0}
+            max_size {$MAX_IMPORT_SIZE}
         }
         reverse_proxy backend:3001
     }
