@@ -66,9 +66,9 @@ class UsageService {
   }
 
   /**
-   * Gets the email of the organization owner
+   * Gets the emails of all organization owners
    */
-  private async getOrganizationOwnerEmail(organizationId: string): Promise<string | null> {
+  private async getOrganizationOwnerEmails(organizationId: string): Promise<string[]> {
     try {
       const owners = await db
         .select({
@@ -78,10 +78,10 @@ class UsageService {
         .innerJoin(user, eq(member.userId, user.id))
         .where(and(eq(member.organizationId, organizationId), eq(member.role, "owner")));
 
-      return owners.length > 0 ? owners[0].email : null;
+      return owners.map(owner => owner.email);
     } catch (error) {
-      this.logger.error(error as Error, `Error getting owner email for organization ${organizationId}`);
-      return null;
+      this.logger.error(error as Error, `Error getting owner emails for organization ${organizationId}`);
+      return [];
     }
   }
 
@@ -244,21 +244,23 @@ class UsageService {
 
           // Send email notification if transitioning from under limit to over limit
           if (isOverLimit && !wasOverLimit) {
-            const ownerEmail = await this.getOrganizationOwnerEmail(orgData.id);
+            const ownerEmails = await this.getOrganizationOwnerEmails(orgData.id);
 
-            // Send email to the owner if found
-            if (ownerEmail) {
-              try {
-                await sendLimitExceededEmail(ownerEmail, orgData.name, eventCount, eventLimit);
-                this.logger.info(`Sent limit exceeded email to owner ${ownerEmail} for organization ${orgData.name}`);
-              } catch (error) {
-                this.logger.error(
-                  error as Error,
-                  `Failed to send limit exceeded email to owner ${ownerEmail} for organization ${orgData.name}`
-                );
+            // Send email to all owners if found
+            if (ownerEmails.length > 0) {
+              for (const ownerEmail of ownerEmails) {
+                try {
+                  await sendLimitExceededEmail(ownerEmail, orgData.name, eventCount, eventLimit);
+                  this.logger.info(`Sent limit exceeded email to owner ${ownerEmail} for organization ${orgData.name}`);
+                } catch (error) {
+                  this.logger.error(
+                    error as Error,
+                    `Failed to send limit exceeded email to owner ${ownerEmail} for organization ${orgData.name}`
+                  );
+                }
               }
             } else {
-              this.logger.warn(`No owner found for organization ${orgData.name}, skipping limit exceeded email`);
+              this.logger.warn(`No owners found for organization ${orgData.name}, skipping limit exceeded email`);
             }
           }
 
