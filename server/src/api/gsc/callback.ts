@@ -23,8 +23,9 @@ export async function gscCallback(req: FastifyRequest<GSCCallbackRequest>, res: 
     const { code, state, error } = req.query;
 
     if (error) {
-      console.error("OAuth error:", error);
-      return res.redirect(`${process.env.BASE_URL}/error?message=OAuth failed`);
+      console.log("OAuth cancelled or failed:", error);
+      const siteId = state;
+      return res.redirect(`${process.env.BASE_URL}/${siteId}/main`);
     }
 
     if (!code || !state) {
