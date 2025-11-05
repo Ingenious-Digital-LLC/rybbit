@@ -1,4 +1,4 @@
-import { Expand, Info, SquareArrowOutUpRight } from "lucide-react";
+import { Expand, Info, Monitor, Smartphone, SquareArrowOutUpRight, Tablet } from "lucide-react";
 import { useState } from "react";
 import { useConnectGSC, useGSCConnection } from "../../../../../api/gsc/useGSCConnection";
 import { GSCDimension, useGSCData } from "../../../../../api/gsc/useGSCData";
@@ -91,7 +91,9 @@ function DataList({ dimension, label, renderName, expanded, close }: DataListPro
                   <Info className="w-5 h-5" />
                   No Data
                 </div>
-                <div className="text-sm mt-2">Google Search Console data has a 2-3 day delay</div>
+                <div className="text-sm mt-2">
+                  Google Search Console data has a 2-3 day delay. Try selecting a wider date range.
+                </div>
               </div>
             </div>
           )}
@@ -193,7 +195,20 @@ export function SearchConsole() {
                 />
               </TabsContent>
               <TabsContent value="devices">
-                <DataList dimension="device" label="Device" expanded={expanded} close={close} />
+                <DataList
+                  dimension="device"
+                  label="Device"
+                  expanded={expanded}
+                  close={close}
+                  renderName={e => (
+                    <div className="flex gap-2 items-center">
+                      {e === "DESKTOP" && <Monitor className="w-4 h-4" />}
+                      {e === "MOBILE" && <Smartphone className="w-4 h-4" />}
+                      {e === "TABLET" && <Tablet className="w-4 h-4" />}
+                      {e === "DESKTOP" ? "Desktop" : e === "MOBILE" ? "Mobile" : e === "TABLET" ? "Tablet" : "Other"}
+                    </div>
+                  )}
+                />
               </TabsContent>
             </>
           )}
