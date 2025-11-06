@@ -30,14 +30,14 @@ const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: [
-    {
-      "@type": "Question",
-      name: "Is Rybbit GDPR and CCPA compliant?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, Rybbit is fully compliant with GDPR, CCPA, and other privacy regulations. We don't use cookies or collect any personal data that could identify your users. We salt user IDs daily to ensure users are not fingerprinted. You will not need to display a cookie consent banner to your users.",
-      },
-    },
+    // {
+    //   "@type": "Question",
+    //   name: "Is Rybbit GDPR and CCPA compliant?",
+    //   acceptedAnswer: {
+    //     "@type": "Answer",
+    //     text: "Yes, Rybbit is fully compliant with GDPR, CCPA, and other privacy regulations. We don't use cookies or collect any personal data that could identify your users. We salt user IDs daily to ensure users are not fingerprinted. You will not need to display a cookie consent banner to your users.",
+    //   },
+    // },
     {
       "@type": "Question",
       name: "How does Rybbit compare to Google Analytics?",
@@ -82,7 +82,7 @@ const faqSchema = {
 };
 
 export const metadata = {
-  title: "Rybbit Analytics",
+  title: "Rybbit - Cookieless Google Analytics Replacement",
   description:
     "Next-gen, open source, lightweight, cookieless web & product analytics for everyone — GDPR/CCPA compliant.",
 };
@@ -333,7 +333,7 @@ export default function HomePage() {
 
             <div className="bg-neutral-800/20 backdrop-blur-sm border border-neutral-800/50 rounded-xl overflow-hidden">
               <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="item-1" className="border-b border-neutral-800/50">
+                {/* <AccordionItem value="item-1" className="border-b border-neutral-800/50">
                   <AccordionTrigger className="px-6 py-4 text-base md:text-lg font-medium hover:text-emerald-400 transition-colors">
                     Is Rybbit GDPR and CCPA compliant?
                   </AccordionTrigger>
@@ -343,7 +343,7 @@ export default function HomePage() {
                     ensure users are not fingerprinted. You will not need to display a cookie consent banner to your
                     users.
                   </AccordionContent>
-                </AccordionItem>
+                </AccordionItem> */}
 
                 <AccordionItem value="item-2" className="border-b border-neutral-800/50">
                   <AccordionTrigger className="px-6 py-4 text-base md:text-lg font-medium hover:text-emerald-400 transition-colors">

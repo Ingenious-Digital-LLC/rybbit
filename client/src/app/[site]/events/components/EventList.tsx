@@ -94,14 +94,14 @@ export function EventList({ events, isLoading, size = "small" }: EventListProps)
   if (!events || events.length === 0) {
     return size === "small" ? (
       <div className="flex flex-col gap-2">
-        <div className="text-neutral-100 w-full text-center mt-6 flex flex-row gap-2 items-center justify-center">
+        <div className="text-neutral-300 w-full text-center mt-6 flex flex-row gap-2 items-center justify-center">
           <Info className="w-5 h-5" />
           No Data
         </div>
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href="https://www.rybbit.io/docs/track-events"
+          href="https://www.rybbit.com/docs/track-events"
           className="text-neutral-400 w-full text-center mt-2 flex flex-row gap-1 items-center justify-center text-sm hover:underline hover:text-neutral-300"
         >
           <BookOpen className="w-4 h-4" />

@@ -7,6 +7,7 @@ import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { collectTelemetry } from "./api/admin/collectTelemetry.js";
 import { getAdminOrganizations } from "./api/admin/getAdminOrganizations.js";
+import { getAdminServiceEventCount } from "./api/admin/getAdminServiceEventCount.js";
 import { getAdminSites } from "./api/admin/getAdminSites.js";
 import { getEventNames } from "./api/analytics/events/getEventNames.js";
 import { getEventProperties } from "./api/analytics/events/getEventProperties.js";
@@ -80,6 +81,12 @@ import { extractSiteId } from "./utils.js";
 import { getTrackingConfig } from "./api/sites/getTrackingConfig.js";
 import { updateSitePrivateLinkConfig } from "./api/sites/updateSitePrivateLinkConfig.js";
 import { getSitePrivateLinkConfig } from "./api/sites/getSitePrivateLinkConfig.js";
+import { connectGSC } from "./api/gsc/connect.js";
+import { gscCallback } from "./api/gsc/callback.js";
+import { getGSCStatus } from "./api/gsc/status.js";
+import { disconnectGSC } from "./api/gsc/disconnect.js";
+import { getGSCData } from "./api/gsc/getData.js";
+import { selectGSCProperty } from "./api/gsc/selectProperty.js";
 import { getSiteImports } from "./api/sites/getSiteImports.js";
 import { importSiteData } from "./api/sites/importSiteData.js";
 import { deleteSiteImport } from "./api/sites/deleteSiteImport.js";
@@ -138,7 +145,6 @@ const server = Fastify({
           url: request.url,
           path: request.url,
           parameters: request.params,
-          headers: request.headers,
         };
       },
       res(reply) {
@@ -213,6 +219,7 @@ const PUBLIC_ROUTES: string[] = [
   "/api/auth",
   "/api/auth/callback/google",
   "/api/auth/callback/github",
+  "/api/gsc/callback",
   "/api/stripe/webhook",
   "/api/as/webhook",
   "/api/session-replay/record",
@@ -255,6 +262,7 @@ const ANALYTICS_ROUTES = [
   "/api/error-events/",
   "/api/error-bucketed/",
   "/api/session-replay/",
+  "/api/gsc/data/",
 ];
 
 server.addHook("onRequest", async (request, reply) => {
@@ -377,6 +385,14 @@ server.get("/api/user/organizations", getUserOrganizations);
 server.post("/api/add-user-to-organization", addUserToOrganization);
 server.post("/api/user/account-settings", updateAccountSettings);
 
+// GOOGLE SEARCH CONSOLE
+server.get("/api/gsc/connect/:site", connectGSC);
+server.get("/api/gsc/callback", gscCallback);
+server.get("/api/gsc/status/:site", getGSCStatus);
+server.delete("/api/gsc/disconnect/:site", disconnectGSC);
+server.post("/api/gsc/select-property/:site", selectGSCProperty);
+server.get("/api/gsc/data/:site", getGSCData);
+
 // UPTIME MONITORING
 // Only register uptime routes when IS_CLOUD is true (Redis is available)
 // if (IS_CLOUD) {
@@ -428,6 +444,7 @@ if (IS_CLOUD) {
   // Admin Routes
   server.get("/api/admin/sites", getAdminSites);
   server.get("/api/admin/organizations", getAdminOrganizations);
+  server.get("/api/admin/service-event-count", getAdminServiceEventCount);
   server.post("/api/admin/telemetry", collectTelemetry);
 
   // AppSumo Routes

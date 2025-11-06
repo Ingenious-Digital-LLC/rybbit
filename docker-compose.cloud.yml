@@ -89,7 +89,7 @@ services:
       dockerfile: ./server/Dockerfile
     environment:
       - NODE_ENV=production
-      - CLICKHOUSE_HOST=http://clickhouse:8123
+      - CLICKHOUSE_HOST=${CLICKHOUSE_HOST:-http://clickhouse:8123}
       - CLICKHOUSE_DB=${CLICKHOUSE_DB:-analytics}
       - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-frog}
       - POSTGRES_HOST=postgres
@@ -131,6 +131,7 @@ services:
       - MAPBOX_TOKEN=${MAPBOX_TOKEN}
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
       - IPAPI_KEY=${IPAPI_KEY}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
     depends_on:
       clickhouse:
         condition: service_healthy

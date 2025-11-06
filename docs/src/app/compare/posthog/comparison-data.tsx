@@ -159,11 +159,11 @@ export const posthogComparisonData: ComparisonSection[] = [
         rybbitValue: true,
         competitorValue: "Optional",
       },
-      {
-        name: "GDPR compliant",
-        rybbitValue: true,
-        competitorValue: true,
-      },
+      // {
+      //   name: "GDPR compliant",
+      //   rybbitValue: true,
+      //   competitorValue: true,
+      // },
       {
         name: "No personal data collection",
         rybbitValue: true,

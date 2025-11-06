@@ -1,10 +1,11 @@
 import { UmamiEvent } from "../mappings/umami.js";
 import { SimpleAnalyticsEvent } from "../mappings/simpleAnalytics.js";
 import { ImportPlatform } from "../platforms.js";
+import { IS_PRODUCTION } from "../../../lib/const.js";
 
-export const CSV_PARSE_QUEUE = "csv-parse";
+export const CSV_PARSE_QUEUE = IS_PRODUCTION ? "csv-parse" : "csv-parse-dev";
 
-export const DATA_INSERT_QUEUE = "data-insert";
+export const DATA_INSERT_QUEUE = IS_PRODUCTION ? "data-insert" : "data-insert-dev";
 
 interface ImportJob {
   site: string;

@@ -5,6 +5,7 @@ description: Introduction to Rybbit
 
 import { Cards, Card } from 'fumadocs-ui/components/card';
 import Image from 'next/image';
+import { Check, X, AlertTriangle } from 'lucide-react';
 import {
   SiAngular,
   SiAstro,
@@ -16,7 +17,7 @@ import {
   SiJekyll,
   SiLaravel,
   SiMintlify,
-  SiReact,  
+  SiReact,
   SiNextdotjs,
   SiGatsby,
   SiRemix,
@@ -61,26 +62,26 @@ See how Rybbit compares to other analytics solutions:
 
 | Feature                  | Rybbit  | GA4        | Plausible  | Cloudflare |
 | ------------------------ | ------- | ---------- | ---------- | ---------- |
-| **Open Source**          | ✅      | ❌         | ✅         | ❌         |
-| **Self-Hosting**         | ✅      | ❌         | ✅\*       | ❌         |
-| **GDPR Compliant**       | ✅      | ❌         | ✅         | ✅         |
-| **Advanced Maps**        | ✅      | ❌         | ❌         | ❌         |
-| **Advanced Filters**     | ✅      | ⚠️ Limited | ⚠️ Limited | ❌         |
-| **Web Vitals**           | ⚠️ Paid | ❌         | ❌         | ❌         |
-| **Session Details**      | ✅      | ❌         | ❌         | ❌         |
-| **User Profiles**        | ✅      | ❌         | ❌         | ❌         |
-| **Session Replays**      | ✅      | ❌         | ❌         | ❌         |
-| **Funnels**              | ✅      | ✅         | ⚠️ Paid    | ❌         |
-| **User Journeys**        | ✅      | ✅         | ❌         | ❌         |
-| **Retention Analysis**   | ✅      | ✅         | ❌         | ❌         |
-| **Goals & Events**       | ✅      | ✅         | ✅         | ❌         |
-| **Real-time Dashboard**  | ✅      | ✅         | ✅         | ✅         |
-| **Custom Events (JSON)** | ✅      | ✅         | ⚠️ Limited | ❌         |
-| **Error Tracking**       | ✅      | ❌         | ❌         | ❌         |
-| **Public Dashboards**    | ✅      | ❌         | ✅         | ❌         |
-| **Organizations**        | ✅      | ✅         | ✅         | ✅         |
-| **Free Tier**            | ✅      | ✅         | ❌         | ✅         |
-| **Frog 🐸**              | ✅      | ❌         | ❌         | ❌         |
+| **Open Source**          | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Self-Hosting**         | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} />\* | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Cookieless & Privacy friendly** | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> |
+| **Advanced Maps**        | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Advanced Filters**     | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <span className="inline-flex items-center gap-1"><AlertTriangle className="w-5 h-5" color="orange" strokeWidth={3} /> Limited</span> | <span className="inline-flex items-center gap-1"><AlertTriangle className="w-5 h-5" color="orange" strokeWidth={3} /> Limited</span> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Web Vitals**           | <span className="inline-flex items-center gap-1"><AlertTriangle className="w-5 h-5" color="orange" strokeWidth={3} /> Paid</span> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Session Details**      | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **User Profiles**        | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Session Replays**      | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Funnels**              | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <span className="inline-flex items-center gap-1"><AlertTriangle className="w-5 h-5" color="orange" strokeWidth={3} /> Paid</span> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **User Journeys**        | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Retention Analysis**   | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Goals & Events**       | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Real-time Dashboard**  | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> |
+| **Custom Events (JSON)** | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <span className="inline-flex items-center gap-1"><AlertTriangle className="w-5 h-5" color="orange" strokeWidth={3} /> Limited</span> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Error Tracking**       | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Public Dashboards**    | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
+| **Organizations**        | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> |
+| **Free Tier**            | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> |
+| **Frog 🐸**              | <Check className="w-5 h-5 inline" color="green" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> | <X className="w-5 h-5 inline" color="gray" strokeWidth={3} /> |
 
 \* Plausible's Community Edition has very limited features compared to their cloud version
 

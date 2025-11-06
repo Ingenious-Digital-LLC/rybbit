@@ -127,6 +127,7 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
     mode: "onChange",
     defaultValues: {
       platform: undefined,
+      file: Object.assign(new DataTransfer().files, {}),
       dateRange: {},
     },
   });

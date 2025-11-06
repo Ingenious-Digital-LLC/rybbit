@@ -160,11 +160,11 @@ export const matomoComparisonData: ComparisonSection[] = [
         rybbitValue: true,
         competitorValue: "Optional",
       },
-      {
-        name: "GDPR compliant by default",
-        rybbitValue: true,
-        competitorValue: false,
-      },
+      // {
+      //   name: "GDPR compliant by default",
+      //   rybbitValue: true,
+      //   competitorValue: false,
+      // },
       {
         name: "No consent banner needed",
         rybbitValue: true,

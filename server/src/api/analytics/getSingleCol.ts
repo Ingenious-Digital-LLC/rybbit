@@ -50,9 +50,10 @@ type GetSingleColPaginatedResponse = {
 
 const getQuery = (request: FastifyRequest<GetSingleColRequest>, isCountQuery: boolean = false) => {
   const { filters, parameter, limit, page } = request.query;
+  const site = request.params.site;
 
-  const filterStatement = getFilterStatement(filters);
   const timeStatement = getTimeStatement(request.query);
+  const filterStatement = getFilterStatement(filters, Number(site), timeStatement);
 
   let validatedLimit: number | null = null;
   if (!isCountQuery && limit !== undefined) {
@@ -177,7 +178,6 @@ const getQuery = (request: FastifyRequest<GetSingleColRequest>, isCountQuery: bo
   if (parameter === "exit_page" || parameter === "entry_page") {
     const isEntry = parameter === "entry_page";
     const orderDirection = isEntry ? "ASC" : "DESC";
-    const rowNumFilter = isEntry ? "row_num = 1" : "row_num = 1";
 
     const baseCteQuery = `
       SessionPageCounts AS (
@@ -227,7 +227,7 @@ const getQuery = (request: FastifyRequest<GetSingleColRequest>, isCountQuery: bo
       FilteredDurations AS (
           SELECT *
           FROM PageDurations
-          WHERE ${rowNumFilter}
+          WHERE row_num = 1
       ),
       PathStats AS (
           SELECT

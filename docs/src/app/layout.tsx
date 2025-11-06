@@ -28,11 +28,11 @@ export const metadata: Metadata = {
   authors: [{ name: "Rybbit Team" }],
   creator: "Rybbit",
   publisher: "Rybbit",
-  metadataBase: new URL("https://rybbit.io"),
+  metadataBase: new URL("https://rybbit.com"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://rybbit.io",
+    url: "https://rybbit.com",
     siteName: "Rybbit",
     title: "Rybbit - Privacy-First Web Analytics Platform",
     description:
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     description:
       "Open-source, privacy-focused web analytics platform. Track your website performance without compromising user privacy.",
     images: ["/opengraph-image.png"],
-    creator: "@rybbitio",
+    creator: "@yang_frog",
   },
   robots: {
     index: true,

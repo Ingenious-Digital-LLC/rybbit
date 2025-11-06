@@ -88,22 +88,6 @@ export default function FunnelsPage() {
     });
   }, [funnels, searchQuery]);
 
-  if (isLoading) {
-    return (
-      <div className="p-4 max-w-[1300px] mx-auto space-y-4">
-        <div className="flex justify-between items-center mb-3">
-          <div>
-            <MobileSidebar />
-          </div>
-          <Skeleton className="h-10 w-32" />
-        </div>
-        {[1, 2, 3].map(i => (
-          <FunnelRowSkeleton key={i} />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <DisabledOverlay message="Funnels" featurePath="funnels">
       <div className="p-2 md:p-4 max-w-[1300px] mx-auto space-y-3">
@@ -119,7 +103,13 @@ export default function FunnelsPage() {
           <CreateFunnelDialog />
         </div>
 
-        {error ? (
+        {isLoading || !funnels ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <FunnelRowSkeleton key={i} />
+            ))}
+          </div>
+        ) : error ? (
           <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
             Failed to load funnels: {error instanceof Error ? error.message : "Unknown error"}
           </div>

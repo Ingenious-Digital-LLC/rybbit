@@ -169,11 +169,11 @@ export const cloudflareAnalyticsComparisonData: ComparisonSection[] = [
         rybbitValue: true,
         competitorValue: true,
       },
-      {
-        name: "GDPR compliant",
-        rybbitValue: true,
-        competitorValue: true,
-      },
+      // {
+      //   name: "GDPR compliant",
+      //   rybbitValue: true,
+      //   competitorValue: true,
+      // },
       {
         name: "Daily rotating salt option",
         rybbitValue: true,

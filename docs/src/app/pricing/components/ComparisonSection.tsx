@@ -132,12 +132,12 @@ const COMPARISON_FEATURES = [
         standard: true,
         pro: true,
       },
-      {
-        name: "GDPR compliant",
-        free: true,
-        standard: true,
-        pro: true,
-      },
+      // {
+      //   name: "GDPR compliant",
+      //   free: true,
+      //   standard: true,
+      //   pro: true,
+      // },
       {
         name: "No cookies required",
         free: true,

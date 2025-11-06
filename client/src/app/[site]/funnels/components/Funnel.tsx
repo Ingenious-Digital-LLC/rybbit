@@ -66,7 +66,7 @@ export function Funnel({ data, steps, isError, error, isPending }: FunnelProps) 
                     {step.stepNumber}
                   </div>
                   <div className="font-medium text-sm flex items-center gap-2">
-                    {steps[index].type === "page" ? <PageviewIcon /> : <EventIcon />}
+                    {steps[index]?.type === "page" ? <PageviewIcon /> : <EventIcon />}
                     {step.stepName}
                   </div>
                 </div>

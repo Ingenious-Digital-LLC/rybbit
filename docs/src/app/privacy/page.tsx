@@ -64,7 +64,7 @@ export default function PrivacyPolicy() {
         <h2 className="text-2xl font-semibold mt-8 mb-4">No Cookies Policy</h2>
         <p>
           Unlike traditional analytics tools, Rybbit functions without cookies. This means websites using Rybbit
-          typically don&apos;t require cookie consent banners under GDPR, ePrivacy Directive, and similar regulations.
+          typically don&apos;t require cookie consent banners.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">How Data is Used</h2>

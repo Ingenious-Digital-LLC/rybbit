@@ -62,12 +62,12 @@ const RowItem = ({
         className="absolute inset-0 bg-dataviz py-2 opacity-25 rounded-md"
         style={{ width: `${item.percentage * ratio}%` }}
       ></div>
-      <div className="z-10 mx-2 flex justify-between items-center text-xs w-full">
-        <div className="flex items-center gap-1">
+      <div className="z-10 mx-2 flex justify-between items-center text-xs w-full gap-2">
+        <div className="flex items-center gap-1 min-w-0 flex-1">
           {leftContent}
-          {getLabel(item)}
+          <span className="truncate">{getLabel(item)}</span>
           {getLink && (
-            <a href={getLink(item)} target="_blank" onClick={e => e.stopPropagation()}>
+            <a href={getLink(item)} target="_blank" onClick={e => e.stopPropagation()} className="flex-shrink-0">
               <SquareArrowOutUpRight
                 className="ml-0.5 w-3.5 h-3.5 text-neutral-300 hover:text-neutral-100"
                 strokeWidth={3}
@@ -75,7 +75,7 @@ const RowItem = ({
             </a>
           )}
         </div>
-        <div className="text-xs flex gap-2">
+        <div className="text-xs flex gap-2 flex-shrink-0">
           <div className="hidden group-hover:block text-neutral-400">{round(item.percentage, 1)}%</div>
           <NumberFlow respectMotionPreference={false} value={item.count} format={{ notation: "compact" }} />
         </div>

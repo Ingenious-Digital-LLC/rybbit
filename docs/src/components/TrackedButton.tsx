@@ -13,7 +13,12 @@ interface TrackedButtonProps {
 
 export function TrackedButton({ href, eventName, eventProps, className, children }: TrackedButtonProps) {
   return (
-    <Link href={href} className="w-full sm:w-auto">
+    <Link
+      href={href}
+      className="w-full sm:w-auto"
+      data-rybbit-event={eventName}
+      data-rybbit-prop-location={eventProps.location}
+    >
       <button onClick={() => trackAdEvent(eventName, eventProps)} className={className}>
         {children}
       </button>

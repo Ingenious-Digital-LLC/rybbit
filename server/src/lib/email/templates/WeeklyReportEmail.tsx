@@ -446,7 +446,7 @@ export const WeeklyReportEmail = ({ userName, organizationReport }: WeeklyReport
                 This weekly report covers the last 7 days of analytics data.
               </Text>
               <Text className="text-mutedText text-xs mb-3">
-                <Link href="https://rybbit.io/settings/account" className="text-brand no-underline">
+                <Link href="https://app.rybbit.io/settings/account" className="text-brand no-underline">
                   Unsubscribe from weekly reports
                 </Link>
               </Text>

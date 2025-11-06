@@ -90,11 +90,11 @@ export const fathomComparisonData: ComparisonSection[] = [
         rybbitValue: true,
         competitorValue: true,
       },
-      {
-        name: "GDPR compliant",
-        rybbitValue: true,
-        competitorValue: true,
-      },
+      // {
+      //   name: "GDPR compliant",
+      //   rybbitValue: true,
+      //   competitorValue: true,
+      // },
       {
         name: "No consent banner needed",
         rybbitValue: true,

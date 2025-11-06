@@ -99,11 +99,11 @@ export const simpleAnalyticsComparisonData: ComparisonSection[] = [
         rybbitValue: true,
         competitorValue: true,
       },
-      {
-        name: "GDPR/CCPA compliant",
-        rybbitValue: true,
-        competitorValue: true,
-      },
+      // {
+      //   name: "GDPR/CCPA compliant",
+      //   rybbitValue: true,
+      //   competitorValue: true,
+      // },
       {
         name: "No personal data collection",
         rybbitValue: true,
