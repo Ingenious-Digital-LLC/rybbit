@@ -38,6 +38,12 @@ import {
   Download,
   Upload,
   Mail,
+  Video,
+  Gauge,
+  AlertTriangle,
+  Search,
+  ShieldAlert,
+  MousePointerClick,
 } from "lucide-react";
 import { EventTracking } from "@/components/Cards/EventTracking";
 import { GoalConversion } from "@/components/Cards/GoalConversion";
@@ -140,6 +146,42 @@ const analyticsFeatures = [
     icon: <Grid3x3 className="w-5 h-5" />,
     title: "Pixels",
     description: "Embed a tracking pixel anywhere to start collecting data.",
+  },
+  {
+    icon: <Video className="w-5 h-5" />,
+    title: "Session replay",
+    description: "Watch real user sessions to understand behavior, identify issues, and improve user experience.",
+  },
+  {
+    icon: <Gauge className="w-5 h-5" />,
+    title: "Web vitals",
+    description: "Monitor Core Web Vitals and performance metrics to ensure your site delivers a great experience.",
+  },
+  {
+    icon: <AlertTriangle className="w-5 h-5" />,
+    title: "Error tracking",
+    description: "Automatically capture and track JavaScript errors to quickly identify and fix issues on your site.",
+  },
+  {
+    icon: <Globe className="w-5 h-5" />,
+    title: "Globe views",
+    description:
+      "Visualize your global traffic in real-time with interactive 3D globe views showing visitor locations.",
+  },
+  {
+    icon: <Search className="w-5 h-5" />,
+    title: "Google Search Console",
+    description: "Integrate with Google Search Console to see search performance data alongside your analytics.",
+  },
+  {
+    icon: <ShieldAlert className="w-5 h-5" />,
+    title: "Bot blocking",
+    description: "Automatically filter out bot traffic to ensure your analytics reflect real human visitors.",
+  },
+  {
+    icon: <MousePointerClick className="w-5 h-5" />,
+    title: "User sessions",
+    description: "Track individual user sessions to understand complete user journeys and engagement patterns.",
   },
 ];
 
@@ -390,33 +432,6 @@ export default function FeaturesPage() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Feature Demos */}
-      <section className="py-14 md:py-20 w-full">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <div className="inline-block bg-emerald-900/30 text-emerald-400 px-3 py-1 rounded-full text-sm font-medium mb-4">
-              See It In Action
-            </div>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Features that grow with you</h2>
-            <p className="text-lg text-neutral-300 max-w-2xl mx-auto font-light">
-              From basic analytics to advanced user insights, Rybbit has everything you need
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-            <RealTimeAnalytics />
-            <SessionReplay />
-            <WebVitals />
-            <UserProfiles />
-            <UserSessions />
-            <UserFlowAnalysis />
-            <UserBehaviorTrends />
-            <EventTracking />
-            <GoalConversion />
           </div>
         </div>
       </section>
