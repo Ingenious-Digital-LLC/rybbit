@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authedFetch } from "@/api/utils";
 import { APIResponse } from "@/api/types";
-import type { ImportQuotaInfo } from "@/lib/import/types";
 
 interface GetSiteImportsResponse {
   importId: string;
@@ -92,13 +91,5 @@ export function useDeleteSiteImport(site: number) {
       });
     },
     retry: false,
-  });
-}
-
-export function useGetImportQuota(site: number) {
-  return useQuery({
-    queryKey: ["import-quota", site],
-    queryFn: async () => await authedFetch<APIResponse<ImportQuotaInfo>>(`/import-quota/${site}`),
-    staleTime: 60000,
   });
 }

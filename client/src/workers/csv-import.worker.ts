@@ -1,35 +1,68 @@
-// Web Worker for client-side CSV parsing and transformation
+// Web Worker for client-side CSV parsing only
 // This worker runs in a separate thread to avoid blocking the main UI thread
+// Transformation happens on the server
 
 import Papa from "papaparse";
 import { DateTime } from "luxon";
-import type { WorkerMessageToWorker, WorkerMessageToMain, UmamiEvent, RybbitEvent } from "@/lib/import/types";
-import { UmamiImportMapper, umamiHeaders } from "@/lib/import/mappers/umami";
-import { ClientQuotaChecker } from "@/lib/import/quota-checker";
+import type { WorkerMessageToWorker, WorkerMessageToMain, UmamiEvent } from "@/lib/import/types";
 
-const CHUNK_SIZE = 5000; // Number of events per batch sent to main thread
+const CHUNK_SIZE = 5000; // Number of rows per batch sent to main thread
 const PROGRESS_UPDATE_INTERVAL = 1000; // Update progress every 1000 rows
 
-let quotaChecker: ClientQuotaChecker | null = null;
-let currentBatch: RybbitEvent[] = [];
+let currentBatch: UmamiEvent[] = [];
 let chunkIndex = 0;
 let totalParsed = 0;
 let totalSkipped = 0;
 let totalErrors = 0;
 let errorDetails: Array<{ row: number; message: string }> = [];
-let siteId: number;
-let importId: string;
-let platform: "umami";
 let lastProgressUpdate = 0;
 
-// Date range filter
+// Date range filter (client-side optimization to reduce server load)
 let startDate: DateTime | null = null;
 let endDate: DateTime | null = null;
 
+// Umami CSV header mapping
+const umamiHeaders = [
+  undefined,
+  "session_id",
+  undefined,
+  undefined,
+  "hostname",
+  "browser",
+  "os",
+  "device",
+  "screen",
+  "language",
+  "country",
+  "region",
+  "city",
+  "url_path",
+  "url_query",
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  "referrer_path",
+  "referrer_query",
+  "referrer_domain",
+  "page_title",
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  "event_type",
+  "event_name",
+  undefined,
+  "distinct_id",
+  "created_at",
+  undefined,
+];
+
 function createDateRangeFilter(startDateStr?: string, endDateStr?: string) {
-  startDate = startDateStr
-    ? DateTime.fromFormat(startDateStr, "yyyy-MM-dd", { zone: "utc" }).startOf("day")
-    : null;
+  startDate = startDateStr ? DateTime.fromFormat(startDateStr, "yyyy-MM-dd", { zone: "utc" }).startOf("day") : null;
   endDate = endDateStr ? DateTime.fromFormat(endDateStr, "yyyy-MM-dd", { zone: "utc" }).endOf("day") : null;
 
   if (startDate && !startDate.isValid) {
@@ -82,42 +115,29 @@ function sendProgress() {
 }
 
 function handleParsedRow(row: unknown, rowIndex: number) {
-  // Skip rows with missing or invalid dates
   const umamiEvent = row as UmamiEvent;
+
+  // Skip rows with missing created_at (required field)
   if (!umamiEvent.created_at) {
     totalSkipped++;
     return;
   }
 
-  // Apply user-specified date range filter
-  if (!isDateInRange(umamiEvent.created_at)) {
-    totalSkipped++;
-    return;
+  // Apply optional date range filter (client-side optimization)
+  if (startDate || endDate) {
+    if (!isDateInRange(umamiEvent.created_at)) {
+      totalSkipped++;
+      return;
+    }
   }
 
-  // Check per-month quota
-  if (quotaChecker && !quotaChecker.canImportEvent(umamiEvent.created_at)) {
-    totalSkipped++;
-    return;
-  }
+  // Add to batch (no transformation, send raw row to server)
+  currentBatch.push(umamiEvent);
+  totalParsed++;
 
-  // Transform the event
-  const transformed = UmamiImportMapper.transform([umamiEvent], siteId.toString(), importId, (error) => {
-    totalErrors++;
-    if (errorDetails.length < 100) {
-      // Limit error collection
-      errorDetails.push({ row: rowIndex, message: error.message });
-    }
-  });
-
-  if (transformed.length > 0) {
-    currentBatch.push(transformed[0]);
-    totalParsed++;
-
-    // Send batch when it reaches chunk size
-    if (currentBatch.length >= CHUNK_SIZE) {
-      sendChunk();
-    }
+  // Send batch when it reaches chunk size
+  if (currentBatch.length >= CHUNK_SIZE) {
+    sendChunk();
   }
 
   // Send progress update periodically
@@ -132,12 +152,14 @@ function parseCSV(file: File) {
 
   Papa.parse<UmamiEvent>(file, {
     header: true,
-    skipEmptyLines: true,
+    dynamicTyping: true, // Auto-convert strings to numbers/booleans
+    skipEmptyLines: "greedy", // Skip all empty lines (improved)
+    delimiter: "", // Auto-detect delimiter (comma, tab, semicolon, etc.)
     transformHeader: (header, index) => {
-      // Use predefined Umami headers mapping
+      // Map Umami CSV column positions to field names
       return umamiHeaders[index] || header;
     },
-    step: (results) => {
+    step: results => {
       if (results.data) {
         handleParsedRow(results.data, rowIndex);
         rowIndex++;
@@ -145,9 +167,10 @@ function parseCSV(file: File) {
       if (results.errors && results.errors.length > 0) {
         totalErrors++;
         if (errorDetails.length < 100) {
+          // Limit error collection to avoid memory issues
           errorDetails.push({
             row: rowIndex,
-            message: results.errors.map((e) => e.message).join(", "),
+            message: results.errors.map(e => e.message).join(", "),
           });
         }
       }
@@ -159,20 +182,6 @@ function parseCSV(file: File) {
       // Send final progress
       sendProgress();
 
-      // Check if we skipped events due to quota
-      const quotaSummary = quotaChecker?.getSummary();
-      if (quotaSummary && quotaSummary.monthsAtCapacity > 0 && totalSkipped > 0) {
-        const quotaErrorMessage =
-          `${totalSkipped} events exceeded monthly quotas or fell outside the ${quotaSummary.totalMonthsInWindow}-month historical window. ` +
-          `${quotaSummary.monthsAtCapacity} of ${quotaSummary.totalMonthsInWindow} months are at full capacity. ` +
-          `Try importing newer data or upgrade your plan for higher monthly quotas.`;
-
-        errorDetails.push({
-          row: 0,
-          message: quotaErrorMessage,
-        });
-      }
-
       // Send completion message
       const message: WorkerMessageToMain = {
         type: "COMPLETE",
@@ -183,7 +192,7 @@ function parseCSV(file: File) {
       };
       self.postMessage(message);
     },
-    error: (error) => {
+    error: error => {
       const message: WorkerMessageToMain = {
         type: "ERROR",
         message: error.message,
@@ -209,21 +218,7 @@ self.onmessage = (event: MessageEvent<WorkerMessageToWorker>) => {
       errorDetails = [];
       lastProgressUpdate = 0;
 
-      // Set up parameters
-      siteId = message.siteId;
-      importId = message.importId;
-      platform = message.platform;
-
-      // Create quota checker
-      quotaChecker = new ClientQuotaChecker({
-        monthlyLimit: message.monthlyLimit,
-        historicalWindowMonths: message.historicalWindowMonths,
-        monthlyUsage: message.monthlyUsage,
-        currentMonthUsage: 0,
-        organizationId: "",
-      });
-
-      // Set up date range filter
+      // Set up date range filter (optional client-side optimization)
       createDateRangeFilter(message.startDate, message.endDate);
 
       // Start parsing

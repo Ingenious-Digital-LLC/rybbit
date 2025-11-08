@@ -1,14 +1,8 @@
 // Worker manager for coordinating CSV import process
 // Manages worker lifecycle, batch uploads, and error handling
+// Server handles transformation and quota checking
 
-import type {
-  WorkerMessageToWorker,
-  WorkerMessageToMain,
-  ImportProgress,
-  FailedBatch,
-  RybbitEvent,
-  ImportQuotaInfo,
-} from "./types";
+import type { WorkerMessageToWorker, WorkerMessageToMain, ImportProgress, FailedBatch, UmamiEvent } from "./types";
 
 const MAX_CONCURRENT_UPLOADS = 3; // Maximum number of parallel batch uploads
 const RETRY_ATTEMPTS = 3; // Number of retry attempts for failed batches
@@ -32,7 +26,7 @@ export class CSVWorkerManager {
   };
   private onProgress: ProgressCallback | null = null;
   private onComplete: CompleteCallback | null = null;
-  private uploadQueue: Array<{ events: RybbitEvent[]; chunkIndex: number }> = [];
+  private uploadQueue: Array<{ events: UmamiEvent[]; chunkIndex: number }> = [];
   private activeUploads = 0;
   private completedUploads = new Set<number>();
   private failedBatches: FailedBatch[] = [];
@@ -50,7 +44,6 @@ export class CSVWorkerManager {
     siteId: number,
     importId: string,
     platform: "umami",
-    quotaInfo: ImportQuotaInfo,
     startDate?: string,
     endDate?: string
   ): void {
@@ -85,7 +78,7 @@ export class CSVWorkerManager {
     };
 
     // Set up error handler
-    this.worker.onerror = (error) => {
+    this.worker.onerror = error => {
       this.progress.status = "failed";
       this.progress.errors.push({
         message: `Worker error: ${error.message}`,
@@ -96,7 +89,7 @@ export class CSVWorkerManager {
       }
     };
 
-    // Start parsing
+    // Start parsing (no quota info - server handles that)
     const message: WorkerMessageToWorker = {
       type: "PARSE_START",
       file,
@@ -105,9 +98,6 @@ export class CSVWorkerManager {
       platform,
       startDate,
       endDate,
-      monthlyLimit: quotaInfo.monthlyLimit,
-      historicalWindowMonths: quotaInfo.historicalWindowMonths,
-      monthlyUsage: quotaInfo.monthlyUsage,
     };
 
     this.worker.postMessage(message);
@@ -146,7 +136,7 @@ export class CSVWorkerManager {
         this.progress.skippedRows = message.totalSkipped;
 
         // Add detailed errors
-        message.errorDetails.forEach((error) => {
+        message.errorDetails.forEach(error => {
           this.progress.errors.push({
             message: `Row ${error.row}: ${error.message}`,
           });
@@ -185,7 +175,7 @@ export class CSVWorkerManager {
     }
   }
 
-  private async uploadBatch(events: RybbitEvent[], chunkIndex: number, retryCount = 0): Promise<void> {
+  private async uploadBatch(events: UmamiEvent[], chunkIndex: number, retryCount = 0): Promise<void> {
     try {
       const response = await fetch(`/api/batch-import-events/${this.siteId}`, {
         method: "POST",
@@ -267,10 +257,7 @@ export class CSVWorkerManager {
         this.progress.status = "completed";
         this.notifyProgress();
         if (this.onComplete) {
-          this.onComplete(
-            true,
-            `Import completed successfully: ${this.progress.importedEvents} events imported`
-          );
+          this.onComplete(true, `Import completed successfully: ${this.progress.importedEvents} events imported`);
         }
       } else {
         this.progress.status = "completed";

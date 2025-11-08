@@ -1,35 +1,5 @@
 // Types for client-side CSV import system
-
-export interface RybbitEvent {
-  site_id: number;
-  timestamp: string;
-  session_id: string;
-  user_id: string;
-  hostname: string;
-  pathname: string;
-  querystring: string;
-  url_parameters: Record<string, string>;
-  page_title: string;
-  referrer: string;
-  channel: string;
-  browser: string;
-  browser_version: string;
-  operating_system: string;
-  operating_system_version: string;
-  language: string;
-  country: string;
-  region: string;
-  city: string;
-  lat: number;
-  lon: number;
-  screen_width: number;
-  screen_height: number;
-  device_type: string;
-  type: string;
-  event_name: string;
-  props: Record<string, unknown>;
-  import_id: string;
-}
+// Client parses CSV, server transforms and validates
 
 export interface UmamiEvent {
   session_id: string;
@@ -64,9 +34,6 @@ export type WorkerMessageToWorker =
       platform: "umami";
       startDate?: string;
       endDate?: string;
-      monthlyLimit: number;
-      historicalWindowMonths: number;
-      monthlyUsage: Record<string, number>;
     }
   | {
       type: "CANCEL";
@@ -81,7 +48,7 @@ export type WorkerMessageToMain =
     }
   | {
       type: "CHUNK_READY";
-      events: RybbitEvent[];
+      events: UmamiEvent[]; // Raw CSV rows, not transformed
       chunkIndex: number;
     }
   | {
@@ -97,18 +64,9 @@ export type WorkerMessageToMain =
       error?: unknown;
     };
 
-// Quota information from server
-export interface ImportQuotaInfo {
-  monthlyLimit: number;
-  historicalWindowMonths: number;
-  monthlyUsage: Record<string, number>; // { "202401": 5000, "202402": 7500, ... }
-  currentMonthUsage: number;
-  organizationId: string;
-}
-
-// Batch import request
+// Batch import request (client sends raw rows to server)
 export interface BatchImportRequest {
-  events: RybbitEvent[];
+  events: UmamiEvent[]; // Raw Umami CSV rows
   importId: string;
   batchIndex: number;
   totalBatches: number;
@@ -138,7 +96,7 @@ export interface ImportProgress {
 // Failed batch info for retry
 export interface FailedBatch {
   batchIndex: number;
-  events: RybbitEvent[];
+  events: UmamiEvent[]; // Raw rows, not transformed
   error: string;
   retryCount: number;
 }

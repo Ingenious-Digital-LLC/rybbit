@@ -3,7 +3,11 @@ import { z } from "zod";
 import { getUserHasAdminAccessToSite } from "../../lib/auth-utils.js";
 import { clickhouse } from "../../db/clickhouse/clickhouse.js";
 import { updateImportProgress, updateImportStatus, getImportById } from "../../services/import/importStatusManager.js";
-import { RybbitEvent } from "../../services/import/mappings/rybbit.js";
+import { UmamiImportMapper, type UmamiEvent } from "../../services/import/mappings/umami.js";
+import { ImportQuotaTracker } from "../../services/import/importQuotaChecker.js";
+import { db } from "../../db/postgres/postgres.js";
+import { sites } from "../../db/postgres/schema.js";
+import { eq } from "drizzle-orm";
 import { createServiceLogger } from "../../lib/logger/logger.js";
 
 const logger = createServiceLogger("import:batch");
@@ -14,7 +18,7 @@ const batchImportRequestSchema = z
       site: z.string().min(1),
     }),
     body: z.object({
-      events: z.array(z.any()).min(1).max(10000), // Limit batch size to 10k events
+      events: z.array(z.any()).min(1).max(10000), // Limit batch size to 10k events, raw Umami rows
       importId: z.string().uuid(),
       batchIndex: z.number().int().min(0),
       totalBatches: z.number().int().min(1),
@@ -75,26 +79,96 @@ export async function batchImportEvents(request: FastifyRequest<BatchImportReque
       await updateImportStatus(importId, "processing");
     }
 
+    // Get organization ID for quota checking
+    const [siteRecord] = await db
+      .select({ organizationId: sites.organizationId })
+      .from(sites)
+      .where(eq(sites.siteId, siteId))
+      .limit(1);
+
+    if (!siteRecord) {
+      logger.error({ siteId }, "Site not found");
+      return reply.status(404).send({ error: "Site not found" });
+    }
+
     try {
-      // Insert events into ClickHouse
+      // Create quota tracker for server-side quota checking
+      const quotaTracker = await ImportQuotaTracker.create(siteRecord.organizationId);
+
+      // Filter events based on quota availability
+      const eventsWithinQuota: UmamiEvent[] = [];
+      let skippedDueToQuota = 0;
+
+      for (const event of events as UmamiEvent[]) {
+        if (!event.created_at) {
+          continue; // Skip events without timestamp
+        }
+
+        if (quotaTracker.canImportEvent(event.created_at)) {
+          eventsWithinQuota.push(event);
+        } else {
+          skippedDueToQuota++;
+        }
+      }
+
+      // If all events were skipped due to quota, fail the batch
+      if (eventsWithinQuota.length === 0 && events.length > 0) {
+        const quotaSummary = quotaTracker.getSummary();
+        const errorMessage =
+          `All ${events.length} events in batch ${batchIndex} exceeded monthly quotas or fell outside the ${quotaSummary.totalMonthsInWindow}-month historical window. ` +
+          `${quotaSummary.monthsAtCapacity} of ${quotaSummary.totalMonthsInWindow} months are at full capacity.`;
+
+        logger.warn({ importId, batchIndex, skippedDueToQuota }, errorMessage);
+
+        // Update import status to failed if this was the only batch or early in the import
+        if (batchIndex === 0 || totalBatches === 1) {
+          await updateImportStatus(importId, "failed", errorMessage);
+        }
+
+        return reply.status(400).send({
+          success: false,
+          error: "Quota exceeded",
+          message: errorMessage,
+        });
+      }
+
+      // Transform events using server-side mapper (single source of truth)
+      const transformedEvents = UmamiImportMapper.transform(eventsWithinQuota, site, importId);
+
+      if (transformedEvents.length === 0) {
+        logger.warn({ importId, batchIndex }, "No valid events after transformation");
+        return reply.send({
+          success: true,
+          importedCount: 0,
+          message: `Batch ${batchIndex + 1}/${totalBatches}: No valid events`,
+        });
+      }
+
+      // Insert transformed events into ClickHouse
       await clickhouse.insert({
         table: "events",
-        values: events as RybbitEvent[],
+        values: transformedEvents,
         format: "JSONEachRow",
       });
 
       logger.info(
-        { importId, batchIndex, eventCount: events.length, totalBatches },
+        {
+          importId,
+          batchIndex,
+          eventCount: transformedEvents.length,
+          skippedDueToQuota,
+          totalBatches,
+        },
         "Batch inserted successfully"
       );
 
       // Update progress
-      await updateImportProgress(importId, events.length);
+      await updateImportProgress(importId, transformedEvents.length);
 
       return reply.send({
         success: true,
-        importedCount: events.length,
-        message: `Batch ${batchIndex + 1}/${totalBatches} imported successfully`,
+        importedCount: transformedEvents.length,
+        message: `Batch ${batchIndex + 1}/${totalBatches} imported successfully${skippedDueToQuota > 0 ? ` (${skippedDueToQuota} events skipped due to quota)` : ""}`,
       });
     } catch (insertError) {
       logger.error({ importId, batchIndex, error: insertError }, "Failed to insert batch");
