@@ -16,6 +16,7 @@ interface PricingCardProps {
   eventLocation?: string;
   onClick?: () => void;
   customButton?: React.ReactNode;
+  recommended?: boolean;
 }
 
 export function PricingCard({
@@ -31,6 +32,7 @@ export function PricingCard({
   eventLocation,
   onClick,
   customButton,
+  recommended = false,
 }: PricingCardProps) {
   const isFree = variant === "free";
   const isPrimary = buttonVariant === "primary";
@@ -40,14 +42,23 @@ export function PricingCard({
       <div
         className={cn(
           "rounded-xl border overflow-hidden backdrop-blur-sm shadow-xl h-full",
-          isFree
+          recommended
+            ? "bg-neutral-800/100 border-emerald-500 border-2"
+            : isFree
             ? "bg-neutral-800/15 border-neutral-800/60 text-neutral-300"
             : "bg-neutral-800/50 border-neutral-800/90"
         )}
       >
         <div className="p-6">
           <div className="mb-4">
-            <h3 className="text-xl font-bold mb-2">{title}</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-xl font-bold">{title}</h3>
+              {recommended && (
+                <span className="px-2 py-0.5 text-xs font-semibold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                  Recommended
+                </span>
+              )}
+            </div>
             <p className="text-sm text-neutral-400 h-10">{description}</p>
           </div>
 

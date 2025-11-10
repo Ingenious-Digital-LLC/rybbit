@@ -4,7 +4,14 @@ import { Slider } from "@/components/ui/slider";
 import { CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { DEFAULT_EVENT_LIMIT, FREE_SITE_LIMIT, STANDARD_SITE_LIMIT } from "../lib/const";
+import {
+  DEFAULT_EVENT_LIMIT,
+  FREE_SITE_LIMIT,
+  PRO_SITE_LIMIT,
+  PRO_TEAM_LIMIT,
+  STANDARD_SITE_LIMIT,
+  STANDARD_TEAM_LIMIT,
+} from "../lib/const";
 import { PricingCard } from "./PricingCard";
 import { getCalApi } from "@calcom/embed-react";
 
@@ -13,27 +20,46 @@ const EVENT_TIERS = [100_000, 250_000, 500_000, 1_000_000, 2_000_000, 5_000_000,
 
 // Define standard plan features
 const STANDARD_FEATURES = [
+  "Everything in Free",
   `Up to ${STANDARD_SITE_LIMIT} websites`,
-  "Up to 3 team members",
-  "Web vitals",
+  `Up to ${STANDARD_TEAM_LIMIT} team members`,
   "Funnels",
   "Goals",
-  "Error tracking",
   "Journeys",
+  "Web vitals",
+  "Error tracking",
   "User profiles",
   "Retention",
+  "Sessions",
+  "Email reports",
   "2 year data retention",
-  "Standard support",
+  "Email support",
 ];
 
 // Define pro plan features
 const PRO_FEATURES = [
   "Everything in Standard",
+  `Up to ${PRO_SITE_LIMIT} websites`,
+  `Up to ${PRO_TEAM_LIMIT} team members`,
+  "Session replays",
+  "5 year data retention",
+  "Priority support",
+];
+
+// Define enterprise plan features
+const ENTERPRISE_FEATURES = [
+  "Everything in Pro",
   "Unlimited websites",
   "Unlimited team members",
-  "Session replays",
-  "5+ year data retention",
-  "Priority support",
+  "Single Sign-On (SSO",
+  "Infinite data retention",
+  "Dedicated isolated instance",
+  "On-premise Installation",
+  "Custom Features",
+  "Manual invoicing",
+  "Uptime SLA",
+  "Enterprise support",
+  "Slack/live chat support",
 ];
 
 // Define free plan features
@@ -223,7 +249,7 @@ export function PricingSection() {
                 </div>
               )
             }
-            buttonText={standardPrices.custom ? "Contact us" : "Try for free"}
+            buttonText={standardPrices.custom ? "Book a call" : "Try for free"}
             buttonHref={standardPrices.custom ? "https://www.rybbit.com/contact" : "https://app.rybbit.io/signup"}
             features={STANDARD_FEATURES}
             eventLocation={standardPrices.custom ? undefined : "standard"}
@@ -245,28 +271,21 @@ export function PricingSection() {
                 </div>
               )
             }
-            buttonText={proPrices.custom ? "Contact us" : "Try for free"}
+            buttonText={proPrices.custom ? "Book a call" : "Try for free"}
             buttonHref={proPrices.custom ? "https://www.rybbit.com/contact" : "https://app.rybbit.io/signup"}
             features={PRO_FEATURES}
             eventLocation={proPrices.custom ? undefined : "pro"}
+            recommended={true}
           />
 
           {/* Enterprise Plan Card */}
           <PricingCard
             title="Enterprise"
-            description="Advanced features for enterprise teams, customized for your needs"
+            description="Advanced features for enterprise teams, with customized terms."
             priceDisplay={<div className="text-3xl font-bold">Custom</div>}
-            features={[]}
-            customButton={
-              <button
-                data-cal-namespace="secret"
-                data-cal-link="rybbit/secret"
-                data-cal-config='{"layout":"month_view"}'
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer"
-              >
-                Schedule a call
-              </button>
-            }
+            features={ENTERPRISE_FEATURES}
+            buttonText={"Book a call"}
+            buttonHref={"https://www.rybbit.com/contact"}
           />
         </div>
       </div>
