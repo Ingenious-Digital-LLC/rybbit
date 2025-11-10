@@ -50,7 +50,7 @@ const ENTERPRISE_FEATURES = [
   "Everything in Pro",
   "Unlimited websites",
   "Unlimited team members",
-  "Single Sign-On (SSO",
+  "Single Sign-On (SSO)",
   "Infinite data retention",
   "Dedicated isolated instance",
   "On-premise Installation",
@@ -281,7 +281,7 @@ export function PricingSection() {
           {/* Enterprise Plan Card */}
           <PricingCard
             title="Enterprise"
-            description="."
+            description="Advanced features for enterprise teams"
             priceDisplay={<div className="text-3xl font-bold">Custom</div>}
             features={ENTERPRISE_FEATURES}
             buttonText={"Book a call"}
