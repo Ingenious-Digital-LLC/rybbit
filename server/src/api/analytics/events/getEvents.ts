@@ -26,16 +26,16 @@ interface GetEventsRequest {
   };
   Querystring: FilterParams<{
     page?: string;
-    pageSize?: string;
+    page_size?: string;
     count?: string; // Keeping for backward compatibility
   }>;
 }
 
 export async function getEvents(req: FastifyRequest<GetEventsRequest>, res: FastifyReply) {
   const { site } = req.params;
-  const { start_date, end_date, time_zone, filters, page = "1", pageSize = "20", count } = req.query;
+  const { start_date, end_date, time_zone, filters, page = "1", page_size: pageSize = "20", count } = req.query;
 
-  // Use count if provided (for backward compatibility), otherwise use pageSize
+  // Use count if provided (for backward compatibility), otherwise use page_size
   const limit = count ? parseInt(count, 10) : parseInt(pageSize, 10);
   const offset = (parseInt(page, 10) - 1) * limit;
 

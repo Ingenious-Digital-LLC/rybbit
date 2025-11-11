@@ -61,7 +61,7 @@ export function useGetEventsInfinite(options: GetEventsOptions = {}) {
     queryFn: async ({ pageParam }) => {
       const params = getQueryParams(time, {
         page: pageParam,
-        pageSize,
+        page_size: pageSize,
         filters: filters && filters.length > 0 ? JSON.stringify(filters) : undefined,
         count: options.count,
       });

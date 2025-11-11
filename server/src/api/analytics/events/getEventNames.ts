@@ -13,7 +13,7 @@ export interface GetEventNamesRequest {
     site: string;
   };
   Querystring: FilterParams<{
-    eventName: string;
+    event_name: string;
   }>;
 }
 

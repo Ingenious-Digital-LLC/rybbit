@@ -14,12 +14,12 @@ export interface GetEventPropertiesRequest {
     site: string;
   };
   Querystring: FilterParams<{
-    eventName: string;
+    event_name: string;
   }>;
 }
 
 export async function getEventProperties(req: FastifyRequest<GetEventPropertiesRequest>, res: FastifyReply) {
-  const { eventName, filters } = req.query;
+  const { event_name: eventName, filters } = req.query;
   const site = req.params.site;
 
   if (!eventName) {
