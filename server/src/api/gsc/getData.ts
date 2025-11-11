@@ -22,7 +22,7 @@ export async function getGSCData(req: FastifyRequest<GetGSCDataRequest>, res: Fa
     }
 
     if (!start_date || !end_date) {
-      return res.status(400).send({ error: "Missing startDate or endDate" });
+      return res.status(400).send({ error: "Missing start_date or end_date" });
     }
 
     if (!dimension) {
