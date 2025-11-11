@@ -321,10 +321,10 @@ export function Chart({
         const diffPercentage = previousY ? (diff / previousY) * 100 : null;
 
         return (
-          <div className="text-sm bg-neutral-850 p-2 rounded-md border border-neutral-750">
+          <div className="text-sm bg-neutral-850 rounded-lg border border-neutral-750">
             {diffPercentage !== null && (
               <div
-                className="text-lg font-medium"
+                className="text-base font-medium px-2 pt-1.5 pb-1"
                 style={{
                   color: diffPercentage > 0 ? "hsl(var(--green-400))" : "hsl(var(--red-400))",
                 }}
@@ -333,17 +333,26 @@ export function Chart({
                 {diffPercentage.toFixed(2)}%
               </div>
             )}
+            <div className="w-full h-[1px] bg-neutral-750"></div>
 
-            <div className="flex justify-between text-sm w-40">
-              <div>{formatChartDateTime(currentTime, bucket)}</div>
-              <div>{formatTooltipValue(currentY, selectedStat)}</div>
-            </div>
-            {previousTime && (
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <div>{formatChartDateTime(previousTime, bucket)}</div>
-                <div>{formatTooltipValue(previousY, selectedStat)}</div>
+            <div className="m-2">
+              <div className="flex justify-between text-sm w-40">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-3 rounded-[3px] bg-dataviz" />
+                  {formatChartDateTime(currentTime, bucket)}
+                </div>
+                <div>{formatTooltipValue(currentY, selectedStat)}</div>
               </div>
-            )}
+              {previousTime && (
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1 h-3 rounded-[3px] bg-neutral-600" />
+                    {formatChartDateTime(previousTime, bucket)}
+                  </div>
+                  <div>{formatTooltipValue(previousY, selectedStat)}</div>
+                </div>
+              )}
+            </div>
           </div>
         );
       }}

@@ -138,10 +138,6 @@ export function PerformanceChart() {
     return dt.toFormat(hour12 ? "MMM d" : "dd MMM");
   };
 
-  const formatTooltipValue = (value: number) => {
-    return `${formatMetricValue(selectedPerformanceMetric, value)}${getMetricUnit(selectedPerformanceMetric, value)}`;
-  };
-
   // Get performance thresholds for the current metric
   const thresholds = getPerformanceThresholds(selectedPerformanceMetric);
 
@@ -298,19 +294,23 @@ export function PerformanceChart() {
                 const currentTime = DateTime.fromJSDate(new Date(slice.points[0].data.x));
 
                 return (
-                  <div className="text-sm bg-neutral-850 p-3 rounded-md min-w-[150px] border border-neutral-750">
+                  <div className="text-sm bg-neutral-850 p-3 rounded-lg min-w-[150px] border border-neutral-750">
                     {formatChartDateTime(currentTime, bucket)}
                     <div className="space-y-2 mt-2">
                       {slice.points.map((point: any) => {
                         return (
                           <div key={point.seriesId} className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: point.seriesColor }} />
-                              <span className="text-neutral-200 font-medium">{point.seriesId}</span>
+                              <div className="w-1 h-3 rounded-[3px]" style={{ backgroundColor: point.seriesColor }} />
+                              <span className="text-neutral-200">{point.seriesId}</span>
                             </div>
-                            <span className="text-white">
-                              {point.serieId}
-                              {formatTooltipValue(Number(point.data.yFormatted))}
+                            <span>
+                              <span className="text-white">
+                                {formatMetricValue(selectedPerformanceMetric, Number(point.data.yFormatted))}
+                              </span>
+                              <span className="text-neutral-300">
+                                {getMetricUnit(selectedPerformanceMetric, Number(point.data.yFormatted))}
+                              </span>
                             </span>
                           </div>
                         );
