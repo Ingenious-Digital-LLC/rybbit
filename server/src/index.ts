@@ -37,6 +37,7 @@ import { getUsers } from "./api/analytics/getUsers.js";
 import { createGoal } from "./api/analytics/goals/createGoal.js";
 import { deleteGoal } from "./api/analytics/goals/deleteGoal.js";
 import { getGoals } from "./api/analytics/goals/getGoals.js";
+import { getGoalSessions } from "./api/analytics/goals/getGoalSessions.js";
 import { updateGoal } from "./api/analytics/goals/updateGoal.js";
 import { getPerformanceByDimension } from "./api/analytics/performance/getPerformanceByDimension.js";
 import { getPerformanceOverview } from "./api/analytics/performance/getPerformanceOverview.js";
@@ -238,6 +239,7 @@ const ANALYTICS_ROUTES = [
   "/api/journeys/",
   "/api/goals/",
   "/api/goal/",
+  "/api/goals/:goalId/sessions/",
   "/api/analytics/events/names/",
   "/api/analytics/events/properties/",
   "/api/events/",
@@ -330,6 +332,7 @@ server.post("/api/funnel/:site", getFunnel);
 server.post("/api/funnel/create/:site", createFunnel);
 server.delete("/api/funnel/:funnelId", deleteFunnel);
 server.get("/api/goals/:site", getGoals);
+server.get("/api/goals/:goalId/sessions/:site", getGoalSessions);
 server.post("/api/goal/create", createGoal);
 server.delete("/api/goal/:goalId", deleteGoal);
 server.put("/api/goal/update", updateGoal);
