@@ -12,6 +12,7 @@ import { BucketSelection } from "../../../../../components/BucketSelection";
 import { Chart } from "./Chart";
 import { Overview } from "./Overview";
 import { PreviousChart } from "./PreviousChart";
+import { RybbitLogo } from "../../../../../components/RybbitLogo";
 
 const SELECTED_STAT_MAP = {
   pageviews: "Pageviews",
@@ -77,7 +78,7 @@ export function MainSection() {
                 href={session.data ? "/" : "https://rybbit.com"}
                 className={cn("text-lg font-semibold flex items-center gap-1.5 opacity-75", tilt_wrap.className)}
               >
-                <Image src="/rybbit.svg" alt="Rybbit" width={20} height={20} />
+                <RybbitLogo width={20} height={20} />
                 rybbit.com
               </Link>
             </div>

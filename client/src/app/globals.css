@@ -27,8 +27,8 @@ body {
     --ring: 0 0% 10%;
     --radius: 0.3rem;
 
-    --dataviz: 230 100% 85%;
-    --dataviz-2: 230 100% 92%;
+    --dataviz: 230 100% 80%;
+    --dataviz-2: 230 100% 87%;
 
     --accent-50: var(--emerald-50);
     --accent-100: var(--emerald-100);
@@ -358,6 +358,9 @@ body {
 
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+
+    --dataviz: 230 100% 85%;
+    --dataviz-2: 230 100% 92%;
   }
 
   /* Dark scrollbar styles */

@@ -86,7 +86,9 @@ export function ErrorSparklineChart({ data, isHovering, errorMessage, isLoading 
             className="bg-neutral-150 dark:bg-neutral-850 p-2 rounded-md text-xs border border-neutral-300 dark:border-neutral-750 shadow-lg"
             style={{ zIndex: 9999, position: "relative" }}
           >
-            <div className="font-semibold mb-1 text-neutral-700 dark:text-neutral-200">{formatDateTime(currentTime)}</div>
+            <div className="font-semibold mb-1 text-neutral-700 dark:text-neutral-200">
+              {formatDateTime(currentTime)}
+            </div>
             <div className="flex justify-between items-center">
               <span className="font-medium text-red-400">
                 {currentY.toLocaleString()} {currentY === 1 ? "error" : "errors"}

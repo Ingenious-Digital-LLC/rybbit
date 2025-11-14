@@ -51,7 +51,9 @@ export default function JourneysPage() {
             />
           </div>
           <div className="flex items-center gap-3 w-[200px]">
-            <span className="text-sm text-neutral-600 dark:text-neutral-300 whitespace-nowrap">{maxJourneys} journeys</span>
+            <span className="text-sm text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
+              {maxJourneys} journeys
+            </span>
             <Slider
               value={[maxJourneys]}
               onValueChange={([value]) => setMaxJourneys(value)}
@@ -85,7 +87,7 @@ export default function JourneysPage() {
                   <span className="ml-2 whitespace-nowrap text-neutral-700 dark:text-neutral-200">Step {i + 1}</span>
                   <Input
                     inputSize="sm"
-                    placeholder="path filter"
+                    placeholder="Path filter"
                     value={stepFilters[i] || ""}
                     onChange={e => {
                       const newFilters = { ...stepFilters };
@@ -96,7 +98,7 @@ export default function JourneysPage() {
                       }
                       setStepFilters(newFilters);
                     }}
-                    className="h-7 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 ml-3 mr-3"
+                    className="h-7 bg-white bg-neutral-50 dark:bg-neutral-850 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 ml-3 mr-3"
                   />
                 </div>
               ))}

@@ -10,13 +10,13 @@ export const getNivoTheme = (isDark: boolean = true): PartialTheme => ({
     ticks: {
       line: {},
       text: {
-        fill: isDark ? "hsl(var(--neutral-400))" : "hsl(var(--neutral-600))",
+        fill: isDark ? "hsl(var(--neutral-400))" : "hsl(var(--neutral-500))",
       },
     },
   },
   grid: {
     line: {
-      stroke: isDark ? "hsl(var(--neutral-800))" : "hsl(var(--neutral-300))",
+      stroke: isDark ? "hsl(var(--neutral-800))" : "hsl(var(--neutral-100))",
       strokeWidth: 1,
     },
   },

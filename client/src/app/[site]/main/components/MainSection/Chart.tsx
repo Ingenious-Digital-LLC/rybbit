@@ -324,7 +324,7 @@ export function Chart({
         const diffPercentage = previousY ? (diff / previousY) * 100 : null;
 
         return (
-          <div className="text-sm bg-neutral-100 dark:bg-neutral-850 rounded-lg border border-neutral-300 dark:border-neutral-750">
+          <div className="text-sm bg-white dark:bg-neutral-850 rounded-lg border border-neutral-100 dark:border-neutral-750 shadow-md">
             {diffPercentage !== null && (
               <div
                 className="text-base font-medium px-2 pt-1.5 pb-1"
@@ -336,7 +336,7 @@ export function Chart({
                 {diffPercentage.toFixed(2)}%
               </div>
             )}
-            <div className="w-full h-[1px] bg-neutral-300 dark:bg-neutral-750"></div>
+            <div className="w-full h-[1px] bg-neutral-100 dark:bg-neutral-750"></div>
 
             <div className="m-2">
               <div className="flex justify-between text-sm w-40">
@@ -349,7 +349,7 @@ export function Chart({
               {previousTime && (
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
-                    <div className="w-1 h-3 rounded-[3px] bg-neutral-600" />
+                    <div className="w-1 h-3 rounded-[3px] bg-neutral-200 dark:bg-neutral-750" />
                     {formatChartDateTime(previousTime, bucket)}
                   </div>
                   <div>{formatTooltipValue(previousY, selectedStat)}</div>

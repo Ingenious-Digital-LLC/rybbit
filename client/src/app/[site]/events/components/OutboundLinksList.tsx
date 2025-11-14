@@ -33,7 +33,7 @@ const OutboundLinksListSkeleton = memo(({ size = "small" }: { size?: "small" | "
       {Array.from({ length: 10 }).map((_, index) => (
         <div key={index} className={cn("relative flex items-center", size === "small" ? "h-6" : "h-9")}>
           <div
-            className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800 py-2 rounded-md animate-pulse"
+            className="absolute inset-0 bg-neutral-150/50 dark:bg-neutral-800 py-2 rounded-md animate-pulse"
             style={{ width: `${widths[index]}%` }}
           ></div>
           <div
@@ -153,7 +153,9 @@ export function OutboundLinksList({ outboundLinks, isLoading, size = "small" }: 
                 <div className="hidden group-hover:block text-neutral-600 dark:text-neutral-400 text-xs">
                   {Math.round(percentage * 10) / 10}%
                 </div>
-                <div className="hidden group-hover:block text-neutral-600 dark:text-neutral-400 text-xs">{lastClicked.toRelative()}</div>
+                <div className="hidden group-hover:block text-neutral-600 dark:text-neutral-400 text-xs">
+                  {lastClicked.toRelative()}
+                </div>
                 <NumberFlow respectMotionPreference={false} value={link.count} format={{ notation: "compact" }} />
               </div>
             </div>
