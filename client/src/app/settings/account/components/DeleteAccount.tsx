@@ -3,7 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -27,11 +27,24 @@ export function DeleteAccount() {
   const [password, setPassword] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [hasPassword, setHasPassword] = useState(true); // Track if user has a password
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  // Check if user has a password-based account when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      authClient.listAccounts().then(accounts => {
+        // Check if user has a credential account (email/password)
+        const hasCredentialAccount = accounts.data?.some(account => account.providerId === "credential");
+        setHasPassword(!!hasCredentialAccount);
+      });
+    }
+  }, [isOpen]);
+
   const handleAccountDeletion = async () => {
-    if (!password) {
+    // Only require password if user has a credential account
+    if (hasPassword && !password) {
       setPasswordError("Password is required to delete your account");
       return;
     }
@@ -39,9 +52,9 @@ export function DeleteAccount() {
     try {
       setIsDeleting(true);
       setPasswordError("");
-      const response = await authClient.deleteUser({
-        password,
-      });
+      const response = await authClient.deleteUser(
+        hasPassword ? { password } : {} // Only include password if user has one
+      );
 
       if (response.error) {
         toast.error(`Failed to delete account: ${response.error.message || "Unknown error"}`);
@@ -86,21 +99,29 @@ export function DeleteAccount() {
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="py-1">
-          <Label htmlFor="password" className="text-sm font-medium">
-            Enter your password to confirm
-          </Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className={cn("mt-1", passwordError && "border-red-500")}
-            disabled={isDeleting}
-          />
-          {passwordError && <p className="text-sm text-red-500 mt-1">{passwordError}</p>}
-        </div>
+        {hasPassword ? (
+          <div className="py-1">
+            <Label htmlFor="password" className="text-sm font-medium">
+              Enter your password to confirm
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className={cn("mt-1", passwordError && "border-red-500")}
+              disabled={isDeleting}
+            />
+            {passwordError && <p className="text-sm text-red-500 mt-1">{passwordError}</p>}
+          </div>
+        ) : (
+          <div className="py-1">
+            <p className="text-sm text-muted-foreground">
+              You signed up using a social provider. Click "Delete Account" below to permanently delete your account.
+            </p>
+          </div>
+        )}
 
         <AlertDialogFooter>
           <AlertDialogCancel onClick={handleClose} disabled={isDeleting}>
