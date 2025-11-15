@@ -9,12 +9,15 @@ import { useStripeSubscription } from "../../lib/subscription/useStripeSubscript
 import { FAQSection } from "./components/FAQSection";
 import { PricingCard } from "./components/PricingCard";
 import { PricingHeader } from "./components/PricingHeader";
+import { useQueryState } from "nuqs";
 
 export default function Subscribe() {
   const { data: sessionData } = authClient.useSession();
   const { data: subscription } = useStripeSubscription();
   const { data: activeOrg } = authClient.useActiveOrganization();
   const router = useRouter();
+
+  const [siteId, setSiteId] = useQueryState("siteId");
 
   // Redirect if already subscribed
   // if (subscription?.status === "active") {
@@ -27,6 +30,19 @@ export default function Subscribe() {
   // Get last 30 days of data
   const endDate = DateTime.now().toISODate();
   const startDate = DateTime.now().minus({ days: 30 }).toISODate();
+
+  if (siteId) {
+    return (
+      <StandardPage>
+        <div className="container mx-auto py-12 px-4">
+          <PricingHeader />
+
+          {/* Pricing Card */}
+          <PricingCard isLoggedIn={!!sessionData?.user} />
+        </div>
+      </StandardPage>
+    );
+  }
 
   return (
     <StandardPage>
