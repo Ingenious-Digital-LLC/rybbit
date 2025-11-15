@@ -4,5 +4,5 @@ export default {
   "website-traffic-drop":
    "Why did my website traffic drop?",
   "onyx-ai-knowledge-platform":
-    "How We Use Onyx to Power Knowledge Management at Rybbit"
+    "How We Use Onyx to Power Knowledge Management at Rybbit",
 };

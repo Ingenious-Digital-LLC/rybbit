@@ -16,7 +16,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-// User table
+// User table (BetterAuth)
 export const user = pgTable(
   "user",
   {
@@ -44,6 +44,7 @@ export const user = pgTable(
   table => [unique("user_username_unique").on(table.username), unique("user_email_unique").on(table.email)]
 );
 
+// Verification table (BetterAuth)
 export const verification = pgTable("verification", {
   id: text().primaryKey().notNull(),
   identifier: text().notNull(),
@@ -133,6 +134,7 @@ export const funnels = pgTable(
   ]
 );
 
+// Account table (BetterAuth)
 export const account = pgTable(
   "account",
   {
@@ -159,6 +161,7 @@ export const account = pgTable(
   ]
 );
 
+// Organization table (BetterAuth)
 export const organization = pgTable(
   "organization",
   {
@@ -175,6 +178,7 @@ export const organization = pgTable(
   table => [unique("organization_slug_unique").on(table.slug)]
 );
 
+// Member table (BetterAuth)
 export const member = pgTable(
   "member",
   {
@@ -198,6 +202,7 @@ export const member = pgTable(
   ]
 );
 
+// Invitation table (BetterAuth)
 export const invitation = pgTable(
   "invitation",
   {
@@ -223,6 +228,7 @@ export const invitation = pgTable(
   ]
 );
 
+// Session table (BetterAuth)
 export const session = pgTable(
   "session",
   {
@@ -244,6 +250,41 @@ export const session = pgTable(
       name: "session_userId_user_id_fk",
     }),
     unique("session_token_unique").on(table.token),
+  ]
+);
+
+// API Key table (BetterAuth)
+export const apiKey = pgTable(
+  "apikey",
+  {
+    id: text().primaryKey().notNull(),
+    name: text(),
+    start: text(),
+    prefix: text(),
+    key: text().notNull(),
+    userId: text().notNull(),
+    refillInterval: integer(),
+    refillAmount: integer(),
+    lastRefillAt: timestamp({ mode: "string" }),
+    enabled: boolean().notNull().default(true),
+    rateLimitEnabled: boolean().notNull().default(false),
+    rateLimitTimeWindow: integer(),
+    rateLimitMax: integer(),
+    requestCount: integer().notNull().default(0),
+    remaining: integer(),
+    lastRequest: timestamp({ mode: "string" }),
+    expiresAt: timestamp({ mode: "string" }),
+    createdAt: timestamp({ mode: "string" }).notNull(),
+    updatedAt: timestamp({ mode: "string" }).notNull(),
+    permissions: text(),
+    metadata: jsonb(),
+  },
+  table => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [user.id],
+      name: "apiKey_userId_user_id_fk",
+    }),
   ]
 );
 

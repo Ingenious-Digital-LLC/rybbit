@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { admin, captcha, emailOTP, organization } from "better-auth/plugins";
+import { admin, captcha, emailOTP, organization, apiKey } from "better-auth/plugins";
 import dotenv from "dotenv";
 import { asc, eq } from "drizzle-orm";
 import pg from "pg";
@@ -16,6 +16,7 @@ type AuthType = ReturnType<typeof betterAuth> | null;
 
 const pluginList = [
   admin(),
+  apiKey(),
   organization({
     // Allow users to create organizations
     allowUserToCreateOrganization: true,
@@ -92,7 +93,7 @@ const pluginList = [
     : []),
 ];
 
-export let auth: AuthType | null = betterAuth({
+export const auth = betterAuth({
   basePath: "/api/auth",
   database: new pg.Pool({
     host: process.env.POSTGRES_HOST || "postgres",

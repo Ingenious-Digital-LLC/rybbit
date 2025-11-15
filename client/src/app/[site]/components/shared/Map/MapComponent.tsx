@@ -3,7 +3,7 @@
 import { useMeasure } from "@uidotdev/usehooks";
 import "ol/ol.css";
 import { useEffect, useState } from "react";
-import { useSingleCol } from "../../../../../api/analytics/useSingleCol";
+import { useMetric } from "../../../../../api/analytics/useGetMetric";
 import { useCountries, useSubdivisions } from "../../../../../lib/geo";
 import { CountryFlag } from "../icons/CountryFlag";
 import { useMapInstance } from "./hooks/useMapInstance";
@@ -16,7 +16,7 @@ export function MapComponent({ height, mapView: controlledMapView }: MapComponen
     data: countryData,
     isLoading: isCountryLoading,
     isFetching: isCountryFetching,
-  } = useSingleCol({
+  } = useMetric({
     parameter: "country",
   });
 
@@ -24,7 +24,7 @@ export function MapComponent({ height, mapView: controlledMapView }: MapComponen
     data: subdivisionData,
     isLoading: isSubdivisionLoading,
     isFetching: isSubdivisionFetching,
-  } = useSingleCol({
+  } = useMetric({
     parameter: "region",
     limit: 10000,
   });

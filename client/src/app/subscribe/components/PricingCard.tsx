@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Check } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -9,12 +8,14 @@ import {
   EVENT_TIERS,
   STANDARD_FEATURES,
   PRO_FEATURES,
+  ENTERPRISE_FEATURES,
   FREE_FEATURES,
   findPriceForTier,
   formatEventTier,
 } from "./utils";
 import { trackAdEvent } from "../../../lib/trackAdEvent";
 import { DEFAULT_EVENT_LIMIT } from "../../../lib/subscription/constants";
+import { FeaturesList } from "./FeaturesList";
 
 export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [eventLimitIndex, setEventLimitIndex] = useState<number>(0);
@@ -28,7 +29,7 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
   async function handleSubscribe(planType: "standard" | "pro"): Promise<void> {
     // Handle custom tier by redirecting to email contact
     if (eventLimit === "Custom") {
-      window.location.href = "https://www.rybbit.io/contact";
+      window.location.href = "https://www.rybbit.com/contact";
       return;
     }
 
@@ -116,14 +117,14 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
           </div>
           <div className="flex flex-col items-end">
             {/* Billing toggle */}
-            <div className="flex gap-3 mb-2 text-sm">
+            <div className="flex mb-2 text-sm">
               <button
                 onClick={() => setIsAnnual(false)}
                 className={cn(
                   "px-3 py-1 rounded-full transition-colors cursor-pointer",
                   !isAnnual
-                    ? "bg-emerald-500/20 text-emerald-400 font-medium"
-                    : "text-neutral-400 hover:text-neutral-200"
+                    ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-medium"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
                 )}
               >
                 Monthly
@@ -133,8 +134,8 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
                 className={cn(
                   "px-3 py-1 rounded-full transition-colors cursor-pointer",
                   isAnnual
-                    ? "bg-emerald-500/20 text-emerald-400 font-medium"
-                    : "text-neutral-400 hover:text-neutral-200"
+                    ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-medium"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
                 )}
               >
                 Annual
@@ -154,9 +155,12 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
           className="mb-3"
         />
 
-        <div className="flex justify-between text-xs text-neutral-400">
+        <div className="flex justify-between text-xs text-neutral-600 dark:text-neutral-400">
           {EVENT_TIERS.map((tier, index) => (
-            <span key={index} className={cn(eventLimitIndex === index && "font-bold text-emerald-400")}>
+            <span
+              key={index}
+              className={cn(eventLimitIndex === index && "font-bold text-emerald-600 dark:text-emerald-400")}
+            >
               {formatEventTier(tier)}
             </span>
           ))}
@@ -164,49 +168,44 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
       </div>
 
       {/* Cards section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div className="grid min-[1100px]:grid-cols-4 min-[600px]:grid-cols-2 min-[400px]:grid-cols-1 gap-6 max-w-6xl mx-auto">
         {/* Free Plan Card */}
-        <div className="bg-neutral-800/15 rounded-xl border border-neutral-700/60 overflow-hidden text-neutral-300">
+        <div className="bg-neutral-100/30 dark:bg-neutral-800/15 rounded-xl border border-neutral-150 dark:border-neutral-800/60 overflow-hidden text-neutral-600 dark:text-neutral-300 shadow:lg">
           <div className="p-6">
             <div className="mb-4">
               <h3 className="text-xl font-bold mb-2">Free</h3>
-              <p className="text-sm text-neutral-400">Perfect for getting started</p>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 h-10">Perfect for hobby projects</p>
             </div>
 
             {/* Price display */}
             <div className="mb-6">
               <div>
                 <span className="text-3xl font-bold">{DEFAULT_EVENT_LIMIT.toLocaleString()}</span>
-                <span className="ml-1 text-neutral-400">/month events</span>
+                <span className="ml-1 text-neutral-600 dark:text-neutral-400">/month events</span>
               </div>
             </div>
 
             {/* Current plan button */}
             <button
               disabled
-              className="w-full bg-neutral-700/50 text-neutral-400 font-medium px-5 py-3 rounded-xl border border-neutral-600/50 cursor-not-allowed opacity-50"
+              className="w-full bg-neutral-300 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 font-medium px-5 py-3 rounded-xl border border-neutral-200 dark:border-neutral-600 cursor-not-allowed opacity-50"
             >
               Current Plan
             </button>
 
             {/* Features */}
-            <div className="space-y-4 mt-6">
-              {FREE_FEATURES.map((feature, i) => (
-                <div key={i} className="flex items-center">
-                  <Check className="h-4 w-4 text-emerald-400 mr-3 shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
-            </div>
+            <FeaturesList features={FREE_FEATURES} />
           </div>
         </div>
 
         {/* Standard Plan Card */}
-        <div className="bg-neutral-800/50 rounded-xl border border-neutral-700 overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800/50 rounded-xl border border-neutral-150 dark:border-neutral-800/90 overflow-hidden text-neutral-900 dark:text-neutral-100 shadow-lg">
           <div className="p-6">
             <div className="mb-4">
               <h3 className="text-xl font-bold mb-2">Standard</h3>
-              <p className="text-sm text-neutral-400">Everything you need to get started</p>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 h-10">
+                Everything you need to get started as a small business
+              </p>
             </div>
 
             {/* Price display */}
@@ -218,7 +217,7 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
                   <span className="text-3xl font-bold">
                     ${isAnnual ? Math.round(standardAnnualPrice / 12) : standardMonthlyPrice}
                   </span>
-                  <span className="ml-1 text-neutral-400">/month</span>
+                  <span className="ml-1 text-neutral-600 dark:text-neutral-400">/month</span>
                 </div>
               )}
             </div>
@@ -229,27 +228,27 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
               className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-xl shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               disabled={isLoading}
             >
-              {isLoading ? "Processing..." : isCustomTier ? "Contact us" : "Get Standard"}
+              {isLoading ? "Processing..." : isCustomTier ? "Book a call" : "Get started"}
             </button>
 
             {/* Features */}
-            <div className="space-y-4 mt-6">
-              {STANDARD_FEATURES.map((feature, i) => (
-                <div key={i} className="flex items-center">
-                  <Check className="h-4 w-4 text-emerald-400 mr-3 shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
-            </div>
+            <FeaturesList features={STANDARD_FEATURES} />
           </div>
         </div>
 
         {/* Pro Plan Card */}
-        <div className="bg-neutral-800/50 rounded-xl border border-neutral-700 overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800/100 rounded-xl border-2 border-emerald-500 overflow-hidden text-neutral-900 dark:text-neutral-100 shadow-lg">
           <div className="p-6">
             <div className="mb-4">
-              <h3 className="text-xl font-bold mb-2">Pro</h3>
-              <p className="text-sm text-neutral-400">Advanced features for professional teams</p>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-xl font-bold">Pro</h3>
+                <span className="px-2 py-0.5 text-xs font-semibold bg-emerald-500/30 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/40 dark:border-emerald-500/30">
+                  Recommended
+                </span>
+              </div>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 h-10">
+                Advanced features for professional teams
+              </p>
             </div>
 
             {/* Price display */}
@@ -261,7 +260,7 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
                   <span className="text-3xl font-bold">
                     ${isAnnual ? Math.round(proAnnualPrice / 12) : proMonthlyPrice}
                   </span>
-                  <span className="ml-1 text-neutral-400">/month</span>
+                  <span className="ml-1 text-neutral-600 dark:text-neutral-400">/month</span>
                 </div>
               )}
             </div>
@@ -272,25 +271,45 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
               className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-xl shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               disabled={isLoading}
             >
-              {isLoading ? "Processing..." : isCustomTier ? "Contact us" : "Get Pro"}
+              {isLoading ? "Processing..." : isCustomTier ? "Book a call" : "Get started"}
             </button>
 
             {/* Features */}
-            <div className="space-y-4 mt-6">
-              {PRO_FEATURES.map((feature, i) => (
-                <div key={i} className="flex items-center">
-                  <Check className="h-4 w-4 text-emerald-400 mr-3 shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
+            <FeaturesList features={PRO_FEATURES} />
+          </div>
+        </div>
+
+        {/* Enterprise Plan Card */}
+        <div className="bg-white dark:bg-neutral-800/50 rounded-xl border border-neutral-150 dark:border-neutral-800/90 overflow-hidden text-neutral-900 dark:text-neutral-100 shadow-lg">
+          <div className="p-6">
+            <div className="mb-4">
+              <h3 className="text-xl font-bold mb-2">Enterprise</h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 h-10">
+                Advanced features for enterprise teams
+              </p>
             </div>
+
+            {/* Price display */}
+            <div className="mb-6">
+              <div className="text-3xl font-bold">Custom</div>
+            </div>
+
+            {/* Contact button */}
+            <a href="https://www.rybbit.com/contact" className="w-full block">
+              <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-xl shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer">
+                Book a call
+              </button>
+            </a>
+
+            {/* Features */}
+            <FeaturesList features={ENTERPRISE_FEATURES} />
           </div>
         </div>
       </div>
 
       {/* Footer text */}
-      <p className="text-center text-sm text-neutral-400 mt-6">
-        {isCustomTier ? "Email us at hello@rybbit.io for custom pricing" : "Secure checkout powered by Stripe."}
+      <p className="text-center text-sm text-neutral-600 dark:text-neutral-400 mt-6">
+        {isCustomTier ? "Email us at hello@rybbit.com for custom pricing" : "Secure checkout powered by Stripe."}
       </p>
     </div>
   );

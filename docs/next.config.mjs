@@ -23,6 +23,10 @@ const config = {
         protocol: "https",
         hostname: "cdn.outrank.so",
       },
+      {
+        protocol: "https",
+        hostname: "www.google.com",
+      },
     ],
   },
   async rewrites() {

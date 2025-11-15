@@ -15,6 +15,7 @@ import { getOutboundLinks } from "./api/analytics/events/getOutboundLinks.js";
 import { createFunnel } from "./api/analytics/funnels/createFunnel.js";
 import { deleteFunnel } from "./api/analytics/funnels/deleteFunnel.js";
 import { getFunnel } from "./api/analytics/funnels/getFunnel.js";
+import { getFunnelStepSessions } from "./api/analytics/funnels/getFunnelStepSessions.js";
 import { getFunnels } from "./api/analytics/funnels/getFunnels.js";
 import { getErrorBucketed } from "./api/analytics/getErrorBucketed.js";
 import { getErrorEvents } from "./api/analytics/getErrorEvents.js";
@@ -29,7 +30,7 @@ import { getPageTitles } from "./api/analytics/getPageTitles.js";
 import { getRetention } from "./api/analytics/getRetention.js";
 import { getSession } from "./api/analytics/getSession.js";
 import { getSessions } from "./api/analytics/getSessions.js";
-import { getSingleCol } from "./api/analytics/getSingleCol.js";
+import { getMetric } from "./api/analytics/getMetric.js";
 import { getUserInfo } from "./api/analytics/getUserInfo.js";
 import { getUserSessionCount } from "./api/analytics/getUserSessionCount.js";
 import { getUserSessions } from "./api/analytics/getUserSessions.js";
@@ -37,6 +38,7 @@ import { getUsers } from "./api/analytics/getUsers.js";
 import { createGoal } from "./api/analytics/goals/createGoal.js";
 import { deleteGoal } from "./api/analytics/goals/deleteGoal.js";
 import { getGoals } from "./api/analytics/goals/getGoals.js";
+import { getGoalSessions } from "./api/analytics/goals/getGoalSessions.js";
 import { updateGoal } from "./api/analytics/goals/updateGoal.js";
 import { getPerformanceByDimension } from "./api/analytics/performance/getPerformanceByDimension.js";
 import { getPerformanceOverview } from "./api/analytics/performance/getPerformanceOverview.js";
@@ -45,17 +47,16 @@ import { getConfig } from "./api/getConfig.js";
 import { getSessionReplayEvents } from "./api/sessionReplay/getSessionReplayEvents.js";
 import { getSessionReplays } from "./api/sessionReplay/getSessionReplays.js";
 import { recordSessionReplay } from "./api/sessionReplay/recordSessionReplay.js";
+import { deleteSessionReplay } from "./api/sessionReplay/deleteSessionReplay.js";
 import { addSite } from "./api/sites/addSite.js";
 import { updateSiteConfig } from "./api/sites/updateSiteConfig.js";
 import { deleteSite } from "./api/sites/deleteSite.js";
 import { getSite } from "./api/sites/getSite.js";
-import { getSiteApiConfig } from "./api/sites/getSiteApiConfig.js";
 import { getSiteExcludedIPs } from "./api/sites/getSiteExcludedIPs.js";
 import { getSiteExcludedCountries } from "./api/sites/getSiteExcludedCountries.js";
 import { getSiteHasData } from "./api/sites/getSiteHasData.js";
 import { getSiteIsPublic } from "./api/sites/getSiteIsPublic.js";
 import { getSitesFromOrg } from "./api/sites/getSitesFromOrg.js";
-import { updateSiteApiConfig } from "./api/sites/updateSiteApiConfig.js";
 import { createCheckoutSession } from "./api/stripe/createCheckoutSession.js";
 import { createPortalSession } from "./api/stripe/createPortalSession.js";
 import { getSubscription } from "./api/stripe/getSubscription.js";
@@ -66,6 +67,9 @@ import { addUserToOrganization } from "./api/user/addUserToOrganization.js";
 import { getUserOrganizations } from "./api/user/getUserOrganizations.js";
 import { listOrganizationMembers } from "./api/user/listOrganizationMembers.js";
 import { updateAccountSettings } from "./api/user/updateAccountSettings.js";
+import { listApiKeys } from "./api/user/listApiKeys.js";
+import { createApiKey } from "./api/user/createApiKey.js";
+import { deleteApiKey } from "./api/user/deleteApiKey.js";
 import { initializeClickhouse } from "./db/clickhouse/clickhouse.js";
 import { initPostgres } from "./db/postgres/initPostgres.js";
 import { getSessionFromReq, getUserHasAccessToSitePublic, mapHeaders } from "./lib/auth-utils.js";
@@ -224,7 +228,7 @@ const ANALYTICS_ROUTES = [
   "/api/overview/",
   "/api/overview-bucketed/",
   "/api/error-bucketed/",
-  "/api/single-col/",
+  "/api/metric/",
   "/api/page-titles/",
   "/api/retention/",
   "/api/site-has-data/",
@@ -237,9 +241,11 @@ const ANALYTICS_ROUTES = [
   "/api/session-locations/",
   "/api/funnels/",
   "/api/funnel/",
+  "/api/funnel/:stepNumber/sessions/",
   "/api/journeys/",
   "/api/goals/",
   "/api/goal/",
+  "/api/goals/:goalId/sessions/",
   "/api/analytics/events/names/",
   "/api/analytics/events/properties/",
   "/api/events/",
@@ -310,7 +316,7 @@ server.get("/api/metrics.js", async (_, reply) => reply.sendFile("web-vitals.iif
 server.get("/api/live-user-count/:site", { logLevel: "silent" }, getLiveUsercount);
 server.get("/api/overview/:site", getOverview);
 server.get("/api/overview-bucketed/:site", getOverviewBucketed);
-server.get("/api/single-col/:site", getSingleCol);
+server.get("/api/metric/:site", getMetric);
 server.get("/api/page-titles/:site", getPageTitles);
 server.get("/api/error-names/:site", getErrorNames);
 server.get("/api/error-events/:site", getErrorEvents);
@@ -329,9 +335,11 @@ server.get("/api/session-locations/:site", getSessionLocations);
 server.get("/api/funnels/:site", getFunnels);
 server.get("/api/journeys/:site", getJourneys);
 server.post("/api/funnel/:site", getFunnel);
+server.post("/api/funnel/:stepNumber/sessions/:site", getFunnelStepSessions);
 server.post("/api/funnel/create/:site", createFunnel);
 server.delete("/api/funnel/:funnelId", deleteFunnel);
 server.get("/api/goals/:site", getGoals);
+server.get("/api/goals/:goalId/sessions/:site", getGoalSessions);
 server.post("/api/goal/create", createGoal);
 server.delete("/api/goal/:goalId", deleteGoal);
 server.put("/api/goal/update", updateGoal);
@@ -349,6 +357,7 @@ server.get("/api/performance/by-dimension/:site", getPerformanceByDimension);
 server.post("/api/session-replay/record/:site", recordSessionReplay);
 server.get("/api/session-replay/list/:site", getSessionReplays);
 server.get("/api/session-replay/:sessionId/:site", getSessionReplayEvents);
+server.delete("/api/session-replay/:sessionId/:site", deleteSessionReplay);
 
 // Imports
 server.get("/api/get-site-imports/:site", getSiteImports);
@@ -363,8 +372,6 @@ server.post("/api/update-site-config", updateSiteConfig);
 server.post("/api/delete-site/:id", deleteSite);
 server.get("/api/get-sites-from-org/:organizationId", getSitesFromOrg);
 server.get("/api/get-site/:id", getSite);
-server.get("/api/site/:siteId/api-config", getSiteApiConfig);
-server.post("/api/site/:siteId/api-config", updateSiteApiConfig);
 server.get("/api/site/:siteId/private-link-config", getSitePrivateLinkConfig);
 server.post("/api/site/:siteId/private-link-config", updateSitePrivateLinkConfig);
 server.get("/api/site/:siteId/tracking-config", getTrackingConfig);
@@ -374,6 +381,9 @@ server.get("/api/list-organization-members/:organizationId", listOrganizationMem
 server.get("/api/user/organizations", getUserOrganizations);
 server.post("/api/add-user-to-organization", addUserToOrganization);
 server.post("/api/user/account-settings", updateAccountSettings);
+server.get("/api/user/api-keys", listApiKeys);
+server.post("/api/user/api-keys", createApiKey);
+server.delete("/api/user/api-keys/:keyId", deleteApiKey);
 
 // GOOGLE SEARCH CONSOLE
 server.get("/api/gsc/connect/:site", connectGSC);

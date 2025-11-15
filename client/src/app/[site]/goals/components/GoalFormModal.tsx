@@ -7,7 +7,7 @@ import * as z from "zod";
 import { useCreateGoal } from "../../../../api/analytics/goals/useCreateGoal";
 import { Goal } from "../../../../api/analytics/goals/useGetGoals";
 import { useUpdateGoal } from "../../../../api/analytics/goals/useUpdateGoal";
-import { useSingleCol } from "../../../../api/analytics/useSingleCol";
+import { useMetric } from "../../../../api/analytics/useGetMetric";
 import { EventIcon, PageviewIcon } from "../../../../components/EventIcons";
 import { Button } from "../../../../components/ui/button";
 import {
@@ -68,13 +68,13 @@ export default function GoalFormModal({ siteId, goal, trigger, isCloneMode = fal
   );
 
   // Fetch suggestions for paths and events
-  const { data: pathsData } = useSingleCol({
+  const { data: pathsData } = useMetric({
     parameter: "pathname",
     limit: 1000,
     useFilters: false,
   });
 
-  const { data: eventsData } = useSingleCol({
+  const { data: eventsData } = useMetric({
     parameter: "event_name",
     limit: 1000,
     useFilters: false,

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { VisuallyHidden } from "radix-ui";
 import { useCurrentSite } from "../../../../api/admin/sites";
-import { GetSessionsResponse, useGetSessionsInfinite } from "../../../../api/analytics/userSessions";
+import { GetSessionsResponse, useGetSessionsInfinite } from "../../../../api/analytics/useGetUserSessions";
 import { Avatar, generateName } from "../../../../components/Avatar";
 import { Channel } from "../../../../components/Channel";
 import { EventIcon, PageviewIcon } from "../../../../components/EventIcons";
@@ -33,31 +33,31 @@ function truncatePath(path: string, maxLength: number = 32) {
 
 function SessionCardSkeleton() {
   return (
-    <div className="rounded-lg bg-neutral-850 border border-neutral-800 overflow-hidden p-2 space-y-2 animate-pulse">
-      <div className="flex justify-between border-b border-neutral-700 pb-2">
+    <div className="rounded-lg bg-white dark:bg-neutral-850 border border-neutral-200 dark:border-neutral-800 overflow-hidden p-2 space-y-2 animate-pulse">
+      <div className="flex justify-between border-b border-neutral-200 dark:border-neutral-700 pb-2">
         <div className="flex items-center gap-1.5">
-          <div className="h-4 w-4 bg-neutral-700 rounded-full" />
-          <div className="h-3 w-24 bg-neutral-700 rounded" />
+          <div className="h-4 w-4 bg-neutral-150 dark:bg-neutral-700 rounded-full" />
+          <div className="h-3 w-24 bg-neutral-150 dark:bg-neutral-700 rounded" />
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="h-3 w-20 bg-neutral-700 rounded" />
-          <div className="h-3 w-1 bg-neutral-700 rounded" />
-          <div className="h-3 w-10 bg-neutral-700 rounded hidden md:block" />
+          <div className="h-3 w-20 bg-neutral-150 dark:bg-neutral-700 rounded" />
+          <div className="h-3 w-1 bg-neutral-150 dark:bg-neutral-700 rounded" />
+          <div className="h-3 w-10 bg-neutral-150 dark:bg-neutral-700 rounded hidden md:block" />
         </div>
       </div>
       <div className="flex space-x-2 items-center">
-        <div className="h-4 w-4 bg-neutral-700 rounded-sm" />
-        <div className="h-4 w-4 bg-neutral-700 rounded-sm" />
-        <div className="h-4 w-4 bg-neutral-700 rounded-sm" />
-        <div className="h-4 w-4 bg-neutral-700 rounded-sm" />
-        <div className="h-[21px] w-12 bg-neutral-700 rounded-sm" />
-        <div className="h-[21px] w-12 bg-neutral-700 rounded-sm" />
-        <div className="h-[21px] w-16 bg-neutral-700 rounded-sm" />
+        <div className="h-4 w-4 bg-neutral-150 dark:bg-neutral-700 rounded-sm" />
+        <div className="h-4 w-4 bg-neutral-150 dark:bg-neutral-700 rounded-sm" />
+        <div className="h-4 w-4 bg-neutral-150 dark:bg-neutral-700 rounded-sm" />
+        <div className="h-4 w-4 bg-neutral-150 dark:bg-neutral-700 rounded-sm" />
+        <div className="h-[21px] w-12 bg-neutral-150 dark:bg-neutral-700 rounded-sm" />
+        <div className="h-[21px] w-12 bg-neutral-150 dark:bg-neutral-700 rounded-sm" />
+        <div className="h-[21px] w-16 bg-neutral-150 dark:bg-neutral-700 rounded-sm" />
       </div>
       <div className="items-center flex-1 min-w-0 hidden md:flex gap-2">
-        <div className="h-3 w-32 bg-neutral-700 rounded" />
-        <div className="h-3 w-3 bg-neutral-700 rounded" />
-        <div className="h-3 w-32 bg-neutral-700 rounded" />
+        <div className="h-3 w-32 bg-neutral-150 dark:bg-neutral-700 rounded" />
+        <div className="h-3 w-3 bg-neutral-150 dark:bg-neutral-700 rounded" />
+        <div className="h-3 w-32 bg-neutral-150 dark:bg-neutral-700 rounded" />
       </div>
     </div>
   );
@@ -162,7 +162,7 @@ function SessionCard({ session, onClick }: { session: GetSessionsResponse[number
 }
 
 export function GlobeSessions() {
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetSessionsInfinite();
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetSessionsInfinite();
 
   const [expanded, setExpanded] = useState(false);
   const [selectedSession, setSelectedSession] = useState<GetSessionsResponse[number] | null>(null);
@@ -194,7 +194,14 @@ export function GlobeSessions() {
               <SessionCard key={session.session_id} session={session} onClick={() => setSelectedSession(session)} />
             ))
           )}
+          {isFetchingNextPage && <SessionCardSkeleton />}
         </div>
+        {/* Load more button */}
+        {hasNextPage && !isLoading && (
+          <Button onClick={() => fetchNextPage()} className="w-full" variant="ghost" size="sm">
+            Load more
+          </Button>
+        )}
       </div>
 
       <Dialog open={!!selectedSession} onOpenChange={open => !open && setSelectedSession(null)}>

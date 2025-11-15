@@ -14,7 +14,6 @@ export interface SiteConfigData {
   blockBots: boolean;
   excludedIPs: string[];
   excludedCountries: string[];
-  apiKey?: string | null;
   privateLinkKey?: string | null;
   sessionReplay: boolean;
   webVitals: boolean;
@@ -61,7 +60,6 @@ class SiteConfig {
           blockBots: sites.blockBots,
           excludedIPs: sites.excludedIPs,
           excludedCountries: sites.excludedCountries,
-          apiKey: sites.apiKey,
           privateLinkKey: sites.privateLinkKey,
           sessionReplay: sites.sessionReplay,
           webVitals: sites.webVitals,
@@ -89,7 +87,6 @@ class SiteConfig {
         blockBots: site.blockBots === undefined ? true : site.blockBots,
         excludedIPs: Array.isArray(site.excludedIPs) ? site.excludedIPs : [],
         excludedCountries: Array.isArray(site.excludedCountries) ? site.excludedCountries : [],
-        apiKey: site.apiKey,
         privateLinkKey: site.privateLinkKey,
         sessionReplay: site.sessionReplay || false,
         webVitals: site.webVitals || false,
@@ -139,23 +136,22 @@ class SiteConfig {
   /**
    * Add a new site
    */
-  // async addSite(config: Omit<SiteConfigData, "siteId">): Promise<void> {
-  //   try {
-  //     await db.insert(sites).values({
-  //       id: config.id,
-  //       name: "", // This would need to be provided
-  //       domain: config.domain,
-  //       public: config.public,
-  //       saltUserIds: config.saltUserIds,
-  //       blockBots: config.blockBots,
-  //       excludedIPs: config.excludedIPs,
-  //       apiKey: config.apiKey,
-  //       createdBy: "", // This would need to be provided
-  //     });
-  //   } catch (error) {
-  //     logger.error(error as Error, `Error adding site`);
-  //   }
-  // }
+  async addSite(config: Omit<SiteConfigData, "siteId">): Promise<void> {
+    try {
+      await db.insert(sites).values({
+        id: config.id,
+        name: "", // This would need to be provided
+        domain: config.domain,
+        public: config.public,
+        saltUserIds: config.saltUserIds,
+        blockBots: config.blockBots,
+        excludedIPs: config.excludedIPs,
+        createdBy: "", // This would need to be provided
+      });
+    } catch (error) {
+      logger.error(error as Error, `Error adding site`);
+    }
+  }
 
   /**
    * Remove a site

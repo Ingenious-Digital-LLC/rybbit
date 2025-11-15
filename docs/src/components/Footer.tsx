@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t border-neutral-800 bg-neutral-950/50">
+    <footer className="border-t border-neutral-800 bg-neutral-900">
       <div className="max-w-[1300px] mx-auto px-6 py-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -124,6 +124,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/features" className="text-neutral-400 hover:text-white transition-colors">
+                  Features
+                </Link>
+              </li>
+              <li>
                 <Link href="/pricing" className="text-neutral-400 hover:text-white transition-colors">
                   Pricing
                 </Link>
@@ -163,6 +168,11 @@ export function Footer() {
                   Geolocation by ipapi.is
                 </Link>
               </li>
+              <li>
+                <Link href="/oss-friends" className="text-neutral-400 hover:text-white transition-colors">
+                  OSS Friends
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -191,7 +201,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:hello@rybbit.io" className="text-neutral-400 hover:text-white transition-colors">
+                <a href="mailto:hello@rybbit.com" className="text-neutral-400 hover:text-white transition-colors">
                   Support
                 </a>
               </li>

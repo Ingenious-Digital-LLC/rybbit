@@ -33,21 +33,11 @@ export function SocialButtons({ onError, callbackURL, mode = "signin", className
       </div>
 
       <div className={`flex flex-col gap-2 ${className}`}>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => handleSocialAuth("google")}
-          className="transition-all duration-300 hover:bg-muted bg-neutral-800/50 border-neutral-700"
-        >
+        <Button type="button" onClick={() => handleSocialAuth("google")}>
           <SiGoogle />
           Google
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => handleSocialAuth("github")}
-          className="transition-all duration-300 hover:bg-muted bg-neutral-800/50 border-neutral-700"
-        >
+        <Button type="button" onClick={() => handleSocialAuth("github")}>
           <SiGithub />
           GitHub
         </Button>

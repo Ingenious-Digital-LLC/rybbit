@@ -17,9 +17,9 @@ export default function Subscribe() {
   const router = useRouter();
 
   // Redirect if already subscribed
-  if (subscription?.status === "active") {
-    router.push("/settings/organization/subscription");
-  }
+  // if (subscription?.status === "active") {
+  //   router.push("/settings/organization/subscription");
+  // }
 
   // Get the active organization ID
   const organizationId = activeOrg?.id;
@@ -38,7 +38,7 @@ export default function Subscribe() {
 
         {/* Usage Stats and Chart */}
         {organizationId && (
-          <div className="max-w-lg mx-auto mt-6 bg-blue-900/20 rounded-xl border border-blue-800 p-6">
+          <div className="max-w-lg mx-auto mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-6">
             <UsageChart organizationId={organizationId} startDate={startDate} endDate={endDate} />
           </div>
         )}
