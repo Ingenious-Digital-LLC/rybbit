@@ -24,6 +24,7 @@ import { userStore } from "../../lib/userStore";
 import { cn, isValidDomain, normalizeDomain } from "../../lib/utils";
 import { useQueryState, parseAsInteger } from "nuqs";
 import { SpinningGlobe } from "../../components/SpinningGlobe";
+import { useQueryState, parseAsInteger } from "nuqs";
 
 // Animation variants for step transitions
 const contentVariants = {
@@ -371,11 +372,6 @@ export default function SignupPage() {
             <RybbitTextLogo />
           </a>
         </div>
-
-        {/* Suspense boundary for the URL parameter handler */}
-        <Suspense fallback={null}>
-          <StepHandler onSetStep={setCurrentStep} />
-        </Suspense>
 
         <div className="flex-1 flex flex-col justify-center w-full max-w-[550px] mx-auto">
           <h1 className="text-lg text-neutral-600 dark:text-neutral-300 mb-6">Get started with Rybbit</h1>
