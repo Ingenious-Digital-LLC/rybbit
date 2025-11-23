@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const toolPages = toolSlugs.map(slug => ({
     url: `${baseUrl}/tools/${slug}`,
-    lastModified: new Date(),
+    lastModified: new Date("2025-11-23"),
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));
