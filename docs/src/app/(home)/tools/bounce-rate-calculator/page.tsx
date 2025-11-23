@@ -1,8 +1,7 @@
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { RelatedTools } from "@/components/RelatedTools";
 import { BounceRateForm } from "./BounceRateForm";
-import { TrackedButton } from "@/components/TrackedButton";
-import { DEFAULT_EVENT_LIMIT } from "@/lib/const";
+import { ToolCTA } from "../components/ToolCTA";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
     description:
       "Calculate and analyze your website's bounce rate compared to industry benchmarks. Get actionable insights to improve visitor engagement.",
     type: "website",
-    url: "https://docs.rybbit.io/tools/bounce-rate-calculator",
+    url: "https://rybbit.com/tools/bounce-rate-calculator",
     siteName: "Rybbit Documentation",
   },
   twitter: {
@@ -35,7 +34,7 @@ export const metadata: Metadata = {
     description: "Calculate your bounce rate and see how you compare to industry averages.",
   },
   alternates: {
-    canonical: "https://docs.rybbit.io/tools/bounce-rate-calculator",
+    canonical: "https://rybbit.com/tools/bounce-rate-calculator",
   },
 };
 
@@ -46,7 +45,7 @@ const structuredData = {
       "@type": "WebApplication",
       name: "Bounce Rate Calculator",
       description: "Free tool to calculate and analyze website bounce rate with industry benchmarks",
-      url: "https://docs.rybbit.io/tools/bounce-rate-calculator",
+      url: "https://rybbit.com/tools/bounce-rate-calculator",
       applicationCategory: "Utility",
       offers: {
         "@type": "Offer",
@@ -114,7 +113,13 @@ export default function BounceRateCalculatorPage() {
 
       <div className="min-h-screen">
         <div className="max-w-4xl mx-auto px-6 py-20">
-          <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Tools", href: "/tools" }, { label: "Bounce Rate Calculator" }]} />
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Tools", href: "/tools" },
+              { label: "Bounce Rate Calculator" },
+            ]}
+          />
           {/* Header */}
           <div className="mb-16">
             <div className="inline-block mb-4 px-4 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-full">
@@ -356,26 +361,11 @@ export default function BounceRateCalculatorPage() {
           <RelatedTools currentToolHref="/tools/bounce-rate-calculator" category="analytics" />
         </div>
 
-        {/* CTA */}
-        <div className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 py-20">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-              Track bounce rate in real-time with Rybbit
-            </h2>
-            <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto">
-              Monitor bounce rate by page, source, and device. Get started for free with up to{" "}
-              {DEFAULT_EVENT_LIMIT.toLocaleString()} events per month.
-            </p>
-            <TrackedButton
-              href="https://app.rybbit.io/signup"
-              eventName="signup"
-              eventProps={{ location: "bounce_rate_calculator_cta" }}
-              className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-10 py-4 text-lg rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200"
-            >
-              Start tracking for free
-            </TrackedButton>
-          </div>
-        </div>
+        <ToolCTA
+          title="Track bounce rate in real-time with Rybbit"
+          description="Monitor bounce rate by page, source, and device."
+          eventLocation="bounce_rate_calculator_cta"
+        />
       </div>
     </>
   );

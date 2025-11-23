@@ -120,36 +120,28 @@ export function RelatedTools({ currentToolHref, category, maxTools = 3 }: Relate
 
   return (
     <div className="mt-20 pt-16 border-t border-neutral-200 dark:border-neutral-800">
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Related Tools</h2>
-        <p className="text-neutral-600 dark:text-neutral-400">
-          Explore more free tools to optimize your marketing
-        </p>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">Related Tools</h2>
+        <ul className="space-y-3">
+          {relatedTools.map(tool => (
+            <li key={tool.href}>
+              <Link
+                href={tool.href}
+                className="group flex items-center gap-2 text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+              >
+                <ArrowRight className="w-4 h-4 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+                <span className="font-medium">{tool.name}</span>
+                <span className="text-sm text-neutral-500 dark:text-neutral-500">— {tool.description}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {relatedTools.map(tool => (
-          <Link
-            key={tool.href}
-            href={tool.href}
-            className="group p-6 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200 hover:shadow-lg"
-          >
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-              {tool.name}
-            </h3>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">{tool.description}</p>
-            <div className="flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400">
-              Try it now
-              <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      <div className="mt-8 text-center">
+      <div className="mt-6">
         <Link
           href="/tools"
-          className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 font-medium transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 font-medium transition-colors"
         >
           View all tools
           <ArrowRight className="w-4 h-4" />

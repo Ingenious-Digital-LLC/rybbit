@@ -1,8 +1,7 @@
-import { TrackedButton } from "@/components/TrackedButton";
+import { ToolCTA } from "../components/ToolCTA";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { RelatedTools } from "@/components/RelatedTools";
-import { DEFAULT_EVENT_LIMIT } from "@/lib/const";
 import Link from "next/link";
 import { AnalyticsDetectorForm } from "./AnalyticsDetectorForm";
 import { Metadata } from "next";
@@ -354,26 +353,11 @@ export default function AnalyticsDetectorPage() {
         <RelatedTools currentToolHref="/tools/analytics-detector" category="privacy" />
       </div>
 
-      {/* CTA */}
-      <div className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-            Privacy-first analytics with Rybbit
-          </h2>
-          <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto">
-            No cookies, no cross-site tracking, full GDPR compliance. Get started for free with up to{" "}
-            {DEFAULT_EVENT_LIMIT.toLocaleString()} events per month.
-          </p>
-          <TrackedButton
-            href="https://app.rybbit.io/signup"
-            eventName="signup"
-            eventProps={{ location: "analytics_detector_cta" }}
-            className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-10 py-4 text-lg rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            Start tracking for free
-          </TrackedButton>
-        </div>
-      </div>
+      <ToolCTA
+        title="Privacy-first analytics with Rybbit"
+        description="No cookies, no cross-site tracking, full GDPR compliance."
+        eventLocation="analytics_detector_cta"
+      />
     </div>
   );
 }
