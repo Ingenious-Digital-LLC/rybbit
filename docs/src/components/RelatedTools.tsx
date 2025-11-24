@@ -5,7 +5,7 @@ interface Tool {
   name: string;
   description: string;
   href: string;
-  category: "seo" | "analytics" | "privacy";
+  category: "seo" | "analytics" | "privacy" | "social-media";
 }
 
 const allTools: Tool[] = [
@@ -135,11 +135,125 @@ const allTools: Tool[] = [
     href: "/tools/cost-per-view-calculator",
     category: "analytics",
   },
+  {
+    name: "LinkedIn Font Generator",
+    description: "Transform text into stylish Unicode fonts for LinkedIn",
+    href: "/tools/linkedin-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Discord Font Generator",
+    description: "Create unique text styles for Discord servers and chats",
+    href: "/tools/discord-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "X Font Generator",
+    description: "Generate eye-catching Unicode fonts for X (Twitter)",
+    href: "/tools/x-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Reddit Font Generator",
+    description: "Stand out in Reddit posts with stylish Unicode fonts",
+    href: "/tools/reddit-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Facebook Font Generator",
+    description: "Create distinctive text for Facebook posts and bio",
+    href: "/tools/facebook-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Instagram Font Generator",
+    description: "Enhance Instagram captions with unique Unicode fonts",
+    href: "/tools/instagram-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Threads Font Generator",
+    description: "Transform text for Threads posts and replies",
+    href: "/tools/threads-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "YouTube Font Generator",
+    description: "Create stylish Unicode fonts for YouTube titles and descriptions",
+    href: "/tools/youtube-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "TikTok Font Generator",
+    description: "Generate trendy Unicode fonts for TikTok bios and captions",
+    href: "/tools/tiktok-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Pinterest Font Generator",
+    description: "Create eye-catching text for Pinterest pins and boards",
+    href: "/tools/pinterest-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "VK Font Generator",
+    description: "Transform text into unique fonts for VK posts",
+    href: "/tools/vk-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Bluesky Font Generator",
+    description: "Generate stylish Unicode fonts for Bluesky posts",
+    href: "/tools/bluesky-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Lemmy Font Generator",
+    description: "Create distinctive text for Lemmy posts and comments",
+    href: "/tools/lemmy-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Slack Font Generator",
+    description: "Transform text for Slack messages and status",
+    href: "/tools/slack-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Mastodon Font Generator",
+    description: "Generate unique Unicode fonts for Mastodon toots",
+    href: "/tools/mastodon-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Warpcast Font Generator",
+    description: "Create stylish text for Warpcast on Farcaster",
+    href: "/tools/warpcast-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Telegram Font Generator",
+    description: "Transform text for Telegram messages and channels",
+    href: "/tools/telegram-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Nostr Font Generator",
+    description: "Generate Unicode fonts for Nostr notes and profiles",
+    href: "/tools/nostr-font-generator",
+    category: "social-media",
+  },
+  {
+    name: "Dribbble Font Generator",
+    description: "Create eye-catching text for Dribbble shot descriptions",
+    href: "/tools/dribbble-font-generator",
+    category: "social-media",
+  },
 ];
 
 interface RelatedToolsProps {
   currentToolHref: string;
-  category?: "seo" | "analytics" | "privacy";
+  category?: "seo" | "analytics" | "privacy" | "social-media";
   maxTools?: number;
 }
 

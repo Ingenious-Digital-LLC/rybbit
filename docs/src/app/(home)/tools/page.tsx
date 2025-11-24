@@ -18,7 +18,30 @@ import {
   Type,
   UserCheck,
   Users,
+  MessageCircle,
+  Briefcase,
+  Zap,
 } from "lucide-react";
+import { platformList } from "./components/platform-configs";
+import {
+  SiDiscord,
+  SiX,
+  SiReddit,
+  SiFacebook,
+  SiInstagram,
+  SiThreads,
+  SiYoutube,
+  SiTiktok,
+  SiPinterest,
+  SiVk,
+  SiBluesky,
+  SiLemmy,
+  SiSlack,
+  SiMastodon,
+  SiFarcaster,
+  SiTelegram,
+  SiDribbble,
+} from "@icons-pack/react-simple-icons";
 
 export const metadata = {
   title: "Free Marketing Tools | Rybbit",
@@ -175,6 +198,36 @@ const otherTools = [
   },
 ];
 
+// Map platform IDs to Simple Icons components (with Lucide fallbacks)
+const platformIconMap: Record<string, any> = {
+  linkedin: Briefcase, // LinkedIn not available in simple-icons, using Lucide
+  discord: SiDiscord,
+  x: SiX,
+  reddit: SiReddit,
+  facebook: SiFacebook,
+  instagram: SiInstagram,
+  threads: SiThreads,
+  youtube: SiYoutube,
+  tiktok: SiTiktok,
+  pinterest: SiPinterest,
+  vk: SiVk,
+  bluesky: SiBluesky,
+  lemmy: SiLemmy,
+  slack: SiSlack,
+  mastodon: SiMastodon,
+  warpcast: SiFarcaster,
+  telegram: SiTelegram,
+  nostr: Zap, // Nostr not available in simple-icons, using Lucide
+  dribbble: SiDribbble,
+};
+
+const socialMediaTools = platformList.map(platform => ({
+  href: `/tools/${platform.id}-font-generator`,
+  icon: platformIconMap[platform.id],
+  title: platform.displayName,
+  description: `Transform your text into unique Unicode fonts for ${platform.name}. Stand out with stylish text.`,
+}));
+
 function ToolCard({ tool }: { tool: { href: string; icon: any; title: string; description: string } }) {
   const Icon = tool.icon;
   return (
@@ -226,8 +279,21 @@ export default function ToolsPage() {
             <Sparkles className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">AI-Powered Tools</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {aiPoweredTools.map(tool => (
+              <ToolCard key={tool.href} tool={tool} />
+            ))}
+          </div>
+        </div>
+
+        {/* Social Media Tools Section */}
+        <div className="mb-16">
+          <div className="flex items-center gap-3 mb-8">
+            <MessageCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Social Media Font Generators</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {socialMediaTools.map(tool => (
               <ToolCard key={tool.href} tool={tool} />
             ))}
           </div>

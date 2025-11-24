@@ -18,7 +18,7 @@ export interface ToolPageLayoutProps {
   toolComponent: ReactNode;
   educationalContent: ReactNode;
   faqs: FAQItem[];
-  relatedToolsCategory: "seo" | "analytics" | "privacy";
+  relatedToolsCategory: "seo" | "analytics" | "privacy" | "social-media";
 
   // CTA section
   ctaTitle: string;
@@ -53,13 +53,7 @@ export function ToolPageLayout({
 
       <div className="min-h-screen">
         <div className="max-w-4xl mx-auto px-6 py-20">
-          <Breadcrumbs
-            items={[
-              { label: "Home", href: "/" },
-              { label: "Tools", href: "/tools" },
-              { label: title },
-            ]}
-          />
+          <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Tools", href: "/tools" }, { label: title }]} />
 
           {/* 1. Header */}
           <div className="mb-16">
@@ -69,45 +63,41 @@ export function ToolPageLayout({
             <h1 className="text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white mb-6 tracking-tight">
               {title}
             </h1>
-            <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl leading-relaxed">
-              {description}
-            </p>
+            <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl leading-relaxed">{description}</p>
           </div>
 
           {/* 2. The Actual Tool */}
-          <div className="mb-16">
-            {toolComponent}
-          </div>
+          <div className="mb-16">{toolComponent}</div>
 
           {/* 3. Educational Content */}
-          <div className="mb-16 prose prose-neutral dark:prose-invert max-w-none">
-            {educationalContent}
-          </div>
+          <div className="mb-16 prose prose-neutral dark:prose-invert max-w-none">{educationalContent}</div>
 
           {/* 4. FAQ Section */}
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
-              Frequently Asked Questions
-            </h2>
-            <div className="bg-neutral-100/50 dark:bg-neutral-800/20 backdrop-blur-sm border border-neutral-300/50 dark:border-neutral-800/50 rounded-xl overflow-hidden">
-              <Accordion type="single" collapsible className="w-full">
-                {faqs.map((faq, index) => (
-                  <AccordionItem
-                    key={index}
-                    value={`item-${index}`}
-                    className={index < faqs.length - 1 ? "border-b border-neutral-300/50 dark:border-neutral-800/50" : ""}
-                  >
-                    <AccordionTrigger className="px-6 py-4 text-base font-medium hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-4 text-neutral-700 dark:text-neutral-300">
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+          {faqs.length > 0 && (
+            <div className="mb-16">
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Frequently Asked Questions</h2>
+              <div className="bg-neutral-100/50 dark:bg-neutral-800/20 backdrop-blur-sm border border-neutral-300/50 dark:border-neutral-800/50 rounded-xl overflow-hidden">
+                <Accordion type="single" collapsible className="w-full">
+                  {faqs.map((faq, index) => (
+                    <AccordionItem
+                      key={index}
+                      value={`item-${index}`}
+                      className={
+                        index < faqs.length - 1 ? "border-b border-neutral-300/50 dark:border-neutral-800/50" : ""
+                      }
+                    >
+                      <AccordionTrigger className="px-6 py-4 text-base font-medium hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="px-6 pb-4 text-neutral-700 dark:text-neutral-300">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* 5. Related Tools */}
           <RelatedTools currentToolHref={`/tools/${toolSlug}`} category={relatedToolsCategory} />
