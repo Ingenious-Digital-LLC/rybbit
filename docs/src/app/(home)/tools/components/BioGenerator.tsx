@@ -87,16 +87,16 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Context Guidelines */}
-      <div className="mb-8 p-6 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-xl">
-        <div className="flex items-start gap-3">
-          <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
+      <div className="mb-8 p-4 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-lg">
+        <div className="flex gap-3">
+          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg h-fit">
+            <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          </div>
           <div>
-            <h3 className="font-semibold text-neutral-900 dark:text-white mb-2">
+            <h3 className="text-sm font-medium text-neutral-900 dark:text-white mb-1">
               {platform.name} {platform.bioType} Guidelines
             </h3>
-            <p className="text-sm text-neutral-600 dark:text-neutral-300">
-              {platform.contextGuidelines}
-            </p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">{platform.contextGuidelines}</p>
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             placeholder="Your name or brand name"
             className="w-full px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500"
           />
@@ -125,7 +125,7 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
           <input
             type="text"
             value={profession}
-            onChange={(e) => setProfession(e.target.value)}
+            onChange={e => setProfession(e.target.value)}
             placeholder="e.g., Software Engineer, Content Creator, Artist"
             className="w-full px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500"
           />
@@ -139,7 +139,7 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
           <input
             type="text"
             value={interests}
-            onChange={(e) => setInterests(e.target.value)}
+            onChange={e => setInterests(e.target.value)}
             placeholder="e.g., AI, fitness, travel, photography"
             className="w-full px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500"
           />
@@ -147,15 +147,13 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
 
         {/* Tone Selector */}
         <div>
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
-            Tone
-          </label>
+          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">Tone</label>
           <select
             value={tone}
-            onChange={(e) => setTone(e.target.value)}
+            onChange={e => setTone(e.target.value)}
             className="w-full px-4 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 focus:border-transparent text-neutral-900 dark:text-white"
           >
-            {platform.tones.map((t) => (
+            {platform.tones.map(t => (
               <option key={t} value={t}>
                 {t}
               </option>
@@ -203,9 +201,7 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
       {/* Generated Bios */}
       {bios.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
-            Generated {platform.bioType}s
-          </h3>
+          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Generated {platform.bioType}s</h3>
 
           {bios.map((bio, index) => {
             const isOverLimit = bio.length > platform.characterLimit;
@@ -217,9 +213,7 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
                 className="p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg"
               >
                 <div className="flex items-start justify-between gap-4 mb-3">
-                  <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-                    Option {index + 1}
-                  </p>
+                  <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Option {index + 1}</p>
                   <button
                     onClick={() => copyBio(bio, index)}
                     disabled={isOverLimit}
@@ -239,9 +233,7 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
                   </button>
                 </div>
 
-                <p className="text-neutral-900 dark:text-white mb-3 leading-relaxed">
-                  {bio}
-                </p>
+                <p className="text-neutral-900 dark:text-white mb-3 leading-relaxed">{bio}</p>
 
                 <div className="flex items-center justify-between text-xs">
                   <span
@@ -262,9 +254,7 @@ export function BioGenerator({ platform }: BioGeneratorProps) {
                     </span>
                   )}
                   {!isOverLimit && charsRemaining < 20 && (
-                    <span className="text-orange-600 dark:text-orange-400">
-                      {charsRemaining} remaining
-                    </span>
+                    <span className="text-orange-600 dark:text-orange-400">{charsRemaining} remaining</span>
                   )}
                 </div>
               </div>

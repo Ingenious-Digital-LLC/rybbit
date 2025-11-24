@@ -31,6 +31,7 @@ import { bioGeneratorPlatformConfigs, bioGeneratorPlatformList } from "../../com
 import { imageResizerPlatformConfigs, imageResizerPlatformList } from "../../components/image-resizer-platform-configs";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Hash, Type, User } from "lucide-react";
 
 interface PageProps {
   params: Promise<{
@@ -531,14 +532,16 @@ export default async function PlatformToolPage({ params }: PageProps) {
         </ol>
 
         <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">Available Tones</h3>
-        <ul className="grid grid-cols-2 gap-2 text-sm text-neutral-700 dark:text-neutral-300 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {platform.tones.map(tone => (
-            <li key={tone} className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              {tone}
-            </li>
+            <div
+              key={tone}
+              className="p-4 bg-neutral-50 dark:bg-neutral-900/20 rounded-lg border border-neutral-200 dark:border-neutral-800 flex items-center gap-2"
+            >
+              <div className="font-medium text-neutral-900 dark:text-white">{tone}</div>
+            </div>
           ))}
-        </ul>
+        </div>
 
         <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">
           Bio Best Practices for {platform.name}
@@ -564,12 +567,19 @@ export default async function PlatformToolPage({ params }: PageProps) {
           </li>
         </ul>
 
-        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 mb-6">
-          <h4 className="font-semibold text-emerald-900 dark:text-emerald-100 mb-2">Character Limit</h4>
-          <p className="text-sm text-emerald-800 dark:text-emerald-200">
-            {platform.name} {platform.bioType}s have a maximum of {platform.characterLimit} characters. Make every
-            character count!
-          </p>
+        <div className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg h-fit">
+              <Type className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <div className="text-sm font-medium text-neutral-900 dark:text-white mb-1">Character Limit</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                {platform.name} {platform.bioType}s have a maximum of {platform.characterLimit} characters. Make every
+                character count!
+              </div>
+            </div>
+          </div>
         </div>
 
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-6">
@@ -843,14 +853,16 @@ export default async function PlatformToolPage({ params }: PageProps) {
         </ol>
 
         <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">Available Hashtag Strategies</h3>
-        <ul className="grid grid-cols-2 gap-2 text-sm text-neutral-700 dark:text-neutral-300 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {platform.hashtagStrategies.map(strategy => (
-            <li key={strategy} className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              {strategy}
-            </li>
+            <div
+              key={strategy}
+              className="p-4 bg-neutral-50 dark:bg-neutral-900/20 rounded-lg border border-neutral-200 dark:border-neutral-800 flex items-center gap-2"
+            >
+              <div className="font-medium text-neutral-900 dark:text-white">{strategy}</div>
+            </div>
           ))}
-        </ul>
+        </div>
 
         <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">
           Hashtag Best Practices for {platform.name}
@@ -874,18 +886,25 @@ export default async function PlatformToolPage({ params }: PageProps) {
         </ul>
 
         {platform.maxHashtags && (
-          <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-emerald-900 dark:text-emerald-100 mb-2">Platform Guidelines</h4>
-            <ul className="space-y-1 text-sm text-emerald-800 dark:text-emerald-200">
-              <li>
-                <strong>Maximum hashtags:</strong> {platform.maxHashtags}
-              </li>
-              {platform.characterLimit && (
-                <li>
-                  <strong>Character limit:</strong> {platform.characterLimit} total characters
-                </li>
-              )}
-            </ul>
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg h-fit">
+                <Hash className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-neutral-900 dark:text-white mb-1">Platform Guidelines</div>
+                <ul className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
+                  <li>
+                    <strong>Maximum hashtags:</strong> {platform.maxHashtags}
+                  </li>
+                  {platform.characterLimit && (
+                    <li>
+                      <strong>Character limit:</strong> {platform.characterLimit} total characters
+                    </li>
+                  )}
+                </ul>
+              </div>
+            </div>
           </div>
         )}
 
@@ -1030,23 +1049,30 @@ export default async function PlatformToolPage({ params }: PageProps) {
           </li>
         </ul>
 
-        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 mb-6">
-          <h4 className="font-semibold text-emerald-900 dark:text-emerald-100 mb-2">Platform Requirements</h4>
-          <ul className="space-y-1 text-sm text-emerald-800 dark:text-emerald-200">
-            <li>
-              <strong>Allowed characters:</strong> {platform.allowedCharacters}
-            </li>
-            {platform.characterLimit && (
-              <li>
-                <strong>Maximum length:</strong> {platform.characterLimit} characters
-              </li>
-            )}
-            {platform.minLength && (
-              <li>
-                <strong>Minimum length:</strong> {platform.minLength} characters
-              </li>
-            )}
-          </ul>
+        <div className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg h-fit">
+              <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <div className="text-sm font-medium text-neutral-900 dark:text-white mb-1">Platform Requirements</div>
+              <ul className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
+                <li>
+                  <strong>Allowed characters:</strong> {platform.allowedCharacters}
+                </li>
+                {platform.characterLimit && (
+                  <li>
+                    <strong>Maximum length:</strong> {platform.characterLimit} characters
+                  </li>
+                )}
+                {platform.minLength && (
+                  <li>
+                    <strong>Minimum length:</strong> {platform.minLength} characters
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
         </div>
 
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-6">
@@ -1166,14 +1192,16 @@ export default async function PlatformToolPage({ params }: PageProps) {
         </ol>
 
         <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">Available Post Styles</h3>
-        <ul className="grid grid-cols-2 gap-2 text-sm text-neutral-700 dark:text-neutral-300 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {platform.recommendedStyles.map(style => (
-            <li key={style} className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              {style}
-            </li>
+            <div
+              key={style}
+              className="p-4 bg-neutral-50 dark:bg-neutral-900/20 rounded-lg border border-neutral-200 dark:border-neutral-800 flex items-center gap-2"
+            >
+              <div className="font-medium text-neutral-900 dark:text-white">{style}</div>
+            </div>
           ))}
-        </ul>
+        </div>
 
         <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">
           Best Practices for {platform.name}
