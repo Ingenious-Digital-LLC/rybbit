@@ -63,7 +63,7 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [importToDelete, setImportToDelete] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<"umami">("umami");
+  const [selectedPlatform, setSelectedPlatform] = useState<"umami" | undefined>(undefined);
   const [fileError, setFileError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workerManagerRef = useRef<CsvParser | null>(null);
@@ -96,7 +96,7 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
   };
 
   const executeImport = () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !selectedPlatform) return;
 
     createImportMutation.mutate(
       { platform: selectedPlatform },
@@ -175,7 +175,7 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
   const hasActiveImport = IS_CLOUD && sortedImports.some(imp => imp.completedAt === null);
 
   const isImportDisabled =
-    !selectedFile || !!fileError || createImportMutation.isPending || disabled || hasActiveImport;
+    !selectedFile || !selectedPlatform || !!fileError || createImportMutation.isPending || disabled || hasActiveImport;
 
   return (
     <div className="space-y-6">
