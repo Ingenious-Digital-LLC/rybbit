@@ -237,7 +237,7 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
               className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-xl shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               disabled={isLoading}
             >
-              {isLoading ? "Processing..." : isCustomTier ? "Book a call" : "Get started"}
+              {isLoading ? "Processing..." : isCustomTier ? "Contact us" : "Get started"}
             </button>
 
             {/* Features */}
@@ -280,7 +280,7 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
               className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-xl shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               disabled={isLoading}
             >
-              {isLoading ? "Processing..." : isCustomTier ? "Book a call" : "Get started"}
+              {isLoading ? "Processing..." : isCustomTier ? "Contact us" : "Get started"}
             </button>
 
             {/* Features */}
@@ -306,7 +306,7 @@ export function PricingCard({ isLoggedIn }: { isLoggedIn: boolean }) {
             {/* Contact button */}
             <a href="https://www.rybbit.com/contact" className="w-full block">
               <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-xl shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer">
-                Book a call
+                Contact us
               </button>
             </a>
 

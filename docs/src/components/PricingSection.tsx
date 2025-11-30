@@ -250,7 +250,7 @@ export function PricingSection() {
                 </div>
               )
             }
-            buttonText={standardPrices.custom ? "Book a call" : "Get started"}
+            buttonText={standardPrices.custom ? "Contact us" : "Get started"}
             buttonHref={standardPrices.custom ? "https://www.rybbit.com/contact" : "https://app.rybbit.io/signup"}
             features={STANDARD_FEATURES}
             eventLocation={standardPrices.custom ? undefined : "standard"}
@@ -272,7 +272,7 @@ export function PricingSection() {
                 </div>
               )
             }
-            buttonText={proPrices.custom ? "Book a call" : "Get started"}
+            buttonText={proPrices.custom ? "Contact us" : "Get started"}
             buttonHref={proPrices.custom ? "https://www.rybbit.com/contact" : "https://app.rybbit.io/signup"}
             features={PRO_FEATURES}
             eventLocation={proPrices.custom ? undefined : "pro"}
@@ -285,7 +285,7 @@ export function PricingSection() {
             description="Advanced features for enterprise teams"
             priceDisplay={<div className="text-3xl font-bold">Custom</div>}
             features={ENTERPRISE_FEATURES}
-            buttonText={"Book a call"}
+            buttonText={"Contact us"}
             buttonHref={"https://www.rybbit.com/contact"}
           />
         </div>
