@@ -24,11 +24,28 @@ interface UmamiEvent {
   created_at: string;
 }
 
+interface SimpleAnalyticsEvent {
+  added_iso: string;
+  country_code: string;
+  datapoint: string;
+  document_referrer: string;
+  hostname: string;
+  lang_language: string;
+  lang_region: string;
+  path: string;
+  query: string;
+  screen_height: string;
+  screen_width: string;
+  session_id: string;
+  user_agent: string;
+  uuid: string;
+}
+
 export class CsvParser {
   private cancelled = false;
   private siteId: number = 0;
   private importId: string = "";
-  private platform: "umami" = "umami";
+  private platform: "umami" | "simple_analytics" = "umami";
 
   private earliestAllowedDate: DateTime | null = null;
   private latestAllowedDate: DateTime | null = null;
@@ -37,7 +54,7 @@ export class CsvParser {
     file: File,
     siteId: number,
     importId: string,
-    platform: "umami",
+    platform: "umami" | "simple_analytics",
     earliestAllowedDate: string,
     latestAllowedDate: string
   ): void {
@@ -70,11 +87,14 @@ export class CsvParser {
         }
 
         try {
-          const validEvents: UmamiEvent[] = [];
+          const validEvents: (UmamiEvent | SimpleAnalyticsEvent)[] = [];
           for (const row of results.data) {
             const event = this.transformRow(row);
-            if (event && this.isDateInRange(event.created_at)) {
-              validEvents.push(event);
+            if (event) {
+              const dateField = this.platform === "umami" ? (event as UmamiEvent).created_at : (event as SimpleAnalyticsEvent).added_iso;
+              if (this.isDateInRange(dateField)) {
+                validEvents.push(event);
+              }
             }
           }
 
@@ -105,7 +125,11 @@ export class CsvParser {
   }
 
   private isDateInRange(dateStr: string): boolean {
-    const createdAt = DateTime.fromFormat(dateStr, "yyyy-MM-dd HH:mm:ss", { zone: "utc" });
+    // Handle both formats: "yyyy-MM-dd HH:mm:ss" (Umami) and ISO (Simple Analytics)
+    let createdAt = DateTime.fromFormat(dateStr, "yyyy-MM-dd HH:mm:ss", { zone: "utc" });
+    if (!createdAt.isValid) {
+      createdAt = DateTime.fromISO(dateStr, { zone: "utc" });
+    }
     if (!createdAt.isValid) {
       return false;
     }
@@ -121,39 +145,64 @@ export class CsvParser {
     return true;
   }
 
-  private transformRow(row: unknown): UmamiEvent | null {
+  private transformRow(row: unknown): UmamiEvent | SimpleAnalyticsEvent | null {
     const rawEvent = row as Record<string, string>;
 
-    const umamiEvent: UmamiEvent = {
-      session_id: rawEvent.session_id,
-      hostname: rawEvent.hostname,
-      browser: rawEvent.browser,
-      os: rawEvent.os,
-      device: rawEvent.device,
-      screen: rawEvent.screen,
-      language: rawEvent.language,
-      country: rawEvent.country,
-      region: rawEvent.region,
-      city: rawEvent.city,
-      url_path: rawEvent.url_path,
-      url_query: rawEvent.url_query,
-      referrer_path: rawEvent.referrer_path,
-      referrer_domain: rawEvent.referrer_domain,
-      page_title: rawEvent.page_title,
-      event_type: rawEvent.event_type,
-      event_name: rawEvent.event_name,
-      distinct_id: rawEvent.distinct_id,
-      created_at: rawEvent.created_at,
-    };
+    if (this.platform === "umami") {
+      const umamiEvent: UmamiEvent = {
+        session_id: rawEvent.session_id,
+        hostname: rawEvent.hostname,
+        browser: rawEvent.browser,
+        os: rawEvent.os,
+        device: rawEvent.device,
+        screen: rawEvent.screen,
+        language: rawEvent.language,
+        country: rawEvent.country,
+        region: rawEvent.region,
+        city: rawEvent.city,
+        url_path: rawEvent.url_path,
+        url_query: rawEvent.url_query,
+        referrer_path: rawEvent.referrer_path,
+        referrer_domain: rawEvent.referrer_domain,
+        page_title: rawEvent.page_title,
+        event_type: rawEvent.event_type,
+        event_name: rawEvent.event_name,
+        distinct_id: rawEvent.distinct_id,
+        created_at: rawEvent.created_at,
+      };
 
-    if (!umamiEvent.created_at) {
-      return null;
+      if (!umamiEvent.created_at) {
+        return null;
+      }
+
+      return umamiEvent;
+    } else {
+      const simpleAnalyticsEvent: SimpleAnalyticsEvent = {
+        added_iso: rawEvent.added_iso,
+        country_code: rawEvent.country_code,
+        datapoint: rawEvent.datapoint,
+        document_referrer: rawEvent.document_referrer,
+        hostname: rawEvent.hostname,
+        lang_language: rawEvent.lang_language,
+        lang_region: rawEvent.lang_region,
+        path: rawEvent.path,
+        query: rawEvent.query,
+        screen_height: rawEvent.screen_height,
+        screen_width: rawEvent.screen_width,
+        session_id: rawEvent.session_id,
+        user_agent: rawEvent.user_agent,
+        uuid: rawEvent.uuid,
+      };
+
+      if (!simpleAnalyticsEvent.added_iso) {
+        return null;
+      }
+
+      return simpleAnalyticsEvent;
     }
-
-    return umamiEvent;
   }
 
-  private async uploadChunk(events: UmamiEvent[], isLastBatch: boolean): Promise<void> {
+  private async uploadChunk(events: (UmamiEvent | SimpleAnalyticsEvent)[], isLastBatch: boolean): Promise<void> {
     // Skip empty chunks unless it's the last one (needed for finalization)
     if (events.length === 0 && !isLastBatch) {
       return;

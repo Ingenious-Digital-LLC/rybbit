@@ -4,7 +4,7 @@ import { APIResponse } from "@/api/types";
 
 interface GetSiteImportsResponse {
   importId: string;
-  platform: "umami";
+  platform: "umami" | "simple_analytics";
   importedEvents: number;
   skippedEvents: number;
   invalidEvents: number;
@@ -37,7 +37,7 @@ export function useCreateSiteImport(site: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: { platform: "umami" }) => {
+    mutationFn: async (data: { platform: "umami" | "simple_analytics" }) => {
       return await authedFetch<APIResponse<CreateSiteImportResponse>>(`/create-site-import/${site}`, undefined, {
         method: "POST",
         data,

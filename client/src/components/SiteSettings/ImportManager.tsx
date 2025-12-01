@@ -63,7 +63,7 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [importToDelete, setImportToDelete] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<"umami" | "">("");
+  const [selectedPlatform, setSelectedPlatform] = useState<"umami" | "simple_analytics" | "">("");
   const [fileError, setFileError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workerManagerRef = useRef<CsvParser | null>(null);
@@ -204,12 +204,13 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
             {/* Platform Selection */}
             <div className="space-y-2">
               <Label htmlFor="platform">Platform</Label>
-              <Select value={selectedPlatform} onValueChange={(value: "umami") => setSelectedPlatform(value)}>
+              <Select value={selectedPlatform} onValueChange={(value: "umami" | "simple_analytics") => setSelectedPlatform(value)}>
                 <SelectTrigger id="platform" disabled={disabled || createImportMutation.isPending || hasActiveImport}>
                   <SelectValue placeholder="Select platform" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="umami">Umami</SelectItem>
+                  <SelectItem value="simple_analytics">Simple Analytics</SelectItem>
                 </SelectContent>
               </Select>
             </div>
