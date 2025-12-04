@@ -26,6 +26,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { IS_CLOUD } from "@/lib/const";
 import { CsvParser } from "@/lib/import/csvParser";
 import { ImportPlatform } from "@/types/import";
+import { DisabledOverlay } from "@/components/DisabledOverlay";
 
 interface ImportManagerProps {
   siteId: number;
@@ -187,254 +188,258 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
     !selectedFile || !selectedPlatform || !!fileError || createImportMutation.isPending || disabled || hasActiveImport;
 
   return (
-    <div className="space-y-6">
-      {/* Import Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="h-5 w-5" />
-            Import Data
-          </CardTitle>
-          <CardDescription>Import data from other analytics platforms.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Active Import Warning */}
-          {hasActiveImport && (
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                You have an active import in progress. Please wait for it to complete before starting a new import.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <form onSubmit={onSubmit} className="space-y-4">
-            {/* Platform Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="platform">Platform</Label>
-              <Select value={selectedPlatform} onValueChange={(value: ImportPlatform) => setSelectedPlatform(value)}>
-                <SelectTrigger id="platform" disabled={disabled || createImportMutation.isPending || hasActiveImport}>
-                  <SelectValue placeholder="Select platform" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="umami">Umami</SelectItem>
-                  <SelectItem value="simple_analytics">Simple Analytics</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* File Upload */}
-            <div className="space-y-2">
-              <Label htmlFor="file" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                CSV File
-              </Label>
-              <Input
-                ref={fileInputRef}
-                id="file"
-                type="file"
-                accept=".csv"
-                multiple={false}
-                onChange={handleFileChange}
-                disabled={disabled || createImportMutation.isPending || hasActiveImport}
-              />
-              {fileError && <p className="text-sm text-red-600">{fileError}</p>}
-            </div>
-
-            {/* Import Button */}
-            <Button type="submit" disabled={isImportDisabled} className="w-full sm:w-auto">
-              {createImportMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Importing...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Import
-                </>
-              )}
-            </Button>
-          </form>
-
-          {/* Import Error */}
-          {createImportMutation.isError && (
-            <Alert variant="destructive">
-              <div className="flex items-center gap-2">
+    <DisabledOverlay message="Data Import" requiredPlan="standard">
+      <div className="space-y-6">
+        {/* Import Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Import Data
+            </CardTitle>
+            <CardDescription>Import data from other analytics platforms.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Active Import Warning */}
+            {hasActiveImport && (
+              <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  {createImportMutation.error.message || "Failed to import file. Please try again."}
+                  You have an active import in progress. Please wait for it to complete before starting a new import.
                 </AlertDescription>
-              </div>
-            </Alert>
-          )}
+              </Alert>
+            )}
 
-          {/* Delete Error Message */}
-          {deleteMutation.isError && (
-            <Alert variant="destructive">
-              <div className="flex items-center gap-2">
+            <form onSubmit={onSubmit} className="space-y-4">
+              {/* Platform Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="platform">Platform</Label>
+                <Select value={selectedPlatform} onValueChange={(value: ImportPlatform) => setSelectedPlatform(value)}>
+                  <SelectTrigger id="platform" disabled={disabled || createImportMutation.isPending || hasActiveImport}>
+                    <SelectValue placeholder="Select platform" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="umami">Umami</SelectItem>
+                    <SelectItem value="simple_analytics">Simple Analytics</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* File Upload */}
+              <div className="space-y-2">
+                <Label htmlFor="file" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  CSV File
+                </Label>
+                <Input
+                  ref={fileInputRef}
+                  id="file"
+                  type="file"
+                  accept=".csv"
+                  multiple={false}
+                  onChange={handleFileChange}
+                  disabled={disabled || createImportMutation.isPending || hasActiveImport}
+                />
+                {fileError && <p className="text-sm text-red-600">{fileError}</p>}
+              </div>
+
+              {/* Import Button */}
+              <Button type="submit" disabled={isImportDisabled} className="w-full sm:w-auto">
+                {createImportMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Importing...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Import
+                  </>
+                )}
+              </Button>
+            </form>
+
+            {/* Import Error */}
+            {createImportMutation.isError && (
+              <Alert variant="destructive">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    {createImportMutation.error.message || "Failed to import file. Please try again."}
+                  </AlertDescription>
+                </div>
+              </Alert>
+            )}
+
+            {/* Delete Error Message */}
+            {deleteMutation.isError && (
+              <Alert variant="destructive">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    {deleteMutation.error.message || "Failed to delete import. Please try again."}
+                  </AlertDescription>
+                </div>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Import History */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Import History</CardTitle>
+            <CardDescription>Track the status of your data imports</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading && !data ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                <span>Loading import history...</span>
+              </div>
+            ) : error ? (
+              <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  {deleteMutation.error.message || "Failed to delete import. Please try again."}
-                </AlertDescription>
+                <AlertDescription>Failed to load import history. Please try refreshing the page.</AlertDescription>
+              </Alert>
+            ) : !data?.data?.length ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p>No imports yet</p>
+                <p className="text-sm">Upload a CSV file to get started</p>
               </div>
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
+            ) : (
+              <div className="rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Started At</TableHead>
+                      <TableHead>Platform</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Imported</TableHead>
+                      <TableHead className="text-right">Skipped</TableHead>
+                      <TableHead className="text-right">Invalid</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedImports.map(imp => {
+                      const statusInfo = getStatusInfo(imp.completedAt);
+                      const StatusIcon = statusInfo.icon;
+                      const startedAt = DateTime.fromSQL(imp.startedAt).toFormat("MMM dd, yyyy HH:mm");
 
-      {/* Import History */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Import History</CardTitle>
-          <CardDescription>Track the status of your data imports</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading && !data ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin mr-2" />
-              <span>Loading import history...</span>
-            </div>
-          ) : error ? (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>Failed to load import history. Please try refreshing the page.</AlertDescription>
-            </Alert>
-          ) : !data?.data?.length ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p>No imports yet</p>
-              <p className="text-sm">Upload a CSV file to get started</p>
-            </div>
-          ) : (
-            <div className="rounded-md">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Started At</TableHead>
-                    <TableHead>Platform</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Imported</TableHead>
-                    <TableHead className="text-right">Skipped</TableHead>
-                    <TableHead className="text-right">Invalid</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedImports.map(imp => {
-                    const statusInfo = getStatusInfo(imp.completedAt);
-                    const StatusIcon = statusInfo.icon;
-                    const startedAt = DateTime.fromSQL(imp.startedAt).toFormat("MMM dd, yyyy HH:mm");
+                      return (
+                        <TableRow key={imp.importId}>
+                          <TableCell className="font-medium">{startedAt}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{formatPlatformName(imp.platform)}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={`${statusInfo.color} flex items-center gap-1`}>
+                              <StatusIcon className={`h-3 w-3 ${imp.completedAt === null ? "animate-spin" : ""}`} />
+                              {statusInfo.label}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">{imp.importedEvents.toLocaleString()}</TableCell>
+                          <TableCell className="text-right">
+                            {imp.skippedEvents > 0 ? (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="text-yellow-600 cursor-help">
+                                      {imp.skippedEvents.toLocaleString()}
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="text-sm">Events exceeded quota or date range limits</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            ) : (
+                              <span className="text-muted-foreground">0</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {imp.invalidEvents > 0 ? (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="text-red-600 cursor-help">
+                                      {imp.invalidEvents.toLocaleString()}
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="text-sm">Events failed validation</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            ) : (
+                              <span className="text-muted-foreground">0</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {imp.completedAt !== null && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDeleteClick(imp.importId)}
+                                disabled={disabled || deleteMutation.isPending}
+                                className="h-8 w-8 p-0"
+                              >
+                                {deleteMutation.isPending && deleteMutation.variables === imp.importId ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-                    return (
-                      <TableRow key={imp.importId}>
-                        <TableCell className="font-medium">{startedAt}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{formatPlatformName(imp.platform)}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={`${statusInfo.color} flex items-center gap-1`}>
-                            <StatusIcon className={`h-3 w-3 ${imp.completedAt === null ? "animate-spin" : ""}`} />
-                            {statusInfo.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">{imp.importedEvents.toLocaleString()}</TableCell>
-                        <TableCell className="text-right">
-                          {imp.skippedEvents > 0 ? (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <span className="text-yellow-600 cursor-help">
-                                    {imp.skippedEvents.toLocaleString()}
-                                  </span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="text-sm">Events exceeded quota or date range limits</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          ) : (
-                            <span className="text-muted-foreground">0</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {imp.invalidEvents > 0 ? (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <span className="text-red-600 cursor-help">{imp.invalidEvents.toLocaleString()}</span>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="text-sm">Events failed validation</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          ) : (
-                            <span className="text-muted-foreground">0</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {imp.completedAt !== null && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDeleteClick(imp.importId)}
-                              disabled={disabled || deleteMutation.isPending}
-                              className="h-8 w-8 p-0"
-                            >
-                              {deleteMutation.isPending && deleteMutation.variables === imp.importId ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Trash2 className="h-4 w-4" />
-                              )}
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        {/* Confirmation Dialog */}
+        <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Large File Import</AlertDialogTitle>
+              <AlertDialogDescription>
+                You're about to import a large file ({selectedFile ? formatFileSize(selectedFile.size) : "?"}). This may
+                take several minutes to process. Are you sure you want to continue?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={executeImport}>Yes, Import File</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
-      {/* Confirmation Dialog */}
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Large File Import</AlertDialogTitle>
-            <AlertDialogDescription>
-              You're about to import a large file ({selectedFile ? formatFileSize(selectedFile.size) : "?"}). This may
-              take several minutes to process. Are you sure you want to continue?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={executeImport}>Yes, Import File</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!importToDelete} onOpenChange={open => !open && setImportToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Import</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this import? This action cannot be undone. The import data and associated
-              files will be permanently removed.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
-              Delete Import
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!importToDelete} onOpenChange={open => !open && setImportToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Import</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this import? This action cannot be undone. The import data and
+                associated files will be permanently removed.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
+                Delete Import
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </DisabledOverlay>
   );
 }
