@@ -1,14 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableSortIndicator,
-} from "@/components/ui/table";
+import { TableSortIndicator } from "@/components/ui/table";
+import { FilterParameter } from "@rybbit/shared";
 import {
   createColumnHelper,
   flexRender,
@@ -18,11 +11,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useDebounce, useIntersectionObserver } from "@uidotdev/usehooks";
-import { Loader2, Search, SquareArrowOutUpRight } from "lucide-react";
+import { Loader2, SquareArrowOutUpRight } from "lucide-react";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { useInfiniteMetric } from "../../../../../api/analytics/useGetMetric";
-import { MetricResponse } from "../../../../../api/analytics/useGetMetric";
-import { FilterParameter } from "@rybbit/shared";
+import { MetricResponse, useInfiniteMetric } from "../../../../../api/analytics/useGetMetric";
 import { addFilter } from "../../../../../lib/store";
 import { cn, formatSecondsAsMinutesAndSeconds } from "../../../../../lib/utils";
 
@@ -267,7 +258,7 @@ export function StandardSectionDialog({
                       <td
                         key={cell.id}
                         className={cn(
-                          "p-2 align-middle [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-[2px]",
+                          "p-2 align-middle [&:has([role=checkbox])]:pr-0 *:[role=checkbox]:translate-y-[2px]",
                           "relative",
                           cellIndex !== 0 && "text-right"
                         )}
