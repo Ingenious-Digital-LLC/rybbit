@@ -52,11 +52,3 @@ export interface Filter {
   value: (string | number)[];
   type: FilterType;
 }
-
-export const NUMERIC_FILTER_PARAMETERS: FilterParameter[] = [
-  "lat",
-  "lon",
-];
-
-export const isNumericFilterParameter = (param: FilterParameter): boolean =>
-  NUMERIC_FILTER_PARAMETERS.includes(param);
