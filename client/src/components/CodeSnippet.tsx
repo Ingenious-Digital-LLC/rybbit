@@ -40,7 +40,7 @@ export const CodeSnippet = React.memo(function CodeSnippet({
   code,
   language,
   showLanguageLabel = false,
-  className
+  className,
 }: CodeSnippetProps) {
   const [hasCopied, setHasCopied] = React.useState(false);
 
@@ -60,9 +60,9 @@ export const CodeSnippet = React.memo(function CodeSnippet({
         style={atomOneDark}
         customStyle={{
           margin: 0,
-          borderRadius: "0.5rem",
-          fontSize: "0.75rem",
-          padding: showLanguageLabel ? "2rem 1rem 1rem 1rem" : "1rem",
+          borderRadius: "4px",
+          fontSize: "12px",
+          padding: showLanguageLabel ? "20px 10px 10px 10px" : "10px",
         }}
         wrapLongLines
       >

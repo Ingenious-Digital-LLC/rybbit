@@ -1,38 +1,29 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  endpointCategories,
-  EndpointConfig,
-  methodColors,
-} from "../utils/endpointConfig";
+import { endpointCategories, EndpointConfig, methodColors } from "../utils/endpointConfig";
 import { usePlaygroundStore } from "../hooks/usePlaygroundStore";
 
 export function EndpointList() {
   const { selectedEndpoint, setSelectedEndpoint } = usePlaygroundStore();
 
   return (
-    <div className="h-full overflow-y-auto border-r border-neutral-200 dark:border-neutral-800">
-      <div className="p-3 border-b border-neutral-200 dark:border-neutral-800">
-        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-          Endpoints
-        </h2>
+    <div className="h-full overflow-y-auto border-r border-neutral-100 dark:border-neutral-850">
+      <div className="p-3 border-b border-neutral-100 dark:border-neutral-850">
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Endpoints</h2>
       </div>
       <div className="p-2">
-        {endpointCategories.map((category) => (
+        {endpointCategories.map(category => (
           <div key={category.name} className="mb-4">
             <h3 className="px-2 py-1 text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
               {category.name}
             </h3>
             <div className="space-y-1 mt-1">
-              {category.endpoints.map((endpoint) => (
+              {category.endpoints.map(endpoint => (
                 <EndpointItem
                   key={`${endpoint.method}-${endpoint.path}`}
                   endpoint={endpoint}
-                  isSelected={
-                    selectedEndpoint?.path === endpoint.path &&
-                    selectedEndpoint?.method === endpoint.method
-                  }
+                  isSelected={selectedEndpoint?.path === endpoint.path && selectedEndpoint?.method === endpoint.method}
                   onClick={() => setSelectedEndpoint(endpoint)}
                 />
               ))}
@@ -60,17 +51,10 @@ function EndpointItem({ endpoint, isSelected, onClick }: EndpointItemProps) {
         isSelected && "bg-neutral-100 dark:bg-neutral-800"
       )}
     >
-      <span
-        className={cn(
-          "shrink-0 px-1.5 py-0.5 text-[10px] font-bold rounded",
-          methodColors[endpoint.method]
-        )}
-      >
+      <span className={cn("shrink-0 px-1.5 py-0.5 text-[10px] font-bold rounded", methodColors[endpoint.method])}>
         {endpoint.method}
       </span>
-      <span className="text-sm text-neutral-700 dark:text-neutral-300 truncate">
-        {endpoint.name}
-      </span>
+      <span className="text-sm text-neutral-700 dark:text-neutral-300 truncate">{endpoint.name}</span>
     </button>
   );
 }

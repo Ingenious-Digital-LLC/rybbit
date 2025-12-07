@@ -13,21 +13,15 @@ export const CodeExamples = memo(function CodeExamples({ config }: CodeExamplesP
   const [selectedLang, setSelectedLang] = useState("cURL");
 
   // Memoize the code generation
-  const code = useMemo(
-    () => codeGenerators[selectedLang]?.(config) || "",
-    [selectedLang, config]
-  );
+  const code = useMemo(() => codeGenerators[selectedLang]?.(config) || "", [selectedLang, config]);
 
-  const language = useMemo(
-    () => getLanguageForHighlight(selectedLang),
-    [selectedLang]
-  );
+  const language = useMemo(() => getLanguageForHighlight(selectedLang), [selectedLang]);
 
   return (
     <div className="space-y-2">
       {/* Language tabs */}
-      <div className="flex flex-wrap gap-1 border-b border-neutral-200 dark:border-neutral-800 pb-2">
-        {languageOrder.map((lang) => (
+      <div className="flex flex-wrap gap-1">
+        {languageOrder.map(lang => (
           <button
             key={lang}
             onClick={() => setSelectedLang(lang)}
@@ -44,10 +38,7 @@ export const CodeExamples = memo(function CodeExamples({ config }: CodeExamplesP
       </div>
 
       {/* Code display */}
-      <CodeSnippet
-        code={code}
-        language={language}
-      />
+      <CodeSnippet code={code} language={language} />
     </div>
   );
 });

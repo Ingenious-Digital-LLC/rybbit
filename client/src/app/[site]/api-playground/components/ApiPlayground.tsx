@@ -6,19 +6,19 @@ import { ResponsePanel } from "./ResponsePanel";
 
 export function ApiPlayground() {
   return (
-    <div className="h-[calc(100vh-120px)] flex border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden bg-white dark:bg-neutral-900">
+    <div className="h-[calc(100vh-120px)] flex border border-neutral-100 dark:border-neutral-850 rounded-lg overflow-hidden bg-white dark:bg-neutral-900">
       {/* Left Column - Endpoint List */}
       <div className="w-64 shrink-0">
         <EndpointList />
       </div>
 
       {/* Center Column - Parameter Controls */}
-      <div className="w-80 shrink-0 border-l border-neutral-200 dark:border-neutral-800">
+      <div className="w-[450px] shrink-0 border-neutral-200 dark:border-neutral-800">
         <ParameterControls />
       </div>
 
       {/* Right Column - Response Panel */}
-      <div className="flex-1 min-w-0 border-l border-neutral-200 dark:border-neutral-800 overflow-hidden">
+      <div className="flex-1 min-w-0 border-l border-neutral-100 dark:border-neutral-850 overflow-hidden">
         <ResponsePanel />
       </div>
     </div>

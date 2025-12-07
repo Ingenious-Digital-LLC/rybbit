@@ -25,18 +25,14 @@ export function RequestBodyEditor() {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-          Request Body (JSON)
-        </label>
-        {error && (
-          <span className="text-xs text-red-500">{error}</span>
-        )}
+        <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Request Body (JSON)</label>
+        {error && <span className="text-xs text-red-500">{error}</span>}
       </div>
       <Textarea
         value={requestBody}
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={e => handleChange(e.target.value)}
         placeholder='{"key": "value"}'
-        className="font-mono text-xs min-h-[120px]"
+        className="text-xxs min-h-[120px]"
       />
     </div>
   );
