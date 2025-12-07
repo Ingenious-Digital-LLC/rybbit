@@ -1,35 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFilteredFilters, useStore } from "../../../lib/store";
 import { GOALS_PAGE_FILTERS } from "../../../lib/filterGroups";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchGoals, Goal, PaginationMeta, GoalsResponse } from "../standalone";
 
-export interface Goal {
-  goalId: number;
-  name: string | null;
-  goalType: "path" | "event";
-  config: {
-    pathPattern?: string;
-    eventName?: string;
-    eventPropertyKey?: string;
-    eventPropertyValue?: string | number | boolean;
-  };
-  createdAt: string;
-  total_conversions: number;
-  total_sessions: number;
-  conversion_rate: number;
-}
-
-export interface PaginationMeta {
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
-interface GoalsResponse {
-  data: Goal[];
-  meta: PaginationMeta;
-}
+// Re-export types from standalone
+export type { Goal, PaginationMeta, GoalsResponse } from "../standalone";
 
 export function useGetGoals({
   page = 1,
@@ -47,16 +23,18 @@ export function useGetGoals({
   const { site, time } = useStore();
   const filteredFilters = getFilteredFilters(GOALS_PAGE_FILTERS);
 
-  const timeParams = getQueryParams(time);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
-    queryKey: ["goals", site, timeParams, filteredFilters, page, pageSize, sort, order],
+    queryKey: ["goals", site, time, filteredFilters, page, pageSize, sort, order],
     queryFn: async () => {
-      return authedFetch<GoalsResponse>(`/goals/${site}`, {
-        ...timeParams,
+      return fetchGoals(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
         filters: filteredFilters,
         page,
-        page_size: pageSize,
+        pageSize,
         sort,
         order,
       });

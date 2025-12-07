@@ -1,51 +1,27 @@
-import { Filter } from "@rybbit/shared";
 import { useQuery } from "@tanstack/react-query";
-import { Time } from "../../../components/DateSelector/types";
 import { EVENT_FILTERS } from "../../../lib/filterGroups";
 import { getFilteredFilters, useStore } from "../../../lib/store";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchEventNames, EventName } from "../standalone";
 
-export type EventName = {
-  eventName: string;
-  count: number;
-};
+// Re-export type from standalone
+export type { EventName } from "../standalone";
 
 export function useGetEventNames() {
-  const { site, time, filters } = useStore();
+  const { site, time } = useStore();
 
-  const timeParams = getQueryParams(time);
   const filteredFilters = getFilteredFilters(EVENT_FILTERS);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
-    queryKey: ["event-names", site, timeParams, filteredFilters],
+    queryKey: ["event-names", site, time, filteredFilters],
     enabled: !!site,
-    queryFn: () => {
-      const params = {
-        ...timeParams,
+    queryFn: () =>
+      fetchEventNames(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
         filters: filteredFilters.length > 0 ? filteredFilters : undefined,
-      };
-
-      return authedFetch<{ data: EventName[] }>(`/events/names/${site}`, params).then(res => res.data);
-    },
+      }),
   });
-}
-
-/**
- * Standalone fetch function for event names (used for exports)
- */
-export async function fetchEventNames(
-  site: number | string,
-  time: Time,
-  filters: Filter[] = []
-): Promise<EventName[]> {
-  const timeParams = getQueryParams(time);
-  const params = {
-    ...timeParams,
-    filters: filters.length > 0 ? filters : undefined,
-  };
-  const response = await authedFetch<{ data: EventName[] }>(
-    `/events/names/${site}`,
-    params
-  );
-  return response.data;
 }

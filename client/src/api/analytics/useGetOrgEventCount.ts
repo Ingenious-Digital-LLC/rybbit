@@ -1,36 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { authedFetch } from "../utils";
+import { fetchOrgEventCount, OrgEventCountResponse, GetOrgEventCountResponse } from "./standalone";
 
-export type OrgEventCountResponse = {
-  event_date: string;
-  pageview_count: number;
-  custom_event_count: number;
-  performance_count: number;
-  event_count: number;
-}[];
-
-export type GetOrgEventCountResponse = {
-  data: OrgEventCountResponse;
-};
-
-async function getOrgEventCount({
-  organizationId,
-  startDate,
-  endDate,
-  timeZone = "UTC",
-}: {
-  organizationId: string;
-  startDate?: string;
-  endDate?: string;
-  timeZone?: string;
-}): Promise<GetOrgEventCountResponse> {
-  const params = new URLSearchParams();
-  if (startDate) params.append("start_date", startDate);
-  if (endDate) params.append("end_date", endDate);
-  if (timeZone) params.append("time_zone", timeZone);
-
-  return authedFetch(`/org-event-count/${organizationId}`, Object.fromEntries(params));
-}
+// Re-export types from standalone
+export type { OrgEventCountResponse, GetOrgEventCountResponse } from "./standalone";
 
 export function useGetOrgEventCount({
   organizationId,
@@ -48,8 +20,7 @@ export function useGetOrgEventCount({
   return useQuery({
     queryKey: ["org-event-count", organizationId, startDate, endDate, timeZone],
     queryFn: () =>
-      getOrgEventCount({
-        organizationId,
+      fetchOrgEventCount(organizationId, {
         startDate,
         endDate,
         timeZone,

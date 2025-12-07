@@ -41,8 +41,10 @@ export {
 export type {
   ErrorNameItem,
   ErrorNamesPaginatedResponse,
+  ErrorNamesStandardResponse,
   ErrorEvent,
   ErrorEventsPaginatedResponse,
+  ErrorEventsStandardResponse,
   GetErrorBucketedResponse,
   ErrorNamesParams,
   ErrorEventsParams,
@@ -112,6 +114,7 @@ export type {
   GetSessionsResponse,
   SessionDetails,
   SessionEvent,
+  SessionEventProps,
   SessionPageviewsAndEvents,
   LiveSessionLocation,
   SessionsParams,
@@ -136,8 +139,13 @@ export type {
   UsersListResponse,
 } from "./users";
 
-// Misc endpoints (retention, journeys)
-export { fetchRetention, fetchJourneys } from "./misc";
+// Misc endpoints (retention, journeys, page titles, org event count)
+export {
+  fetchRetention,
+  fetchJourneys,
+  fetchPageTitles,
+  fetchOrgEventCount,
+} from "./misc";
 export type {
   ProcessedRetentionData,
   RetentionMode,
@@ -145,4 +153,26 @@ export type {
   JourneysResponse,
   RetentionParams,
   JourneysParams,
+  PageTitleItem,
+  PageTitlesPaginatedResponse,
+  PageTitlesStandardResponse,
+  PageTitlesParams,
+  OrgEventCountResponse,
+  GetOrgEventCountResponse,
+  OrgEventCountParams,
 } from "./misc";
+
+// Session Replay endpoints
+export {
+  fetchSessionReplays,
+  fetchSessionReplayEvents,
+  deleteSessionReplay,
+} from "./sessionReplay";
+export type {
+  SessionReplayListItem,
+  SessionReplayListResponse,
+  SessionReplayEvent,
+  SessionReplayMetadata,
+  GetSessionReplayEventsResponse,
+  SessionReplaysParams,
+} from "./sessionReplay";

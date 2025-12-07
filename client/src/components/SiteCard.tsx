@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { useGetOverview } from "../api/analytics/useGetOverview";
 import { useGetOverviewBucketed } from "../api/analytics/useGetOverviewBucketed";
 import { useInView } from "../hooks/useInView";
-import { MINUTES_IN_24_HOURS } from "../lib/const";
 import { Favicon } from "./Favicon";
 import { SiteSessionChart } from "./SiteSessionChart";
 import { Button } from "./ui/button";

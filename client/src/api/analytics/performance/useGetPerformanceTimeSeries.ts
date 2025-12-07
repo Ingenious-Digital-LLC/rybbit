@@ -3,34 +3,13 @@ import { UseQueryOptions, UseQueryResult, useQuery } from "@tanstack/react-query
 import { usePerformanceStore } from "../../../app/[site]/performance/performanceStore";
 import { useStore } from "../../../lib/store";
 import { APIResponse } from "../../types";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchPerformanceTimeSeries, GetPerformanceTimeSeriesResponse } from "../standalone";
+
+// Re-export type from standalone
+export type { GetPerformanceTimeSeriesResponse } from "../standalone";
 
 type PeriodTime = "current" | "previous";
-
-export type GetPerformanceTimeSeriesResponse = {
-  time: string;
-  event_count: number;
-  lcp_p50: number | null;
-  lcp_p75: number | null;
-  lcp_p90: number | null;
-  lcp_p99: number | null;
-  cls_p50: number | null;
-  cls_p75: number | null;
-  cls_p90: number | null;
-  cls_p99: number | null;
-  inp_p50: number | null;
-  inp_p75: number | null;
-  inp_p90: number | null;
-  inp_p99: number | null;
-  fcp_p50: number | null;
-  fcp_p75: number | null;
-  fcp_p90: number | null;
-  fcp_p99: number | null;
-  ttfb_p50: number | null;
-  ttfb_p75: number | null;
-  ttfb_p90: number | null;
-  ttfb_p99: number | null;
-}[];
 
 export function useGetPerformanceTimeSeries({
   periodTime,
@@ -52,18 +31,18 @@ export function useGetPerformanceTimeSeries({
   const bucketToUse = bucket || storeBucket;
   const combinedFilters = [...globalFilters, ...dynamicFilters];
 
-  const queryParams = getQueryParams(timeToUse, {
-    bucket: bucketToUse,
-    filters: combinedFilters,
-  });
+  const { startDate, endDate } = getStartAndEndDate(timeToUse);
 
   return useQuery({
     queryKey: ["performance-time-series", timeToUse, bucketToUse, site, combinedFilters, selectedPerformanceMetric],
     queryFn: () => {
-      return authedFetch<APIResponse<GetPerformanceTimeSeriesResponse>>(
-        `/performance/time-series/${site}`,
-        queryParams
-      );
+      return fetchPerformanceTimeSeries(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        bucket: bucketToUse,
+        filters: combinedFilters,
+      }).then(data => ({ data }));
     },
     placeholderData: (_, query: any) => {
       if (!query?.queryKey) return undefined;

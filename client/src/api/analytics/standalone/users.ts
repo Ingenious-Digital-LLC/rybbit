@@ -1,14 +1,19 @@
 import { authedFetch } from "../../utils";
 import { CommonApiParams, PaginationParams, SortParams, toQueryParams } from "./types";
+import type { GetSessionsResponse } from "./sessions";
 
 // Re-export types from hooks
 export type { UsersResponse } from "../useGetUsers";
 export type { UserInfo, LinkedDevice } from "../userGetInfo";
-export type { UserSessionCountResponse } from "../useGetUserSessions";
 
 import type { UsersResponse } from "../useGetUsers";
 import type { UserInfo } from "../userGetInfo";
-import type { GetSessionsResponse, UserSessionCountResponse } from "../useGetUserSessions";
+
+// User session count response type
+export interface UserSessionCountResponse {
+  date: string;
+  sessions: number;
+}
 
 export interface UsersParams extends CommonApiParams, PaginationParams, SortParams {
   pageSize?: number;

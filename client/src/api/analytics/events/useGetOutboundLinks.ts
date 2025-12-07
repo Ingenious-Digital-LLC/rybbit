@@ -1,52 +1,27 @@
-import { Filter } from "@rybbit/shared";
 import { useQuery } from "@tanstack/react-query";
-import { Time } from "../../../components/DateSelector/types";
 import { EVENT_FILTERS } from "../../../lib/filterGroups";
 import { getFilteredFilters, useStore } from "../../../lib/store";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchOutboundLinks, OutboundLink } from "../standalone";
 
-export type OutboundLink = {
-  url: string;
-  count: number;
-  lastClicked: string;
-};
+// Re-export type from standalone
+export type { OutboundLink } from "../standalone";
 
 export function useGetOutboundLinks() {
-  const { site, time, filters } = useStore();
+  const { site, time } = useStore();
 
-  const timeParams = getQueryParams(time);
   const filteredFilters = getFilteredFilters(EVENT_FILTERS);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
-    queryKey: ["outbound-links", site, timeParams, filteredFilters],
+    queryKey: ["outbound-links", site, time, filteredFilters],
     enabled: !!site,
-    queryFn: () => {
-      const params = {
-        ...timeParams,
+    queryFn: () =>
+      fetchOutboundLinks(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
         filters: filteredFilters.length > 0 ? filteredFilters : undefined,
-      };
-
-      return authedFetch<{ data: OutboundLink[] }>(`/events/outbound/${site}`, params).then(res => res.data);
-    },
+      }),
   });
-}
-
-/**
- * Standalone fetch function for outbound links (used for exports)
- */
-export async function fetchOutboundLinks(
-  site: number | string,
-  time: Time,
-  filters: Filter[] = []
-): Promise<OutboundLink[]> {
-  const timeParams = getQueryParams(time);
-  const params = {
-    ...timeParams,
-    filters: filters.length > 0 ? filters : undefined,
-  };
-  const response = await authedFetch<{ data: OutboundLink[] }>(
-    `/events/outbound/${site}`,
-    params
-  );
-  return response.data;
 }

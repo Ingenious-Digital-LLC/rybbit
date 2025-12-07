@@ -1,31 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFilteredFilters, useStore } from "../../../lib/store";
 import { EVENT_FILTERS } from "../../../lib/filterGroups";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchEventProperties, EventProperty } from "../standalone";
 
-export type EventProperty = {
-  propertyKey: string;
-  propertyValue: string;
-  count: number;
-};
+// Re-export type from standalone
+export type { EventProperty } from "../standalone";
 
 export function useGetEventProperties(eventName: string | null) {
-  const { site, time, filters } = useStore();
+  const { site, time } = useStore();
 
-  const timeParams = getQueryParams(time);
   const filteredFilters = getFilteredFilters(EVENT_FILTERS);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
-    queryKey: ["event-properties", site, eventName, timeParams, filteredFilters],
+    queryKey: ["event-properties", site, eventName, time, filteredFilters],
     enabled: !!site && !!eventName,
     queryFn: () => {
-      const params = {
-        ...timeParams,
-        event_name: eventName,
+      return fetchEventProperties(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
         filters: filteredFilters.length > 0 ? filteredFilters : undefined,
-      };
-
-      return authedFetch<{ data: EventProperty[] }>(`/events/properties/${site}`, params).then(res => res.data);
+        eventName: eventName!,
+      });
     },
   });
 }

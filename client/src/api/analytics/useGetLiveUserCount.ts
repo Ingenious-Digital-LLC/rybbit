@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useStore } from "../../lib/store";
-import { authedFetch } from "../utils";
+import { fetchLiveUserCount } from "./standalone";
 
 export interface LiveUserCountResponse {
   count: number;
@@ -11,9 +11,6 @@ export function useGetLiveUsercount(minutes = 5) {
   return useQuery<LiveUserCountResponse>({
     queryKey: ["live-user-count", site, minutes],
     refetchInterval: 5000,
-    queryFn: () =>
-      authedFetch<LiveUserCountResponse>(`/live-user-count/${site}`, {
-        minutes,
-      }),
+    queryFn: () => fetchLiveUserCount(site, minutes),
   });
 }

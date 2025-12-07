@@ -1,14 +1,33 @@
 import { authedFetch } from "../../utils";
 import { CommonApiParams, PaginationParams, SortParams, toQueryParams } from "./types";
+import type { GetSessionsResponse } from "./sessions";
 
-// Re-export types from hooks
-export type { Goal, PaginationMeta } from "../goals/useGetGoals";
-export type { CreateGoalRequest } from "../goals/useCreateGoal";
-export type { UpdateGoalRequest } from "../goals/useUpdateGoal";
+// Goal type
+export interface Goal {
+  goalId: number;
+  name: string | null;
+  goalType: "path" | "event";
+  config: {
+    pathPattern?: string;
+    eventName?: string;
+    eventPropertyKey?: string;
+    eventPropertyValue?: string | number | boolean;
+  };
+  createdAt: string;
+  total_conversions: number;
+  total_sessions: number;
+  conversion_rate: number;
+}
 
-import type { Goal, PaginationMeta } from "../goals/useGetGoals";
-import type { GetSessionsResponse } from "../useGetUserSessions";
+// Pagination meta type
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
 
+// Goals response type
 export interface GoalsResponse {
   data: Goal[];
   meta: PaginationMeta;

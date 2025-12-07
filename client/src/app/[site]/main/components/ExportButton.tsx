@@ -4,10 +4,13 @@ import { FilterParameter } from "@rybbit/shared";
 import { Download, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { fetchEventNames } from "../../../../api/analytics/events/useGetEventNames";
-import { fetchOutboundLinks } from "../../../../api/analytics/events/useGetOutboundLinks";
-import { fetchMetric } from "../../../../api/analytics/useGetMetric";
-import { fetchOverviewBucketed } from "../../../../api/analytics/useGetOverviewBucketed";
+import {
+  fetchEventNames,
+  fetchMetric,
+  fetchOutboundLinks,
+  fetchOverviewBucketed,
+} from "../../../../api/analytics/standalone";
+import { getStartAndEndDate, timeZone } from "../../../../api/utils";
 import { fetchGSCConnectionStatus } from "../../../../api/gsc/useGSCConnection";
 import { fetchGSCData, GSCDimension } from "../../../../api/gsc/useGSCData";
 import { Button } from "../../../../components/ui/button";
@@ -86,6 +89,15 @@ export function ExportButton() {
     setIsExporting(true);
     const csvFiles: CSVFile[] = [];
 
+    // Convert time to API params
+    const { startDate, endDate } = getStartAndEndDate(time);
+    const commonParams = {
+      startDate: startDate ?? "",
+      endDate: endDate ?? "",
+      timeZone,
+      filters,
+    };
+
     try {
       // Fetch all metrics in parallel
       const allMetrics = [
@@ -98,8 +110,8 @@ export function ExportButton() {
 
       const metricPromises = allMetrics.map(async ({ param, filename }) => {
         try {
-          const data = await fetchMetric(site, param, time, filters);
-          return { filename, data: data as Record<string, unknown>[] };
+          const result = await fetchMetric(site, { ...commonParams, parameter: param });
+          return { filename, data: result.data as Record<string, unknown>[] };
         } catch {
           console.warn(`Failed to fetch ${param}`);
           return { filename, data: [] };
@@ -109,7 +121,7 @@ export function ExportButton() {
       // Fetch overview bucketed data
       const overviewPromise = (async () => {
         try {
-          const data = await fetchOverviewBucketed(site, time, "day", filters);
+          const data = await fetchOverviewBucketed(site, { ...commonParams, bucket: "day" });
           return {
             filename: "overview-timeseries.csv",
             data: data as unknown as Record<string, unknown>[],
@@ -123,7 +135,7 @@ export function ExportButton() {
       // Fetch weekdays heatmap data (hourly bucketed)
       const weekdaysPromise = (async () => {
         try {
-          const data = await fetchOverviewBucketed(site, time, "hour", filters);
+          const data = await fetchOverviewBucketed(site, { ...commonParams, bucket: "hour" });
           return {
             filename: "weekdays-heatmap.csv",
             data: data as unknown as Record<string, unknown>[],
@@ -137,7 +149,7 @@ export function ExportButton() {
       // Fetch events data
       const eventsPromise = (async () => {
         try {
-          const data = await fetchEventNames(site, time, filters);
+          const data = await fetchEventNames(site, commonParams);
           return {
             filename: "events.csv",
             data: data as unknown as Record<string, unknown>[],
@@ -151,7 +163,7 @@ export function ExportButton() {
       // Fetch outbound links
       const outboundPromise = (async () => {
         try {
-          const data = await fetchOutboundLinks(site, time, filters);
+          const data = await fetchOutboundLinks(site, commonParams);
           return {
             filename: "outbound-links.csv",
             data: data as unknown as Record<string, unknown>[],

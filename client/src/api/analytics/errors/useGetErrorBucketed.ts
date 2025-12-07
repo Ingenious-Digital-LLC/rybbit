@@ -1,12 +1,10 @@
 import { useStore } from "@/lib/store";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchErrorBucketed, GetErrorBucketedResponse } from "../standalone";
 
-// This should match GetErrorBucketedResponse from the backend
-export type GetErrorBucketedResponse = {
-  time: string;
-  error_count: number;
-}[];
+// Re-export type from standalone
+export type { GetErrorBucketedResponse } from "../standalone";
 
 type UseGetErrorBucketedOptions = {
   errorMessage: string;
@@ -19,18 +17,18 @@ export function useGetErrorBucketed({
 }: UseGetErrorBucketedOptions): UseQueryResult<GetErrorBucketedResponse> {
   const { time, site, filters, bucket } = useStore();
 
-  const queryParams = {
-    ...getQueryParams(time),
-    bucket,
-    errorMessage,
-    filters,
-  };
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
     queryKey: ["error-bucketed", time, site, filters, bucket, errorMessage],
     queryFn: () => {
-      return authedFetch<any>(`/error-bucketed/${site}`, queryParams).then(res => {
-        return res.data;
+      return fetchErrorBucketed(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters,
+        errorMessage,
+        bucket,
       });
     },
     enabled: enabled && !!errorMessage && !!site,

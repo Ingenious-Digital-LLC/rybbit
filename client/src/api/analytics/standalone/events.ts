@@ -1,16 +1,54 @@
 import { authedFetch } from "../../utils";
 import { CommonApiParams, PaginationParams, toQueryParams } from "./types";
 
-// Re-export types from hooks
-export type { Event, EventsResponse } from "../events/useGetEvents";
-export type { EventName } from "../events/useGetEventNames";
-export type { EventProperty } from "../events/useGetEventProperties";
-export type { OutboundLink } from "../events/useGetOutboundLinks";
+// Event type
+export type Event = {
+  timestamp: string;
+  event_name: string;
+  properties: string;
+  user_id: string;
+  hostname: string;
+  pathname: string;
+  querystring: string;
+  page_title: string;
+  referrer: string;
+  browser: string;
+  operating_system: string;
+  country: string;
+  device_type: string;
+  type: string;
+};
 
-import type { EventsResponse } from "../events/useGetEvents";
-import type { EventName } from "../events/useGetEventNames";
-import type { EventProperty } from "../events/useGetEventProperties";
-import type { OutboundLink } from "../events/useGetOutboundLinks";
+// Events response with pagination
+export interface EventsResponse {
+  data: Event[];
+  pagination: {
+    total: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+  };
+}
+
+// Event name with count
+export type EventName = {
+  eventName: string;
+  count: number;
+};
+
+// Event property key-value pair
+export type EventProperty = {
+  propertyKey: string;
+  propertyValue: string;
+  count: number;
+};
+
+// Outbound link click data
+export type OutboundLink = {
+  url: string;
+  count: number;
+  lastClicked: string;
+};
 
 export interface EventsParams extends CommonApiParams, PaginationParams {
   pageSize?: number;

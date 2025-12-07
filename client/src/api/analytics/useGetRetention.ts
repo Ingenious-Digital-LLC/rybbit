@@ -1,26 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useStore } from "../../lib/store";
-import { authedFetch } from "../utils";
+import { fetchRetention, ProcessedRetentionData, RetentionMode } from "./standalone";
 
-// Define the interface for processed retention data
-export interface ProcessedRetentionData {
-  cohorts: Record<string, { size: number; percentages: (number | null)[] }>;
-  maxPeriods: number;
-  mode: "day" | "week";
-  range: number;
-}
-
-export type RetentionMode = "day" | "week";
+// Re-export types from standalone
+export type { ProcessedRetentionData, RetentionMode } from "./standalone";
 
 export function useGetRetention(mode: RetentionMode = "week", range: number = 90) {
   const { site } = useStore();
   return useQuery<ProcessedRetentionData>({
     queryKey: ["retention", site, mode, range],
-    queryFn: async () => {
-      const response = await authedFetch<{
-        data: ProcessedRetentionData;
-      }>(`/retention/${site}`, { mode, range });
-      return response.data;
-    },
+    queryFn: () => fetchRetention(site, { mode, range }),
   });
 }

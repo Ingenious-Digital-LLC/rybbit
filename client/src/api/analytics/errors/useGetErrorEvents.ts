@@ -1,71 +1,40 @@
 import { useStore } from "@/lib/store";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { APIResponse } from "../../types";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import {
+  fetchErrorEvents,
+  ErrorEvent,
+  ErrorEventsPaginatedResponse,
+  ErrorEventsStandardResponse,
+} from "../standalone";
 
-// This should match ErrorEvent from the backend
-export type ErrorEvent = {
-  timestamp: string;
-  session_id: string;
-  user_id: string | null;
-  pathname: string | null;
-  hostname: string | null;
-  page_title: string | null;
-  referrer: string | null;
-  browser: string | null;
-  browser_version: string | null;
-  operating_system: string | null;
-  operating_system_version: string | null;
-  device_type: string | null;
-  country: string | null;
-  city: string | null;
-  region: string | null;
-  // Parsed error properties (now from backend)
-  message: string;
-  stack: string | null;
-  fileName: string | null;
-  lineNumber: number | null;
-  columnNumber: number | null;
-};
-
-// This should match the paginated response structure from getErrorEvents.ts
-export type ErrorEventsPaginatedResponse = {
-  data: ErrorEvent[];
-  totalCount: number;
-};
-
-// This is for non-paginated use
-export type ErrorEventsStandardResponse = ErrorEvent[];
-
-type UseGetErrorEventsOptions = {
-  errorMessage: string;
-  limit?: number;
-  page?: number;
-  useFilters?: boolean;
-  enabled?: boolean;
-};
+// Re-export types from standalone
+export type { ErrorEvent, ErrorEventsPaginatedResponse, ErrorEventsStandardResponse } from "../standalone";
 
 // Hook for infinite scrolling
 export function useGetErrorEventsInfinite(errorMessage: string, enabled: boolean = true) {
   const { time, site, filters } = useStore();
 
+  const { startDate, endDate } = getStartAndEndDate(time);
+
   return useInfiniteQuery({
     queryKey: ["error-events-infinite", time, site, filters, errorMessage],
     queryFn: async ({ pageParam = 1 }) => {
-      const queryParams = {
-        ...getQueryParams(time),
+      const data = await fetchErrorEvents(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters,
         errorMessage,
         limit: 20,
         page: pageParam,
-        filters,
-      };
-
-      return authedFetch<APIResponse<ErrorEventsPaginatedResponse>>(`/error-events/${site}`, queryParams);
+      });
+      return { data };
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage: APIResponse<ErrorEventsPaginatedResponse>, allPages) => {
+    getNextPageParam: (lastPage: { data: ErrorEventsPaginatedResponse }, allPages) => {
       const currentPage = allPages.length;
-      const totalItems = lastPage.data?.totalCount || 0;
+      const totalItems = lastPage?.data?.totalCount || 0;
       const itemsPerPage = 20;
       const totalPages = Math.ceil(totalItems / itemsPerPage);
 

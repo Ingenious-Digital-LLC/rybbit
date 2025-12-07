@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authedFetch } from "../../utils";
+import { createGoal } from "../standalone";
 
 export interface CreateGoalRequest {
   siteId: number;
@@ -23,14 +23,11 @@ export function useCreateGoal() {
 
   return useMutation<CreateGoalResponse, Error, CreateGoalRequest>({
     mutationFn: async goalData => {
-      try {
-        return await authedFetch<CreateGoalResponse>(`/goals/${goalData.siteId}`, undefined, {
-          method: "POST",
-          data: goalData,
-        });
-      } catch (error) {
-        throw new Error(error instanceof Error ? error.message : "Failed to create goal");
-      }
+      return createGoal(goalData.siteId, {
+        name: goalData.name,
+        goalType: goalData.goalType,
+        config: goalData.config,
+      });
     },
     onSuccess: (_, variables) => {
       // Invalidate goals query to refetch with the new goal

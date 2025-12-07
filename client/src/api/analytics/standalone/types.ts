@@ -2,12 +2,16 @@ import { Filter, FilterParameter, TimeBucket } from "@rybbit/shared";
 
 /**
  * Common parameters shared across most analytics API endpoints
+ * Supports either date range mode OR past-minutes mode
  */
 export interface CommonApiParams {
-  startDate: string; // YYYY-MM-DD format
-  endDate: string; // YYYY-MM-DD format
+  startDate: string; // YYYY-MM-DD format (empty string for past-minutes mode)
+  endDate: string; // YYYY-MM-DD format (empty string for past-minutes mode)
   timeZone: string; // IANA timezone string
   filters?: Filter[];
+  // Optional past-minutes mode params (when startDate/endDate are empty)
+  pastMinutesStart?: number;
+  pastMinutesEnd?: number;
 }
 
 /**
@@ -42,8 +46,20 @@ export interface SortParams {
 
 /**
  * Convert CommonApiParams to query params format expected by the API
+ * Handles both date range mode and past-minutes mode
  */
 export function toQueryParams(params: CommonApiParams): Record<string, any> {
+  // Use past-minutes mode if pastMinutesStart is provided
+  if (params.pastMinutesStart !== undefined) {
+    return {
+      time_zone: params.timeZone,
+      past_minutes_start: params.pastMinutesStart,
+      past_minutes_end: params.pastMinutesEnd ?? 0,
+      filters: params.filters?.length ? params.filters : undefined,
+    };
+  }
+
+  // Default to date range mode
   return {
     start_date: params.startDate,
     end_date: params.endDate,

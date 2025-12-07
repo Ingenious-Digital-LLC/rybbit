@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { authedFetch, getQueryParams } from "../../utils";
-import { GetSessionsResponse } from "../useGetUserSessions";
 import { Time } from "../../../components/DateSelector/types";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchGoalSessions, GetSessionsResponse } from "../standalone";
 
-interface GoalSessionsResponse {
-  data: GetSessionsResponse;
-}
+// Re-export type from standalone
+export type { GetSessionsResponse } from "../standalone";
 
 export function useGetGoalSessions({
   goalId,
@@ -22,13 +21,16 @@ export function useGetGoalSessions({
   limit?: number;
   enabled?: boolean;
 }) {
-  const timeParams = getQueryParams(time);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
-    queryKey: ["goal-sessions", goalId, siteId, timeParams, page, limit],
+    queryKey: ["goal-sessions", goalId, siteId, time, page, limit],
     queryFn: async () => {
-      return authedFetch<GoalSessionsResponse>(`/goals/${goalId}/sessions/${siteId}`, {
-        ...timeParams,
+      return fetchGoalSessions(siteId, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        goalId,
         page,
         limit,
       });

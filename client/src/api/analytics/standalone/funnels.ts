@@ -1,18 +1,49 @@
 import { authedFetch } from "../../utils";
 import { CommonApiParams, PaginationParams, toQueryParams } from "./types";
+import type { GetSessionsResponse } from "./sessions";
 
-// Re-export types from hooks
-export type { SavedFunnel } from "../funnels/useGetFunnels";
-export type {
-  FunnelStep,
-  FunnelRequest,
-  SaveFunnelRequest,
-  FunnelResponse,
-} from "../funnels/useGetFunnel";
+// Funnel step type
+export type FunnelStep = {
+  value: string;
+  name?: string;
+  type: "page" | "event";
+  hostname?: string;
+  eventPropertyKey?: string;
+  eventPropertyValue?: string | number | boolean;
+};
 
-import type { SavedFunnel } from "../funnels/useGetFunnels";
-import type { FunnelStep, FunnelResponse } from "../funnels/useGetFunnel";
-import type { GetSessionsResponse } from "../useGetUserSessions";
+// Funnel request type
+export type FunnelRequest = {
+  steps: FunnelStep[];
+  name?: string;
+};
+
+// Save funnel request type
+export type SaveFunnelRequest = {
+  steps: FunnelStep[];
+  name: string;
+  reportId?: number;
+};
+
+// Funnel response type
+export type FunnelResponse = {
+  step_number: number;
+  step_name: string;
+  visitors: number;
+  conversion_rate: number;
+  dropoff_rate: number;
+};
+
+// Saved funnel type
+export interface SavedFunnel {
+  id: number;
+  name: string;
+  steps: FunnelStep[];
+  createdAt: string;
+  updatedAt: string;
+  conversionRate: number | null;
+  totalVisitors: number | null;
+}
 
 export interface AnalyzeFunnelParams extends CommonApiParams {
   steps: FunnelStep[];

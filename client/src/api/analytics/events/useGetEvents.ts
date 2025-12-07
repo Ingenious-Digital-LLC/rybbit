@@ -1,34 +1,11 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Time } from "../../../components/DateSelector/types";
 import { useStore } from "../../../lib/store";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchEvents, Event, EventsResponse } from "../standalone";
 
-export type Event = {
-  timestamp: string;
-  event_name: string;
-  properties: string;
-  user_id: string;
-  hostname: string;
-  pathname: string;
-  querystring: string;
-  page_title: string;
-  referrer: string;
-  browser: string;
-  operating_system: string;
-  country: string;
-  device_type: string;
-  type: string;
-};
-
-export interface EventsResponse {
-  data: Event[];
-  pagination: {
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-  };
-}
+// Re-export types from standalone
+export type { Event, EventsResponse } from "../standalone";
 
 export interface GetEventsOptions {
   time?: Time;
@@ -40,34 +17,40 @@ export interface GetEventsOptions {
 
 export function useGetEvents(count = 10) {
   const { site } = useStore();
+
   return useQuery({
     queryKey: ["events", site, count],
     refetchInterval: 5000,
     queryFn: () =>
-      authedFetch<{ data: Event[] }>(`/events/${site}`, {
-        count,
+      fetchEvents(site, {
+        startDate: "",
+        endDate: "",
+        timeZone,
+        limit: count,
       }).then(res => res.data),
   });
 }
 
-// New hook with pagination and filtering support
+// Hook with pagination and filtering support
 export function useGetEventsInfinite(options: GetEventsOptions = {}) {
   const { site, time, filters } = useStore();
   const pageSize = options.pageSize || 20;
+
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useInfiniteQuery<EventsResponse, Error>({
     queryKey: ["events-infinite", site, time, filters, pageSize, options.isRealtime],
     initialPageParam: 1,
     queryFn: async ({ pageParam }) => {
-      const params = getQueryParams(time, {
-        page: pageParam,
-        page_size: pageSize,
-        filters: filters && filters.length > 0 ? JSON.stringify(filters) : undefined,
-        count: options.count,
+      return fetchEvents(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters: filters && filters.length > 0 ? filters : undefined,
+        page: pageParam as number,
+        pageSize,
+        limit: options.count,
       });
-
-      const response = await authedFetch<EventsResponse>(`/events/${site}`, params);
-      return response;
     },
     getNextPageParam: (lastPage: EventsResponse) => {
       if (lastPage.pagination.page < lastPage.pagination.totalPages) {

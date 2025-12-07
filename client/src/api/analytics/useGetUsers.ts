@@ -1,10 +1,10 @@
 import { Filter } from "@rybbit/shared";
 import { useQuery } from "@tanstack/react-query";
-import { timeZone } from "../../lib/dateTimeUtils";
 import { getFilteredFilters, useStore } from "../../lib/store";
 import { USER_PAGE_FILTERS } from "../../lib/filterGroups";
 import { APIResponse } from "../types";
-import { authedFetch, getQueryParams } from "../utils";
+import { getStartAndEndDate, timeZone } from "../utils";
+import { fetchUsers } from "./standalone";
 
 export type UsersResponse = {
   user_id: string; // Device fingerprint
@@ -37,8 +37,7 @@ export interface GetUsersOptions {
 
 export function useGetUsers(options: GetUsersOptions) {
   const { time, site } = useStore();
-  // Get the appropriate time parameters using getQueryParams
-  const timeParams = getQueryParams(time);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   const { page, pageSize, sortBy, sortOrder, identifiedOnly = false } = options;
   const filteredFilters = getFilteredFilters(USER_PAGE_FILTERS);
@@ -52,33 +51,27 @@ export function useGetUsers(options: GetUsersOptions) {
   >({
     queryKey: ["users", site, time, page, pageSize, sortBy, sortOrder, filteredFilters, identifiedOnly],
     queryFn: async () => {
-      // Build request parameters
-      const requestParams: Record<string, any> = {
-        time_zone: timeZone,
+      const result = await fetchUsers(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
         filters: filteredFilters,
         page,
-        page_size: pageSize,
-        sort_by: sortBy,
-        sort_order: sortOrder,
-        identified_only: identifiedOnly,
+        pageSize,
+        sortBy,
+        sortOrder: sortOrder as "asc" | "desc",
+        identifiedOnly,
+      });
+      return {
+        data: result.data as UsersResponse[],
+        totalCount: result.totalCount,
+        page: result.page,
+        pageSize: result.pageSize,
       };
-
-      // Add time parameters (getQueryParams handles both past-minutes and regular modes)
-      Object.assign(requestParams, timeParams);
-
-      return authedFetch<
-        APIResponse<UsersResponse[]> & {
-          totalCount: number;
-          page: number;
-          pageSize: number;
-        }
-      >(`/users/${site}`, requestParams);
     },
     // Use default staleTime (0) for real-time data
     staleTime: 0,
     // Enable refetching when the window regains focus
     refetchOnWindowFocus: true,
-    // Add a background refetch interval (every 30 seconds)
-    // refetchInterval: 30000,
   });
 }

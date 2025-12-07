@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useStore } from "../../../lib/store";
-import { authedFetch } from "../../utils";
+import { deleteSessionReplay } from "../standalone";
 
 interface DeleteSessionReplayParams {
   sessionId: string;
@@ -12,14 +12,7 @@ export function useDeleteSessionReplay() {
 
   return useMutation({
     mutationFn: async ({ sessionId }: DeleteSessionReplayParams) => {
-      const response = await authedFetch<{ success: boolean }>(
-        `/session-replay/${sessionId}/${site}`,
-        {},
-        {
-          method: "DELETE",
-        }
-      );
-      return response;
+      return deleteSessionReplay(site, sessionId);
     },
     onSuccess: () => {
       // Invalidate the session replay list query to refetch data

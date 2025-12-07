@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authedFetch } from "../../utils";
 import { useStore } from "../../../lib/store";
+import { updateGoal } from "../standalone";
 
 export interface UpdateGoalRequest {
   goalId: number;
@@ -26,14 +26,12 @@ export function useUpdateGoal() {
 
   return useMutation<UpdateGoalResponse, Error, UpdateGoalRequest>({
     mutationFn: async goalData => {
-      try {
-        return await authedFetch<UpdateGoalResponse>(`/goals/${goalData.goalId}/${goalData.siteId}`, undefined, {
-          method: "PUT",
-          data: goalData,
-        });
-      } catch (error) {
-        throw new Error(error instanceof Error ? error.message : "Failed to update goal");
-      }
+      return updateGoal(goalData.siteId, {
+        goalId: goalData.goalId,
+        name: goalData.name,
+        goalType: goalData.goalType,
+        config: goalData.config,
+      });
     },
     onSuccess: () => {
       // Invalidate goals query to refetch with the updated goal

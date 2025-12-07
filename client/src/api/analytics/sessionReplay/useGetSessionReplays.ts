@@ -1,33 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useStore } from "../../../lib/store";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchSessionReplays, SessionReplayListItem, SessionReplayListResponse } from "../standalone";
 
-export interface SessionReplayListItem {
-  session_id: string;
-  user_id: string;
-  identified_user_id: string;
-  traits: Record<string, unknown> | null;
-  start_time: string;
-  end_time?: string;
-  duration_ms?: number;
-  page_url: string;
-  event_count: number;
-  country: string;
-  region: string;
-  city: string;
-  browser: string;
-  browser_version: string;
-  operating_system: string;
-  operating_system_version: string;
-  device_type: string;
-  screen_width: number;
-  screen_height: number;
-}
-
-export interface SessionReplayListResponse {
-  data: SessionReplayListItem[];
-  totalCount: number;
-}
+// Re-export types from standalone
+export type { SessionReplayListItem, SessionReplayListResponse } from "../standalone";
 
 type UseGetSessionReplaysOptions = {
   limit?: number;
@@ -36,20 +13,20 @@ type UseGetSessionReplaysOptions = {
 
 export function useGetSessionReplays({ limit = 20, minDuration = 30 }: UseGetSessionReplaysOptions = {}) {
   const { time, site, filters } = useStore();
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useInfiniteQuery({
     queryKey: ["session-replays", site, time, filters, limit, minDuration],
     queryFn: async ({ pageParam = 0 }) => {
-      const queryParams = {
-        ...getQueryParams(time),
+      return fetchSessionReplays(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters,
         limit,
         offset: pageParam,
-        filters,
         minDuration,
-      };
-
-      const response = await authedFetch<SessionReplayListResponse>(`/session-replay/list/${site}`, queryParams);
-      return response;
+      });
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {

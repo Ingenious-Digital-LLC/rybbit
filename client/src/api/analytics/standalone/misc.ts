@@ -1,12 +1,55 @@
 import { authedFetch } from "../../utils";
-import { CommonApiParams, toQueryParams } from "./types";
+import { CommonApiParams, PaginationParams, toQueryParams } from "./types";
 
-// Re-export types from hooks
-export type { ProcessedRetentionData, RetentionMode } from "../useGetRetention";
-export type { Journey, JourneysResponse } from "../useGetJourneys";
+// Retention types
+export interface ProcessedRetentionData {
+  cohorts: Record<string, { size: number; percentages: (number | null)[] }>;
+  maxPeriods: number;
+  mode: "day" | "week";
+  range: number;
+}
 
-import type { ProcessedRetentionData, RetentionMode } from "../useGetRetention";
-import type { JourneysResponse } from "../useGetJourneys";
+export type RetentionMode = "day" | "week";
+
+// Journey types
+export interface Journey {
+  path: string[];
+  count: number;
+  percentage: number;
+}
+
+export interface JourneysResponse {
+  journeys: Journey[];
+}
+
+// Page title types
+export type PageTitleItem = {
+  value: string; // The page_title
+  pathname: string; // A representative pathname
+  count: number;
+  percentage: number;
+  time_on_page_seconds?: number;
+};
+
+export type PageTitlesPaginatedResponse = {
+  data: PageTitleItem[];
+  totalCount: number;
+};
+
+export type PageTitlesStandardResponse = PageTitleItem[];
+
+// Org event count types
+export type OrgEventCountResponse = {
+  event_date: string;
+  pageview_count: number;
+  custom_event_count: number;
+  performance_count: number;
+  event_count: number;
+}[];
+
+export type GetOrgEventCountResponse = {
+  data: OrgEventCountResponse;
+};
 
 export interface RetentionParams {
   mode?: RetentionMode;
@@ -56,6 +99,57 @@ export async function fetchJourneys(
 
   const response = await authedFetch<JourneysResponse>(
     `/journeys/${site}`,
+    queryParams
+  );
+  return response;
+}
+
+export interface PageTitlesParams extends CommonApiParams, PaginationParams {
+  useFilters?: boolean;
+}
+
+export interface OrgEventCountParams {
+  startDate?: string;
+  endDate?: string;
+  timeZone?: string;
+}
+
+/**
+ * Fetch page titles with pagination
+ * GET /api/page-titles/:site
+ */
+export async function fetchPageTitles(
+  site: string | number,
+  params: PageTitlesParams
+): Promise<PageTitlesPaginatedResponse> {
+  const queryParams = {
+    ...toQueryParams(params),
+    limit: params.limit,
+    page: params.page,
+  };
+
+  const response = await authedFetch<{ data: PageTitlesPaginatedResponse }>(
+    `/page-titles/${site}`,
+    queryParams
+  );
+  return response.data;
+}
+
+/**
+ * Fetch organization event count
+ * GET /api/org-event-count/:organizationId
+ */
+export async function fetchOrgEventCount(
+  organizationId: string,
+  params: OrgEventCountParams = {}
+): Promise<GetOrgEventCountResponse> {
+  const queryParams: Record<string, string> = {};
+  if (params.startDate) queryParams.start_date = params.startDate;
+  if (params.endDate) queryParams.end_date = params.endDate;
+  if (params.timeZone) queryParams.time_zone = params.timeZone;
+
+  const response = await authedFetch<GetOrgEventCountResponse>(
+    `/org-event-count/${organizationId}`,
     queryParams
   );
   return response;

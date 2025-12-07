@@ -1,25 +1,15 @@
 import { useStore } from "@/lib/store";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { APIResponse } from "../../types";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import {
+  fetchErrorNames,
+  ErrorNameItem,
+  ErrorNamesPaginatedResponse,
+  ErrorNamesStandardResponse,
+} from "../standalone";
 
-// This should match ErrorNameItem from the backend
-export type ErrorNameItem = {
-  value: string; // Error message
-  errorName: string; // Error type (TypeError, ReferenceError, etc.)
-  count: number; // Total occurrences
-  sessionCount: number; // Unique sessions affected
-  percentage: number;
-};
-
-// This should match the paginated response structure from getErrorNames.ts
-export type ErrorNamesPaginatedResponse = {
-  data: ErrorNameItem[];
-  totalCount: number;
-};
-
-// This is for non-paginated use by StandardSection (or similar)
-export type ErrorNamesStandardResponse = ErrorNameItem[];
+// Re-export types from standalone
+export type { ErrorNameItem, ErrorNamesPaginatedResponse, ErrorNamesStandardResponse } from "../standalone";
 
 type UseGetErrorNamesOptions = {
   limit?: number;
@@ -32,20 +22,23 @@ export function useGetErrorNamesPaginated({
   limit = 10,
   page = 1,
   useFilters = true,
-}: UseGetErrorNamesOptions): UseQueryResult<APIResponse<ErrorNamesPaginatedResponse>> {
+}: UseGetErrorNamesOptions): UseQueryResult<{ data: ErrorNamesPaginatedResponse }> {
   const { time, site, filters } = useStore();
 
-  const queryParams = {
-    ...getQueryParams(time),
-    limit,
-    page,
-    filters: useFilters ? filters : undefined,
-  };
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
     queryKey: ["error-names", time, site, filters, limit, page],
-    queryFn: () => {
-      return authedFetch<APIResponse<ErrorNamesPaginatedResponse>>(`/error-names/${site}`, queryParams);
+    queryFn: async () => {
+      const data = await fetchErrorNames(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters: useFilters ? filters : undefined,
+        limit,
+        page,
+      });
+      return { data };
     },
     staleTime: Infinity,
   });
@@ -55,19 +48,22 @@ export function useGetErrorNamesPaginated({
 export function useGetErrorNames({
   limit = 10,
   useFilters = true,
-}: Omit<UseGetErrorNamesOptions, "page">): UseQueryResult<APIResponse<ErrorNamesStandardResponse>> {
+}: Omit<UseGetErrorNamesOptions, "page">): UseQueryResult<{ data: ErrorNamesPaginatedResponse }> {
   const { time, site, filters } = useStore();
 
-  const queryParams = {
-    ...getQueryParams(time),
-    limit,
-    filters: useFilters ? filters : undefined,
-  };
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
     queryKey: ["error-names", time, site, filters, limit],
-    queryFn: () => {
-      return authedFetch<APIResponse<ErrorNamesStandardResponse>>(`/error-names/${site}`, queryParams);
+    queryFn: async () => {
+      const data = await fetchErrorNames(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters: useFilters ? filters : undefined,
+        limit,
+      });
+      return { data };
     },
     staleTime: Infinity,
   });

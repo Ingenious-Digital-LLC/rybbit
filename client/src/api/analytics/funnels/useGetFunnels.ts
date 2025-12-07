@@ -1,17 +1,8 @@
-import { Filter } from "@rybbit/shared";
 import { useQuery } from "@tanstack/react-query";
-import { authedFetch } from "../../utils";
-import { FunnelStep } from "./useGetFunnel";
+import { fetchFunnels, SavedFunnel } from "../standalone";
 
-export interface SavedFunnel {
-  id: number;
-  name: string;
-  steps: FunnelStep[];
-  createdAt: string;
-  updatedAt: string;
-  conversionRate: number | null;
-  totalVisitors: number | null;
-}
+// Re-export types from standalone
+export type { SavedFunnel, FunnelStep } from "../standalone";
 
 export function useGetFunnels(siteId?: string | number) {
   return useQuery<SavedFunnel[]>({
@@ -20,12 +11,7 @@ export function useGetFunnels(siteId?: string | number) {
       if (!siteId) {
         return [];
       }
-      try {
-        const response = await authedFetch<{ data: SavedFunnel[] }>(`/funnels/${siteId}`);
-        return response.data;
-      } catch (error) {
-        throw new Error("Failed to fetch funnels");
-      }
+      return fetchFunnels(siteId);
     },
     enabled: !!siteId,
   });

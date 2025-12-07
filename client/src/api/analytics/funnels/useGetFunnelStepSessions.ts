@@ -2,13 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Time } from "../../../components/DateSelector/types";
 import { FUNNEL_PAGE_FILTERS } from "../../../lib/filterGroups";
 import { getFilteredFilters } from "../../../lib/store";
-import { authedFetch, getQueryParams } from "../../utils";
-import { GetSessionsResponse } from "../useGetUserSessions";
-import { FunnelStep } from "./useGetFunnel";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchFunnelStepSessions, FunnelStep, GetSessionsResponse } from "../standalone";
 
-interface FunnelStepSessionsResponse {
-  data: GetSessionsResponse;
-}
+// Re-export types from standalone
+export type { FunnelStep, GetSessionsResponse } from "../standalone";
 
 export function useGetFunnelStepSessions({
   steps,
@@ -29,26 +27,23 @@ export function useGetFunnelStepSessions({
   limit?: number;
   enabled?: boolean;
 }) {
-  const timeParams = getQueryParams(time);
   const filteredFilters = getFilteredFilters(FUNNEL_PAGE_FILTERS);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useQuery({
-    queryKey: ["funnel-step-sessions", steps, stepNumber, siteId, timeParams, mode, page, limit, filteredFilters],
+    queryKey: ["funnel-step-sessions", steps, stepNumber, siteId, time, mode, page, limit, filteredFilters],
     queryFn: async () => {
-      return authedFetch<FunnelStepSessionsResponse>(
-        `/funnels/${stepNumber}/sessions/${siteId}`,
-        {
-          ...timeParams,
-          mode,
-          page,
-          limit,
-          filters: filteredFilters,
-        },
-        {
-          method: "POST",
-          data: { steps },
-        }
-      );
+      return fetchFunnelStepSessions(siteId, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters: filteredFilters,
+        steps,
+        stepNumber,
+        mode,
+        page,
+        limit,
+      });
     },
     enabled: !!siteId && !!steps && steps.length >= 2 && enabled,
   });

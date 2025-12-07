@@ -8,8 +8,9 @@ import {
 } from "@tanstack/react-query";
 import { useStore } from "../../lib/store";
 import { APIResponse } from "../types";
-import { authedFetch, getQueryParams } from "../utils";
+import { getStartAndEndDate, timeZone } from "../utils";
 import { Time } from "../../components/DateSelector/types";
+import { fetchMetric } from "./standalone";
 
 type PeriodTime = "current" | "previous";
 
@@ -49,21 +50,21 @@ export function useMetric({
         }
       : timeToUse;
 
-  const queryParams = getQueryParams(timeForQuery, {
-    parameter,
-    limit,
-    filters: useFilters ? filters : undefined,
-  });
-
+  const { startDate, endDate } = getStartAndEndDate(timeForQuery);
   const queryKey = [parameter, timeForQuery, site, filters, limit, useFilters];
 
   return useQuery({
     queryKey,
     queryFn: async () => {
-      const response = await authedFetch<{
-        data: APIResponse<MetricResponse[]>;
-      }>(`/metric/${site}`, queryParams);
-      return response.data;
+      const result = await fetchMetric(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        parameter,
+        limit,
+        filters: useFilters ? filters : undefined,
+      });
+      return { data: result.data };
     },
     staleTime: 60_000,
     placeholderData: (_, query: any) => {
@@ -104,20 +105,26 @@ export function usePaginatedMetric({
   customTime?: Time;
 }): UseQueryResult<PaginatedResponse> {
   const { time, site, filters } = useStore();
-
-  const queryParams = {
-    ...getQueryParams(customTime ?? time),
-    parameter,
-    limit,
-    page,
-    filters: useFilters ? (customFilters.length > 0 ? customFilters : [...filters, ...additionalFilters]) : undefined,
-  };
+  const timeToUse = customTime ?? time;
+  const { startDate, endDate } = getStartAndEndDate(timeToUse);
+  const combinedFilters = useFilters
+    ? customFilters.length > 0
+      ? customFilters
+      : [...filters, ...additionalFilters]
+    : undefined;
 
   return useQuery({
     queryKey: [parameter, customTime, time, site, filters, limit, page, additionalFilters, customFilters],
     queryFn: async () => {
-      const response = await authedFetch<{ data: PaginatedResponse }>(`/metric/${site}`, queryParams);
-      return response.data;
+      return fetchMetric(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        parameter,
+        limit,
+        page,
+        filters: combinedFilters,
+      });
     },
     staleTime: 60_000,
     placeholderData: (_, query: any) => {
@@ -144,22 +151,20 @@ export function useInfiniteMetric({
   useFilters?: boolean;
 }): UseInfiniteQueryResult<InfiniteData<PaginatedResponse>> {
   const { time, site, filters } = useStore();
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   return useInfiniteQuery({
     queryKey: [parameter, time, site, filters, limit, "infinite-metric"],
     queryFn: async ({ pageParam = 1 }) => {
-      const queryParams = {
-        ...getQueryParams(time),
+      return fetchMetric(site, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
         parameter,
         limit,
         page: pageParam,
         filters: useFilters ? filters : undefined,
-      };
-
-      const response = await authedFetch<{
-        data: PaginatedResponse;
-      }>(`/metric/${site}`, queryParams);
-      return response.data;
+      });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
@@ -175,27 +180,4 @@ export function useInfiniteMetric({
     },
     staleTime: 60_000,
   });
-}
-
-/**
- * Standalone fetch function for metric data (used for exports)
- */
-export async function fetchMetric(
-  site: number | string,
-  parameter: FilterParameter,
-  time: Time,
-  filters: Filter[] = [],
-  limit = 100
-): Promise<MetricResponse[]> {
-  const queryParams = {
-    ...getQueryParams(time),
-    parameter,
-    limit,
-    filters: filters.length > 0 ? filters : undefined,
-  };
-  const response = await authedFetch<{ data: { data: MetricResponse[] } }>(
-    `/metric/${site}`,
-    queryParams
-  );
-  return response.data.data;
 }

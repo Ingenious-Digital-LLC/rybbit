@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useStore } from "../../lib/store";
-import { authedFetch, getQueryParams } from "../utils";
+import { getStartAndEndDate, timeZone } from "../utils";
+import { fetchOverview } from "./standalone";
 
 export type GetOverviewResponse = {
   sessions: number;
@@ -28,14 +29,31 @@ export function useGetOverview({ periodTime, site, overrideTime }: UseGetOvervie
   const baseTime = overrideTime || time;
   const timeToUse = periodTime === "previous" ? previousTime : baseTime;
 
-  const queryParams = getQueryParams(timeToUse, { filters });
-
+  const { startDate, endDate } = getStartAndEndDate(timeToUse);
   const queryKey = ["overview", timeToUse, site, filters];
 
   return useQuery({
     queryKey,
     queryFn: () => {
-      return authedFetch<{ data: GetOverviewResponse }>(`/overview/${site}`, queryParams);
+      // Build params based on time mode
+      const params =
+        timeToUse.mode === "past-minutes"
+          ? {
+              startDate: "",
+              endDate: "",
+              timeZone,
+              filters,
+              pastMinutesStart: timeToUse.pastMinutesStart,
+              pastMinutesEnd: timeToUse.pastMinutesEnd,
+            }
+          : {
+              startDate: startDate ?? "",
+              endDate: endDate ?? "",
+              timeZone,
+              filters,
+            };
+
+      return fetchOverview(site!, params).then(data => ({ data }));
     },
     staleTime: 60_000,
     placeholderData: (_, query: any) => {

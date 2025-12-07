@@ -1,9 +1,9 @@
 import { Filter, TimeBucket } from "@rybbit/shared";
-import { Time } from "../../components/DateSelector/types";
 import { UseQueryOptions, UseQueryResult, useQuery } from "@tanstack/react-query";
 import { useStore } from "../../lib/store";
 import { APIResponse } from "../types";
-import { authedFetch, getQueryParams } from "../utils";
+import { getStartAndEndDate, timeZone } from "../utils";
+import { fetchOverviewBucketed } from "./standalone";
 
 type PeriodTime = "current" | "previous";
 
@@ -43,12 +43,6 @@ export function useGetOverviewBucketed({
   const timeToUse = periodTime === "previous" ? previousTime : baseTime;
   const combinedFilters = [...globalFilters, ...dynamicFilters];
 
-  // Use getQueryParams utility to handle conditional logic
-  const queryParams = getQueryParams(timeToUse, {
-    bucket,
-    filters: combinedFilters,
-  });
-
   // Generate appropriate query key based on whether we're using past minutes or regular time
   const queryKey =
     timeToUse.mode === "past-minutes"
@@ -62,10 +56,32 @@ export function useGetOverviewBucketed({
         ]
       : ["overview-bucketed", timeToUse, bucket, site, combinedFilters];
 
+  const { startDate, endDate } = getStartAndEndDate(timeToUse);
+
   return useQuery({
     queryKey,
     queryFn: () => {
-      return authedFetch<APIResponse<GetOverviewBucketedResponse>>(`/overview-bucketed/${site}`, queryParams);
+      // Build params based on time mode
+      const params =
+        timeToUse.mode === "past-minutes"
+          ? {
+              startDate: "",
+              endDate: "",
+              timeZone,
+              bucket,
+              filters: combinedFilters,
+              pastMinutesStart: timeToUse.pastMinutesStart,
+              pastMinutesEnd: timeToUse.pastMinutesEnd,
+            }
+          : {
+              startDate: startDate ?? "",
+              endDate: endDate ?? "",
+              timeZone,
+              bucket,
+              filters: combinedFilters,
+            };
+
+      return fetchOverviewBucketed(site, params).then(data => ({ data }));
     },
     refetchInterval,
     placeholderData: (_, query: any) => {
@@ -82,21 +98,4 @@ export function useGetOverviewBucketed({
     staleTime: 60_000,
     ...props,
   });
-}
-
-/**
- * Standalone fetch function for overview bucketed data (used for exports)
- */
-export async function fetchOverviewBucketed(
-  site: number | string,
-  time: Time,
-  bucket: TimeBucket = "day",
-  filters: Filter[] = []
-): Promise<GetOverviewBucketedResponse> {
-  const queryParams = getQueryParams(time, { bucket, filters });
-  const response = await authedFetch<APIResponse<GetOverviewBucketedResponse>>(
-    `/overview-bucketed/${site}`,
-    queryParams
-  );
-  return response.data;
 }

@@ -1,24 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { usePerformanceStore } from "../../../app/[site]/performance/performanceStore";
 import { useStore } from "../../../lib/store";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import { fetchPerformanceOverview, GetPerformanceOverviewResponse } from "../standalone";
 
-export type GetPerformanceOverviewResponse = {
-  current: {
-    lcp: number;
-    cls: number;
-    inp: number;
-    fcp: number;
-    ttfb: number;
-  };
-  previous: {
-    lcp: number;
-    cls: number;
-    inp: number;
-    fcp: number;
-    ttfb: number;
-  };
-};
+// Re-export type from standalone
+export type { GetPerformanceOverviewResponse } from "../standalone";
 
 type PeriodTime = "current" | "previous";
 
@@ -27,15 +14,18 @@ export function useGetPerformanceOverview({ periodTime, site }: { periodTime?: P
   const { selectedPercentile } = usePerformanceStore();
   const timeToUse = periodTime === "previous" ? previousTime : time;
 
-  const queryParams = getQueryParams(timeToUse, {
-    filters,
-    percentile: selectedPercentile,
-  });
+  const { startDate, endDate } = getStartAndEndDate(timeToUse);
 
   return useQuery({
     queryKey: ["performance-overview", timeToUse, site, filters, selectedPercentile],
     queryFn: () => {
-      return authedFetch<{ data: GetPerformanceOverviewResponse }>(`/performance/overview/${site}`, queryParams);
+      return fetchPerformanceOverview(site!, {
+        startDate: startDate ?? "",
+        endDate: endDate ?? "",
+        timeZone,
+        filters,
+        percentile: selectedPercentile,
+      }).then(data => ({ data }));
     },
     staleTime: Infinity,
     placeholderData: (_, query: any) => {

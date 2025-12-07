@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authedFetch } from "../../utils";
 import { useStore } from "../../../lib/store";
+import { deleteGoal } from "../standalone";
 
 export function useDeleteGoal() {
   const queryClient = useQueryClient();
@@ -8,13 +8,7 @@ export function useDeleteGoal() {
 
   return useMutation<{ success: boolean }, Error, number>({
     mutationFn: async (goalId: number) => {
-      try {
-        return await authedFetch<{ success: boolean }>(`/goals/${goalId}/${site}`, undefined, {
-          method: "DELETE",
-        });
-      } catch (error) {
-        throw new Error(error instanceof Error ? error.message : "Failed to delete goal");
-      }
+      return deleteGoal(site, goalId);
     },
     onSuccess: () => {
       // Invalidate goals query to refetch without the deleted goal

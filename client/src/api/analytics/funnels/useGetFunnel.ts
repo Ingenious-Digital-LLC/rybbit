@@ -1,37 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
-import { timeZone } from "../../../lib/dateTimeUtils";
 import { FUNNEL_PAGE_FILTERS } from "../../../lib/filterGroups";
 import { getFilteredFilters, useStore } from "../../../lib/store";
-import { authedFetch, getQueryParams } from "../../utils";
+import { getStartAndEndDate, timeZone } from "../../utils";
+import {
+  analyzeFunnel,
+  saveFunnel,
+  FunnelStep,
+  FunnelRequest,
+  SaveFunnelRequest,
+  FunnelResponse,
+} from "../standalone";
 
-export type FunnelStep = {
-  value: string;
-  name?: string;
-  type: "page" | "event";
-  hostname?: string;
-  eventPropertyKey?: string;
-  eventPropertyValue?: string | number | boolean;
-};
-
-export type FunnelRequest = {
-  steps: FunnelStep[];
-  name?: string;
-};
-
-export type SaveFunnelRequest = {
-  steps: FunnelStep[];
-  name: string;
-  reportId?: number;
-};
-
-export type FunnelResponse = {
-  step_number: number;
-  step_name: string;
-  visitors: number;
-  conversion_rate: number;
-  dropoff_rate: number;
-};
+// Re-export types from standalone
+export type { FunnelStep, FunnelRequest, SaveFunnelRequest, FunnelResponse } from "../standalone";
 
 /**
  * Hook for analyzing conversion funnels through a series of steps
@@ -40,29 +22,27 @@ export function useGetFunnel(config?: FunnelRequest, debounce?: boolean) {
   const { site, time } = useStore();
 
   const debouncedConfig = useDebounce(config, 500);
-
-  const queryParams = getQueryParams(time, { filters: getFilteredFilters(FUNNEL_PAGE_FILTERS) });
+  const filteredFilters = getFilteredFilters(FUNNEL_PAGE_FILTERS);
+  const { startDate, endDate } = getStartAndEndDate(time);
 
   const configToUse = debounce ? debouncedConfig : config;
 
   return useQuery<FunnelResponse[], Error>({
-    queryKey: ["funnel", site, queryParams, configToUse?.steps.map(s => s.value + s.type)],
+    queryKey: ["funnel", site, time, filteredFilters, configToUse?.steps.map(s => s.value + s.type)],
     queryFn: async () => {
       if (!configToUse) {
         throw new Error("Funnel configuration is required");
       }
 
-      // Add time zone to the request
-      const fullConfig = {
-        ...configToUse,
-      };
       try {
-        const response = await authedFetch<{ data: FunnelResponse[] }>(`/funnels/analyze/${site}`, queryParams, {
-          method: "POST",
-          data: fullConfig,
+        return analyzeFunnel(site, {
+          startDate: startDate ?? "",
+          endDate: endDate ?? "",
+          timeZone,
+          filters: filteredFilters,
+          steps: configToUse.steps,
+          name: configToUse.name,
         });
-
-        return response.data;
       } catch (error) {
         throw new Error("Failed to analyze funnel");
       }
@@ -80,20 +60,11 @@ export function useSaveFunnel() {
 
   return useMutation<{ success: boolean; funnelId: number }, Error, SaveFunnelRequest>({
     mutationFn: async funnelConfig => {
-      // Add time zone to the request
-      const fullConfig = {
-        ...funnelConfig,
-        timeZone,
-      };
-
       try {
-        // Save the funnel configuration
-        const saveResponse = await authedFetch<{
-          success: boolean;
-          funnelId: number;
-        }>(`/funnels/${site}`, undefined, {
-          method: "POST",
-          data: fullConfig,
+        const saveResponse = await saveFunnel(site, {
+          steps: funnelConfig.steps,
+          name: funnelConfig.name,
+          reportId: funnelConfig.reportId,
         });
 
         // Invalidate the funnels query to refresh the list
