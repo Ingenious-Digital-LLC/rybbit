@@ -165,16 +165,16 @@ const useChartData = ({
   const seriesConfig: SeriesConfig[] = showUserBreakdown
     ? [
         {
+          id: "returning_users",
+          dataKey: "returning_users",
+          label: SERIES_LABELS["returning_users"],
+          color: "hsl(var(--indigo-400))",
+        },
+        {
           id: "new_users",
           dataKey: "new_users",
           label: SERIES_LABELS["new_users"],
           color: "hsl(var(--dataviz))",
-        },
-        {
-          id: "returning_users",
-          dataKey: "returning_users",
-          label: SERIES_LABELS["returning_users"],
-          color: "hsl(var(--accent-200))",
         },
       ]
     : [
@@ -246,7 +246,7 @@ const useChartData = ({
       id: `${baseId}-gradient`,
       type: "linearGradient",
       colors: [
-        { offset: 0, color: series.color, opacity: 1 },
+        { offset: 0, color: series.color, opacity: showUserBreakdown ? 0.5 : 0.7 },
         { offset: 100, color: series.color, opacity: 0 },
       ],
     });

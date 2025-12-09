@@ -50,17 +50,17 @@ export function PreviousChart({
   const showUserBreakdown = selectedStat === "users" && showUsersSplit;
   const previousColors = showUserBreakdown
     ? resolvedTheme === "dark"
-      ? ["hsl(var(--dataviz) / 0.32)", "hsl(var(--accent-800) / 0.35)"]
-      : ["hsl(var(--dataviz) / 0.32)", "hsl(var(--accent-200) / 0.38)"]
+      ? ["hsl(var(--neutral-700) / 0.5)", "hsl(var(--neutral-700) / 0.5)"]
+      : ["hsl(var(--neutral-100) / 0.5)", "hsl(var(--neutral-100) / 0.5)"]
     : resolvedTheme === "dark"
-      ? ["hsl(var(--neutral-700))", "hsl(var(--neutral-500))"]
-      : ["hsl(var(--neutral-100))", "hsl(var(--neutral-300))"];
+      ? ["hsl(var(--neutral-700))"]
+      : ["hsl(var(--neutral-100))"];
 
   const seriesConfig: { id: string; dataKey: keyof GetOverviewBucketedResponse[number]; color: string }[] =
     showUserBreakdown
       ? [
-          { id: "new_users", dataKey: "new_users", color: previousColors[0] },
           { id: "returning_users", dataKey: "returning_users", color: previousColors[1] },
+          { id: "new_users", dataKey: "new_users", color: previousColors[0] },
         ]
       : [{ id: selectedStat, dataKey: selectedStat, color: previousColors[0] }];
 
