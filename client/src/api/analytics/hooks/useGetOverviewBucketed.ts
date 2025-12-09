@@ -7,6 +7,18 @@ import { fetchOverviewBucketed, GetOverviewBucketedResponse } from "../endpoints
 
 type PeriodTime = "current" | "previous";
 
+export type GetOverviewBucketedResponse = {
+  time: string;
+  pageviews: number;
+  sessions: number;
+  pages_per_session: number;
+  bounce_rate: number;
+  session_duration: number;
+  users: number;
+  new_users: number;
+  returning_users: number;
+}[];
+
 export function useGetOverviewBucketed({
   periodTime,
   site,
