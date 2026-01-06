@@ -101,6 +101,7 @@ function PageviewItem({
                     maxWidth: "calc(min(100vw, 1150px) - 250px)",
                   }}
                 >
+                  {item.hostname}
                   {item.pathname}
                   {item.querystring ? `${item.querystring}` : ""}
                 </div>
