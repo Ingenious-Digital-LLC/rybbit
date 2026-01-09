@@ -1,5 +1,11 @@
 "use client";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { UserPlus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+
+import { authedFetch } from "@/api/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -14,16 +20,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus } from "lucide-react";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
-import { Alert } from "../../../../../components/ui/alert";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../../../../components/ui/tooltip";
-import { authClient } from "../../../../../lib/auth";
-import { IS_CLOUD, STANDARD_TEAM_LIMIT } from "../../../../../lib/const";
-import { SubscriptionData, useStripeSubscription } from "../../../../../lib/subscription/useStripeSubscription";
+import { Alert } from "@/components/ui/alert";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { authClient } from "@/lib/auth";
+import { IS_CLOUD, STANDARD_TEAM_LIMIT } from "@/lib/const";
+import { SubscriptionData, useStripeSubscription } from "@/lib/subscription/useStripeSubscription";
+
 import { SiteAccessMultiSelect } from "./SiteAccessMultiSelect";
-import { authedFetch } from "../../../../../api/utils";
 
 interface InviteMemberDialogProps {
   organizationId: string;
@@ -46,6 +49,7 @@ const getMemberLimit = (subscription: SubscriptionData | undefined) => {
 
 export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: InviteMemberDialogProps) {
   const { data: subscription } = useStripeSubscription();
+  const queryClient = useQueryClient();
 
   const isOverMemberLimit = useMemo(() => {
     if (!IS_CLOUD) return false;
@@ -57,25 +61,11 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
   const [role, setRole] = useState<"admin" | "member" | "owner">("member");
   const [restrictSiteAccess, setRestrictSiteAccess] = useState(false);
   const [selectedSiteIds, setSelectedSiteIds] = useState<number[]>([]);
-
-  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
 
-  const handleInvite = async () => {
-    if (!email) {
-      setError("Email is required");
-      return;
-    }
-
-    // Validate site selection when restricting access
-    if (role === "member" && restrictSiteAccess && selectedSiteIds.length === 0) {
-      setError("Please select at least one site or disable site restrictions");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
+  const inviteMutation = useMutation({
+    mutationFn: async () => {
       // Create the invitation via BetterAuth
       const result = await authClient.organization.inviteMember({
         email,
@@ -86,20 +76,19 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
 
       // If role is "member" and site access is restricted, update the invitation
       if (role === "member" && restrictSiteAccess && result.data?.id) {
-        try {
-          await authedFetch(`/organizations/${organizationId}/invitations/${result.data.id}/sites`, undefined, {
-            method: "PUT",
-            data: {
-              hasRestrictedSiteAccess: true,
-              siteIds: selectedSiteIds,
-            },
-          });
-        } catch (siteAccessError) {
-          console.error("Failed to set site access for invitation:", siteAccessError);
-          // Continue anyway - the invitation was created successfully
-        }
+        await authedFetch(`/organizations/${organizationId}/invitations/${result.data.id}/sites`, undefined, {
+          method: "PUT",
+          data: {
+            hasRestrictedSiteAccess: true,
+            siteIds: selectedSiteIds,
+          },
+        });
       }
 
+      return result;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizationInvitations"] });
       toast.success(`Invitation sent to ${email}`);
       setOpen(false);
       onSuccess();
@@ -107,11 +96,27 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
       setRole("member");
       setRestrictSiteAccess(false);
       setSelectedSiteIds([]);
-    } catch (error: any) {
-      setError(error.message || "Failed to send invitation");
-    } finally {
-      setIsLoading(false);
+      setError("");
+    },
+    onError: (err: any) => {
+      setError(err.message || "Failed to send invitation");
+    },
+  });
+
+  const handleInvite = () => {
+    setError("");
+
+    if (!email) {
+      setError("Email is required");
+      return;
     }
+
+    if (role === "member" && restrictSiteAccess && selectedSiteIds.length === 0) {
+      setError("Please select at least one site or disable site restrictions");
+      return;
+    }
+
+    inviteMutation.mutate();
   };
 
   if (isOverMemberLimit) {
@@ -132,6 +137,7 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
       </Tooltip>
     );
   }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -162,7 +168,6 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
               value={role}
               onValueChange={value => {
                 setRole(value as "admin" | "member" | "owner");
-                // Reset site access when switching away from member role
                 if (value !== "member") {
                   setRestrictSiteAccess(false);
                   setSelectedSiteIds([]);
@@ -180,7 +185,6 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
             </Select>
           </div>
 
-          {/* Site access restriction - only for member role */}
           {role === "member" && (
             <div className="grid gap-3">
               <div className="flex items-center space-x-2">
@@ -200,10 +204,7 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
               </div>
               {restrictSiteAccess && (
                 <div className="pl-6">
-                  <SiteAccessMultiSelect
-                    selectedSiteIds={selectedSiteIds}
-                    onChange={setSelectedSiteIds}
-                  />
+                  <SiteAccessMultiSelect selectedSiteIds={selectedSiteIds} onChange={setSelectedSiteIds} />
                   <p className="text-xs text-muted-foreground mt-2">
                     This member will only have access to the selected sites.
                   </p>
@@ -218,8 +219,8 @@ export function InviteMemberDialog({ organizationId, onSuccess, memberCount }: I
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button onClick={handleInvite} disabled={isLoading} variant="success">
-            {isLoading ? "Inviting..." : "Invite"}
+          <Button onClick={handleInvite} disabled={inviteMutation.isPending} variant="success">
+            {inviteMutation.isPending ? "Inviting..." : "Invite"}
           </Button>
         </DialogFooter>
       </DialogContent>
