@@ -239,7 +239,9 @@ export const cancelScheduledEmail = async (emailId: string): Promise<void> => {
 export const sendReengagementEmail = async (
   email: string,
   userName: string,
-  content: ReengagementContent
+  content: ReengagementContent,
+  siteId: number,
+  domain: string
 ): Promise<void> => {
   if (!resend) return;
 
@@ -253,7 +255,8 @@ export const sendReengagementEmail = async (
         title: content.title,
         message: content.message,
         ctaText: content.ctaText,
-        ctaLink: content.ctaLink,
+        siteId,
+        domain,
         unsubscribeUrl,
       })
     );

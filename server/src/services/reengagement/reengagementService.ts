@@ -16,9 +16,12 @@ class ReengagementService {
   constructor() {}
 
   /**
-   * Check if any of the user's sites have received events
+   * Get a site for reengagement email
+   * Only returns a siteId if ALL sites have no events (user hasn't started tracking at all)
    */
-  private async hasUserSentEvents(userId: string): Promise<boolean> {
+  private async getSiteWithoutEvents(
+    userId: string
+  ): Promise<{ hasEvents: boolean; siteId: number | null; domain: string | null }> {
     try {
       // Find organizations where the user is an owner
       const userOrgs = await db
@@ -27,24 +30,24 @@ class ReengagementService {
         .where(and(eq(member.userId, userId), eq(member.role, "owner")));
 
       if (userOrgs.length === 0) {
-        return false;
+        return { hasEvents: false, siteId: null, domain: null };
       }
 
       const orgIds = userOrgs.map(o => o.organizationId);
 
       // Find sites belonging to these organizations
       const userSites = await db
-        .select({ siteId: sites.siteId })
+        .select({ siteId: sites.siteId, domain: sites.domain })
         .from(sites)
         .where(inArray(sites.organizationId, orgIds));
 
       if (userSites.length === 0) {
-        return false;
+        return { hasEvents: false, siteId: null, domain: null };
       }
 
       const siteIds = userSites.map(s => s.siteId);
 
-      // Check if any events exist for these sites
+      // Check if ANY site has events
       const result = await clickhouse.query({
         query: `
           SELECT 1 FROM events
@@ -57,11 +60,18 @@ class ReengagementService {
         },
       });
 
-      const data = await result.json<{ 1: number }[]>();
-      return data.length > 0;
+      const data = await result.json<{ 1: number }>();
+
+      // If any site has events, don't send reengagement email
+      if (data.length > 0) {
+        return { hasEvents: true, siteId: null, domain: null };
+      }
+
+      // No sites have events - return the first site for the dashboard link
+      return { hasEvents: false, siteId: userSites[0].siteId, domain: userSites[0].domain };
     } catch (error) {
-      this.logger.error({ error, userId }, "Error checking if user has sent events");
-      return true; // On error, assume they have events (don't send email)
+      this.logger.error({ error, userId }, "Error checking user sites for events");
+      return { hasEvents: true, siteId: null, domain: null }; // On error, assume they have events (don't send email)
     }
   }
 
@@ -94,10 +104,15 @@ class ReengagementService {
       this.logger.info({ targetDay, userCount: users.length }, "Processing re-engagement emails");
 
       for (const userData of users) {
-        // Check if user has sent any events
-        const hasEvents = await this.hasUserSentEvents(userData.id);
+        // Check if user has a site without events
+        const { hasEvents, siteId, domain } = await this.getSiteWithoutEvents(userData.id);
         if (hasEvents) {
           this.logger.debug({ userId: userData.id }, "User has events, skipping");
+          continue;
+        }
+
+        if (!siteId || !domain) {
+          this.logger.debug({ userId: userData.id }, "User has no sites, skipping");
           continue;
         }
 
@@ -109,9 +124,9 @@ class ReengagementService {
         }
 
         // Send re-engagement email
-        await sendReengagementEmail("hello@rybbit.com", userData.name, content);
-        // await sendReengagementEmail(userData.email, userData.name, content);
-        this.logger.info({ userId: userData.id, day: targetDay }, "Sent re-engagement email");
+        await sendReengagementEmail("hello@rybbit.com", userData.name, content, siteId, domain);
+        // await sendReengagementEmail(userData.email, userData.name, content, siteId, domain);
+        this.logger.info({ userId: userData.id, day: targetDay, siteId, domain }, "Sent re-engagement email");
         break;
       }
     } catch (error) {

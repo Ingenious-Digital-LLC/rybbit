@@ -19,9 +19,12 @@ interface ReengagementEmailProps {
   title: string;
   message: string;
   ctaText: string;
-  ctaLink: string;
+  siteId: number;
+  domain: string;
   unsubscribeUrl: string;
 }
+
+const DOCS_URL = "https://www.rybbit.io/docs";
 
 export const ReengagementEmail = ({
   userName,
@@ -29,13 +32,16 @@ export const ReengagementEmail = ({
   title,
   message,
   ctaText,
-  ctaLink,
+  siteId,
+  domain,
   unsubscribeUrl,
 }: ReengagementEmailProps) => {
   const greeting = userName ? `Hi ${userName}` : "Hi there";
+  const dashboardUrl = `https://app.rybbit.io/${siteId}`;
+  const messageWithDomain = message.replace("{domain}", domain);
 
   // Split message into paragraphs
-  const paragraphs = message.split("\n\n").filter(p => p.trim());
+  const paragraphs = messageWithDomain.split("\n\n").filter(p => p.trim());
 
   return (
     <Html>
@@ -75,8 +81,15 @@ export const ReengagementEmail = ({
             ))}
 
             <Text className="text-darkText text-base leading-relaxed mb-4">
-              <Link href={ctaLink} className="text-brand underline">
+              <Link href={dashboardUrl} className="text-brand underline">
                 {ctaText}
+              </Link>
+            </Text>
+
+            <Text className="text-mutedText text-sm leading-relaxed mb-4">
+              Need help?{" "}
+              <Link href={DOCS_URL} className="text-mutedText underline">
+                View our setup guide
               </Link>
             </Text>
 
