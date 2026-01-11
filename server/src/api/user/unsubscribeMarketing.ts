@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { eq } from "drizzle-orm";
-import { z } from "zod";
 import { DateTime } from "luxon";
 import { db } from "../../db/postgres/postgres.js";
 import { user } from "../../db/postgres/schema.js";
@@ -54,20 +53,28 @@ export const unsubscribeMarketing = async (
   }
 };
 
-// One-click unsubscribe handler (for List-Unsubscribe-Post header)
-// This is called by email clients when user clicks "Unsubscribe" button
-const oneClickUnsubscribeSchema = z.object({
-  email: z.string().email(),
-});
-
+// One-click unsubscribe handler
+// GET: User clicks link in email - show confirmation page
+// POST: Email client's List-Unsubscribe-Post - return 200 OK
 export const oneClickUnsubscribeMarketing = async (
   request: FastifyRequest<{ Querystring: { email?: string } }>,
   reply: FastifyReply
 ) => {
   try {
     const email = request.query.email;
+    const isGetRequest = request.method === "GET";
 
     if (!email) {
+      if (isGetRequest) {
+        return reply.status(400).type("text/html").send(`
+          <!DOCTYPE html>
+          <html><head><title>Unsubscribe - Rybbit</title></head>
+          <body style="font-family: sans-serif; max-width: 600px; margin: 50px auto; text-align: center;">
+            <h1>Invalid Request</h1>
+            <p>Email address is required to unsubscribe.</p>
+          </body></html>
+        `);
+      }
       return reply.status(400).send({ error: "Email is required" });
     }
 
@@ -98,7 +105,20 @@ export const oneClickUnsubscribeMarketing = async (
     // Mark contact as unsubscribed in Resend (even if user not found in our DB)
     await unsubscribeContact(email);
 
-    // For one-click unsubscribe, return 200 OK as per RFC 8058
+    // For GET requests (link clicks), show confirmation page
+    if (isGetRequest) {
+      return reply.status(200).type("text/html").send(`
+        <!DOCTYPE html>
+        <html><head><title>Unsubscribed - Rybbit</title></head>
+        <body style="font-family: sans-serif; max-width: 600px; margin: 50px auto; text-align: center;">
+          <h1>Unsubscribed</h1>
+          <p>You have been successfully unsubscribed from Rybbit marketing emails.</p>
+          <p style="color: #666; margin-top: 20px;">You can close this page.</p>
+        </body></html>
+      `);
+    }
+
+    // For POST requests (email client List-Unsubscribe), return 200 OK as per RFC 8058
     return reply.status(200).send();
   } catch (error) {
     console.error("Error in one-click unsubscribe:", error);

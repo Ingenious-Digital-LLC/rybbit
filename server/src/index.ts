@@ -342,6 +342,7 @@ async function userRoutes(fastify: FastifyInstance) {
   fastify.get("/user/organizations", authOnly, getUserOrganizations);
   fastify.post("/user/account-settings", authOnly, updateAccountSettings);
   fastify.post("/user/unsubscribe-marketing", authOnly, unsubscribeMarketing);
+  fastify.get("/user/unsubscribe-marketing-oneclick", oneClickUnsubscribeMarketing); // Public - for link clicks
   fastify.post("/user/unsubscribe-marketing-oneclick", oneClickUnsubscribeMarketing); // Public - for List-Unsubscribe header
   fastify.get("/user/api-keys", authOnly, listApiKeys);
   fastify.post("/user/api-keys", authOnly, createApiKey);
