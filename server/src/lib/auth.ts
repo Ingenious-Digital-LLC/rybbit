@@ -162,6 +162,7 @@ export const auth = betterAuth({
     after: createAuthMiddleware(async ctx => {
       if (ctx.path.startsWith("/sign-up") && IS_CLOUD) {
         const newSession = ctx.context.newSession;
+        console.log("newSession", newSession);
         if (newSession) {
           sendWelcomeEmail(newSession.user.email, newSession.user.name);
 
