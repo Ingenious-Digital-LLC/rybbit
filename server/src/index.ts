@@ -411,7 +411,7 @@ const start = async () => {
     telemetryService.startTelemetryCron();
     if (IS_CLOUD) {
       weeklyReportService.startWeeklyReportCron();
-      // reengagementService.startReengagementCron();
+      reengagementService.startReengagementCron();
 
       // await onboardingTipsService.scheduleOnboardingEmails("hello@rybbit.com", "Bill").then(emailIds => {
       //   console.log("Scheduled email IDs:", emailIds);
