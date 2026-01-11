@@ -436,11 +436,6 @@ const start = async () => {
     await server.listen({ port: 3001, host: "0.0.0.0" });
     server.log.info("Server is listening on http://0.0.0.0:3001");
 
-    // Test Axiom logging
-    if (hasAxiom) {
-      server.log.info({ axiom: true, dataset: process.env.AXIOM_DATASET }, "Axiom logging is configured");
-    }
-
     // if (process.env.NODE_ENV === "production") {
     //   // Initialize uptime monitoring service in the background (non-blocking)
     //   uptimeService
