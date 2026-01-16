@@ -1,9 +1,10 @@
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { InputWithSuggestions, SuggestionOption } from "@/components/ui/input-with-suggestions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Save, Trash2, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Save, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { FunnelResponse, FunnelStep } from "../../../../api/analytics/endpoints";
 import { useMetric } from "../../../../api/analytics/hooks/useGetMetric";
@@ -47,16 +48,32 @@ export function FunnelForm({
 }: FunnelFormProps) {
   // State to track which event steps have property filtering enabled
   const [useProperties, setUseProperties] = useState<boolean[]>(() =>
-    steps.map(step => !!(step.propertyFilters?.length || (step.eventPropertyKey && step.eventPropertyValue !== undefined)))
+    steps.map(
+      step => !!(step.propertyFilters?.length || (step.eventPropertyKey && step.eventPropertyValue !== undefined))
+    )
   );
 
   // State for managing multiple property filters per step (store as strings in UI)
   const [stepPropertyFilters, setStepPropertyFilters] = useState<Array<Array<{ key: string; value: string }>>>(() =>
-    steps.map(step =>
-      step.propertyFilters?.map(f => ({ key: f.key, value: String(f.value) })) ||
-      (step.eventPropertyKey && step.eventPropertyValue !== undefined
-        ? [{ key: step.eventPropertyKey, value: String(step.eventPropertyValue) }]
-        : [{ key: "", value: "" }])
+    steps.map(
+      step =>
+        step.propertyFilters?.map(f => ({ key: f.key, value: String(f.value) })) ||
+        (step.eventPropertyKey && step.eventPropertyValue !== undefined
+          ? [{ key: step.eventPropertyKey, value: String(step.eventPropertyValue) }]
+          : [{ key: "", value: "" }])
+    )
+  );
+
+  // State to track which steps have advanced options expanded
+  const [expandedSteps, setExpandedSteps] = useState<boolean[]>(() =>
+    steps.map(
+      step =>
+        !!(
+          step.hostname ||
+          step.name ||
+          step.propertyFilters?.length ||
+          (step.eventPropertyKey && step.eventPropertyValue !== undefined)
+        )
     )
   );
 
@@ -103,6 +120,7 @@ export function FunnelForm({
     setSteps([...steps, { type: "page", value: "", name: "" }]);
     setUseProperties([...useProperties, false]);
     setStepPropertyFilters([...stepPropertyFilters, [{ key: "", value: "" }]]);
+    setExpandedSteps([...expandedSteps, false]);
   };
 
   // Handle removing a step
@@ -119,6 +137,10 @@ export function FunnelForm({
     const newStepPropertyFilters = [...stepPropertyFilters];
     newStepPropertyFilters.splice(index, 1);
     setStepPropertyFilters(newStepPropertyFilters);
+
+    const newExpandedSteps = [...expandedSteps];
+    newExpandedSteps.splice(index, 1);
+    setExpandedSteps(newExpandedSteps);
   };
 
   // Handle step input changes
@@ -201,14 +223,20 @@ export function FunnelForm({
                 <Plus className="mr-2 h-4 w-4" /> Add Step
               </Button>
             </CardHeader>
-            <CardContent className="p-3 space-y-4 max-h-[calc(100vh-340px)] overflow-y-auto">
+            <CardContent className="p-3 pt-0 max-h-[calc(100vh-340px)] overflow-y-auto">
               {steps.map((step, index) => (
                 <div
                   key={index}
-                  className="flex flex-col space-y-2 border border-neutral-200 dark:border-neutral-750 p-4 rounded-lg bg-white dark:bg-neutral-850"
+                  className={cn(
+                    "flex flex-col space-y-2 border border-neutral-200 dark:border-neutral-750 p-4 bg-white dark:bg-neutral-850",
+                    index === 0 && "rounded-t-lg",
+                    index === steps.length - 1 && "rounded-b-lg",
+                    index !== 0 && "-mt-px"
+                  )}
                 >
-                  <div className="flex items-start gap-2">
-                    <div className="shrink-0 w-6 h-6 rounded-full border border-neutral-300 dark:border-neutral-400 bg-neutral-100 dark:bg-neutral-750 flex items-center justify-center text-xs mt-1.5">
+                  {/* Top row: Step number, type, value, expand toggle, delete */}
+                  <div className="flex items-center gap-2">
+                    <div className="shrink-0 w-6 h-6 rounded-full border border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-xs">
                       {index + 1}
                     </div>
                     <Select value={step.type} onValueChange={value => updateStepType(index, value as "page" | "event")}>
@@ -220,42 +248,57 @@ export function FunnelForm({
                         <SelectItem value="event">Event</SelectItem>
                       </SelectContent>
                     </Select>
+                    <InputWithSuggestions
+                      suggestions={step.type === "page" ? pathSuggestions : eventSuggestions}
+                      placeholder={step.type === "page" ? "Path (e.g. /pricing)" : "Event name"}
+                      value={step.value}
+                      className="border-neutral-300 dark:border-neutral-700 w-[360px]"
+                      onChange={e => updateStep(index, "value", e.target.value)}
+                    />
+                    <div className="flex items-center">
+                      <Button
+                        variant="ghost"
+                        size="smIcon"
+                        onClick={() => {
+                          const newExpandedSteps = [...expandedSteps];
+                          newExpandedSteps[index] = !newExpandedSteps[index];
+                          setExpandedSteps(newExpandedSteps);
+                        }}
+                        title={expandedSteps[index] ? "Hide advanced options" : "Show advanced options"}
+                      >
+                        {expandedSteps[index] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="smIcon"
+                        onClick={() => removeStep(index)}
+                        disabled={steps.length <= 2}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
 
-                    <div className="grow space-y-2">
+                  {/* Collapsible advanced options */}
+                  {expandedSteps[index] && (
+                    <div className="ml-8 space-y-2 pt-2">
                       <div className="flex gap-2">
                         <InputWithSuggestions
                           suggestions={hostnameSuggestions}
                           placeholder="Hostname (optional)"
                           value={step.hostname || ""}
-                          className="border-neutral-300 dark:border-neutral-700 w-30"
+                          className="border-neutral-300 dark:border-neutral-700 w-40"
                           onChange={e => updateStep(index, "hostname", e.target.value)}
                         />
-                        <InputWithSuggestions
-                          suggestions={step.type === "page" ? pathSuggestions : eventSuggestions}
-                          placeholder={step.type === "page" ? "Path (e.g. /pricing)" : "Event name"}
-                          value={step.value}
-                          className="border-neutral-300 dark:border-neutral-700 w-56"
-                          onChange={e => updateStep(index, "value", e.target.value)}
-                        />
-                      </div>
-                      <div className="flex items-center gap-2">
                         <Input
                           placeholder="Label (optional)"
-                          className="border-neutral-300 dark:border-neutral-700"
+                          className="border-neutral-300 dark:border-neutral-700 grow"
                           value={step.name || ""}
                           onChange={e => updateStep(index, "name", e.target.value)}
                         />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeStep(index)}
-                          disabled={steps.length <= 2}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
                       {/* Property filtering for both page and event steps */}
-                      <div className="mt-2 space-y-2">
+                      <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <Switch
                             checked={useProperties[index]}
@@ -342,7 +385,10 @@ export function FunnelForm({
                               size="sm"
                               onClick={() => {
                                 const newStepPropertyFilters = [...stepPropertyFilters];
-                                newStepPropertyFilters[index] = [...newStepPropertyFilters[index], { key: "", value: "" }];
+                                newStepPropertyFilters[index] = [
+                                  ...newStepPropertyFilters[index],
+                                  { key: "", value: "" },
+                                ];
                                 setStepPropertyFilters(newStepPropertyFilters);
                               }}
                               className="w-full"
@@ -354,7 +400,7 @@ export function FunnelForm({
                         )}
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </CardContent>
