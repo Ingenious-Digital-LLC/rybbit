@@ -27,7 +27,7 @@ import { UserTopPages } from "./components/UserTopPages";
 const LIMIT = 25;
 
 export default function UserPage() {
-  useSetPageTitle("Rybbit · User");
+  useSetPageTitle("User");
 
   const { userId: rawUserId, site } = useParams();
   const userId = (() => {
@@ -60,8 +60,7 @@ export default function UserPage() {
   const traitsName = data?.traits?.name as string | undefined;
   const traitsEmail = data?.traits?.email as string | undefined;
   const isIdentified = !!data?.identified_user_id;
-  const displayName =
-    traitsUsername || traitsName || (isIdentified ? userId : generateName(userId));
+  const displayName = traitsUsername || traitsName || (isIdentified ? userId : generateName(userId));
 
   return (
     <div className="p-2 md:p-4 max-w-[1200px] mx-auto">

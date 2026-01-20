@@ -10,9 +10,8 @@ import { EventList } from "./components/EventList";
 import { EventLog } from "./components/EventLog";
 import { EventsChart } from "./components/EventsChart";
 
-
 export default function EventsPage() {
-  useSetPageTitle("Rybbit · Events");
+  useSetPageTitle("Events");
 
   const { data: eventNamesData, isLoading: isLoadingEventNames } = useGetEventNames();
 
@@ -25,7 +24,6 @@ export default function EventsPage() {
 
         <Card className="h-auto lg:h-full">
           <CardHeader>
-
             <CardTitle>Custom Events</CardTitle>
           </CardHeader>
           <CardContent>
