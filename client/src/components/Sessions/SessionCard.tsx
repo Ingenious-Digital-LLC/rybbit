@@ -48,9 +48,88 @@ export function SessionCard({ session, onClick, userId, expandedByDefault }: Ses
   return (
     <div className="rounded-lg bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-850 overflow-hidden">
       <div className="p-3 cursor-pointer" onClick={handleCardClick}>
-        <div className="flex items-center gap-2">
+        {/* Mobile layout - two rows */}
+        <div className="flex flex-col gap-2 md:hidden">
+          {/* Top row on mobile - User name (left) + Timestamp (right) */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Avatar
+                size={24}
+                id={session.user_id}
+                lastActiveTime={DateTime.fromSQL(session.session_end, { zone: "utc" })}
+              />
+              <span className="text-xs text-neutral-600 dark:text-neutral-200 truncate max-w-[150px]">
+                {getUserDisplayName(session)}
+              </span>
+              {!!session.identified_user_id && <IdentifiedBadge traits={session.traits} />}
+            </div>
+            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+              {DateTime.fromSQL(session.session_start, {
+                zone: "utc",
+              })
+                .setLocale(userLocale)
+                .setZone(getTimezone())
+                .toFormat(hour12 ? "MMM d, h:mm a" : "dd MMM, HH:mm")}
+            </span>
+          </div>
+
+          {/* Bottom row on mobile - Icons, badges, channel */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {session.country && (
+              <CountryFlagTooltipIcon country={session.country} city={session.city} region={session.region} />
+            )}
+            <BrowserTooltipIcon browser={session.browser || "Unknown"} browser_version={session.browser_version} />
+            <OperatingSystemTooltipIcon
+              operating_system={session.operating_system || ""}
+              operating_system_version={session.operating_system_version}
+            />
+            <DeviceTypeTooltipIcon
+              device_type={session.device_type || ""}
+              screen_width={session.screen_width}
+              screen_height={session.screen_height}
+            />
+            {session.has_replay === 1 && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="success"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setReplayDrawerOpen(true);
+                    }}
+                  >
+                    <Video className="w-4 h-4" />
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>Watch Session Replay</TooltipContent>
+              </Tooltip>
+            )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+                  <PageviewIcon />
+                  <span>{formatter(session.pageviews)}</span>
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>Pageviews</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+                  <EventIcon />
+                  <span>{formatter(session.events)}</span>
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>Events</TooltipContent>
+            </Tooltip>
+            <Channel channel={session.channel} referrer={session.referrer} />
+          </div>
+        </div>
+
+        {/* Desktop layout - single row */}
+        <div className="hidden md:flex items-center gap-2">
           {!userId && (
-            <div className="hidden md:flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Avatar
                 size={24}
                 id={session.user_id}
@@ -112,12 +191,11 @@ export function SessionCard({ session, onClick, userId, expandedByDefault }: Ses
               </TooltipTrigger>
               <TooltipContent>Events</TooltipContent>
             </Tooltip>
-
             <Channel channel={session.channel} referrer={session.referrer} />
           </div>
 
           {/* Pages section with tooltips for long paths */}
-          <div className="items-center ml-3 flex-1 min-w-0 hidden md:flex">
+          <div className="items-center ml-3 flex-1 min-w-0 flex">
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="text-xs text-neutral-500 dark:text-neutral-400 truncate max-w-[200px] inline-block">
@@ -144,7 +222,6 @@ export function SessionCard({ session, onClick, userId, expandedByDefault }: Ses
           </div>
 
           {/* Time information */}
-
           <div className="flex items-center gap-1.5 text-xs text-neutral-600 dark:text-neutral-300">
             <span className="text-neutral-500 dark:text-neutral-400">
               {DateTime.fromSQL(session.session_start, {
@@ -155,11 +232,11 @@ export function SessionCard({ session, onClick, userId, expandedByDefault }: Ses
                 .toFormat(hour12 ? "MMM d, h:mm a" : "dd MMM, HH:mm")}
             </span>
             <span className="text-neutral-500 dark:text-neutral-400">•</span>
-            <span className="hidden md:block">{duration}</span>
+            <span>{duration}</span>
           </div>
 
           {/* Expand/Collapse icon */}
-          <div className="ml-2 shrink-0 hidden md:flex">
+          <div className="ml-2 shrink-0">
             {expanded ? (
               <ChevronDown className="w-4 h-4 text-neutral-500 dark:text-neutral-400" strokeWidth={3} />
             ) : (
@@ -206,10 +283,34 @@ export const SessionCardSkeleton = memo(({ userId, count }: { userId?: string; c
       key={index}
     >
       <div className="p-3">
-        <div className="flex items-center gap-2">
+        {/* Mobile layout - two rows */}
+        <div className="flex flex-col gap-2 md:hidden">
+          {/* Top row - Avatar + name (left) + timestamp (right) */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-6 w-6 rounded-full" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+            <Skeleton className={cn("h-3", getRandomTimeWidth())} />
+          </div>
+
+          {/* Bottom row - Icons, badges, channel */}
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-4 rounded-sm" />
+            <Skeleton className="h-4 w-4 rounded-sm" />
+            <Skeleton className="h-4 w-4 rounded-sm" />
+            <Skeleton className="h-4 w-4 rounded-sm" />
+            <Skeleton className="h-[21px] w-12 rounded-sm" />
+            <Skeleton className="h-[21px] w-12 rounded-sm" />
+            <Skeleton className="h-[21px] w-16 rounded-sm" />
+          </div>
+        </div>
+
+        {/* Desktop layout - single row */}
+        <div className="hidden md:flex items-center gap-2">
           {/* Avatar and User ID */}
           {!userId && (
-            <div className="hidden md:flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Skeleton className="h-6 w-6 rounded-full" />
               <Skeleton className="h-3 w-24" />
             </div>
@@ -231,7 +332,7 @@ export const SessionCardSkeleton = memo(({ userId, count }: { userId?: string; c
           </div>
 
           {/* Entry/Exit paths with randomized widths */}
-          <div className="items-center ml-3 flex-1 min-w-0 hidden md:flex">
+          <div className="items-center ml-3 flex-1 min-w-0 flex">
             <Skeleton className={cn("h-3 max-w-[200px]", getRandomWidth())} />
             <ArrowRight className="mx-2 w-3 h-3 shrink-0 text-neutral-500 dark:text-neutral-400 opacity-20" />
             <Skeleton className={cn("h-3 max-w-[200px]", getRandomWidth())} />
@@ -241,11 +342,11 @@ export const SessionCardSkeleton = memo(({ userId, count }: { userId?: string; c
           <div className="flex items-center gap-1.5">
             <Skeleton className={cn("h-3", getRandomTimeWidth())} />
             <span className="text-neutral-500 dark:text-neutral-400 opacity-20">•</span>
-            <Skeleton className={cn("h-3 hidden md:block", getRandomDurationWidth())} />
+            <Skeleton className={cn("h-3", getRandomDurationWidth())} />
           </div>
 
           {/* Expand icon */}
-          <div className="ml-2 shrink-0 hidden md:flex">
+          <div className="ml-2 shrink-0">
             <Skeleton className="h-4 w-4" />
           </div>
         </div>
