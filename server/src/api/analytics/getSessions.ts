@@ -57,22 +57,29 @@ export interface GetSessionsRequest {
   }>;
 }
 
+// Field mappings for the CTE which extracts UTM params as separate columns
+const SESSION_FIELD_MAPPINGS = {
+  "url_parameters['utm_source']": "utm_source",
+  "url_parameters['utm_medium']": "utm_medium",
+  "url_parameters['utm_campaign']": "utm_campaign",
+  "url_parameters['utm_term']": "utm_term",
+  "url_parameters['utm_content']": "utm_content",
+};
+
 export async function getSessions(req: FastifyRequest<GetSessionsRequest>, res: FastifyReply) {
   const { filters, page = 1, user_id: userId, limit = 100, identified_only: identifiedOnly = "false" } = req.query;
   const site = req.params.siteId;
   const filterIdentified = identifiedOnly === "true";
 
   const timeStatement = getTimeStatement(req.query);
-  let filterStatement = getFilterStatement(filters, Number(site), timeStatement);
 
-  // Transform filter statement to use extracted UTM columns instead of map access
-  // since the CTE already extracts utm_source, utm_medium, etc. as separate columns
-  filterStatement = filterStatement
-    .replace(/url_parameters\['utm_source'\]/g, "utm_source")
-    .replace(/url_parameters\['utm_medium'\]/g, "utm_medium")
-    .replace(/url_parameters\['utm_campaign'\]/g, "utm_campaign")
-    .replace(/url_parameters\['utm_term'\]/g, "utm_term")
-    .replace(/url_parameters\['utm_content'\]/g, "utm_content");
+  // Use composable filter options:
+  // - sessionLevelParams: pathname and page_title filter at session level (finds sessions that visited a page)
+  // - fieldMappings: CTE extracts UTM params as separate columns, so we need to map the field names
+  const filterStatement = getFilterStatement(filters, Number(site), timeStatement, {
+    sessionLevelParams: ["event_name", "pathname", "page_title"],
+    fieldMappings: SESSION_FIELD_MAPPINGS,
+  });
 
   const query = `
   WITH AggregatedSessions AS (
