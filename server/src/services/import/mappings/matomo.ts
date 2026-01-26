@@ -54,7 +54,7 @@ export class MatomoImportMapper {
     desktop: "Desktop",
     smartphone: "Mobile",
     phablet: "Mobile",
-    tablet: "Tablet",
+    tablet: "Mobile",
   };
 
   private static readonly deviceSchema = z
