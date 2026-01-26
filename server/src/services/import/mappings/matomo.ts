@@ -5,37 +5,7 @@ import { z } from "zod";
 import { DateTime } from "luxon";
 import { deriveKeyOnlySchema } from "./utils.js";
 
-export interface MatomoEvent {
-  // Session/user identifiers
-  visitorId: string;
-  fingerprint: string; // Used as session_id
-
-  // Action data (single action, not indexed)
-  type: string;
-  url: string;
-  pageTitle: string;
-  timestamp: string;
-
-  // Referrer data
-  referrerUrl: string;
-  referrerType: string;
-
-  // Browser/OS data (pre-processed by Matomo)
-  browserName: string;
-  browserVersion: string;
-  operatingSystemName: string;
-  operatingSystemVersion: string;
-  deviceType: string;
-
-  // Language and geo
-  languageCode: string;
-  countryCode: string;
-  regionCode: string;
-  city: string;
-  latitude: string;
-  longitude: string;
-  resolution: string;
-}
+export type MatomoEvent = z.input<typeof MatomoImportMapper.matomoEventKeyOnlySchema>;
 
 export class MatomoImportMapper {
   private static readonly browserMap: Record<string, string> = {
