@@ -139,6 +139,9 @@ export default function Home() {
               />
             </div>
           )}
+          <div className="hidden md:block">
+            <AddSite disabled={!canAddSites} />
+          </div>
         </div>
       )}
       <div className="flex flex-col gap-2">
@@ -169,11 +172,7 @@ export default function Home() {
               }
             />
           </Card>
-        ) : (
-          <div className="flex justify-center">
-            <AddSite disabled={!canAddSites} />
-          </div>
-        )}
+        ) : null}
       </div>
       <CreateOrganizationDialog
         open={createOrgDialogOpen}
