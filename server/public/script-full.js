@@ -1028,7 +1028,8 @@
       const sourceElement = anchorNode instanceof HTMLElement ? anchorNode : anchorNode?.parentElement;
       if (!sourceElement) return;
       const properties = {
-        textLength,
+        text: text.substring(0, 500),
+        ...textLength > 500 && { textLength },
         sourceElement: sourceElement.tagName.toLowerCase()
       };
       this.tracker.trackCopy(properties);

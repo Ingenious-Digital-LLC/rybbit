@@ -49,7 +49,6 @@ export function getEventDisplayName(item: EventLike): string {
       return "Outbound Click";
     case "button_click":
       if (item.props?.text) return `Clicked button with text "${item.props.text}"`;
-      if (item.props?.selector) return `Clicked button "${item.props.selector}"`;
       return "Clicked button";
     case "copy": {
       if (!item.props?.text) return "Copied text";
@@ -57,13 +56,12 @@ export function getEventDisplayName(item: EventLike): string {
       return `Copied "${text.substring(0, 50)}${text.length > 50 ? "..." : ""}"`;
     }
     case "form_submit":
-      if (item.props?.id) return `Submitted form "${item.props.id}"`;
-      if (item.props?.action) return `Submitted form to "${item.props.action}"`;
+      if (item.props?.formId) return `Submitted form "${item.props.formId}"`;
+      if (item.props?.formAction) return `Submitted form to "${item.props.formAction}"`;
       return "Submitted form";
     case "input_change": {
       const inputType = item.props?.inputType ? `${item.props.inputType} ` : "";
-      const inputName = item.props?.name || item.props?.id;
-      if (inputName) return `Changed ${inputType}input "${inputName}"`;
+      if (item.props?.inputName) return `Changed ${inputType}input "${item.props.inputName}"`;
       return `Changed ${inputType}input`;
     }
     default:
@@ -73,8 +71,8 @@ export function getEventDisplayName(item: EventLike): string {
 
 // Props to hide from badges (already shown in event name or redundant)
 export const PROPS_TO_HIDE: Record<string, string[]> = {
-  button_click: ["text", "element"],
+  button_click: ["text"],
   copy: ["text"],
-  form_submit: ["id", "action"],
-  input_change: ["name", "id", "element", "inputName", "inputType"],
+  form_submit: ["formId", "formAction"],
+  input_change: ["inputName", "inputType", "element"],
 };

@@ -30,7 +30,8 @@ export class CopyTrackingManager {
     if (!sourceElement) return;
 
     const properties: CopyProperties = {
-      textLength,
+      text: text.substring(0, 500),
+      ...(textLength > 500 && { textLength }),
       sourceElement: sourceElement.tagName.toLowerCase(),
     };
 

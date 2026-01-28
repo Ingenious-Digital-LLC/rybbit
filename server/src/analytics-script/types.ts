@@ -62,7 +62,8 @@ export interface ButtonClickProperties {
 }
 
 export interface CopyProperties {
-  textLength: number;
+  text: string;
+  textLength?: number; // Only sent if text was truncated
   sourceElement: string;
 }
 
