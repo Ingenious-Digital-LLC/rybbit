@@ -134,7 +134,10 @@ export function PageviewItem({
               {item.props && Object.keys(item.props).length > 0 ? (
                 <span className="flex flex-wrap gap-2 mt-1">
                   {Object.entries(item.props).map(([key, value]) => (
-                    <Badge key={key} variant="outline">
+                    <Badge
+                      key={key}
+                      variant="outline"
+                                          >
                       <span className="text-neutral-600 dark:text-neutral-300 font-light mr-1">
                         {key}:
                       </span>{" "}
@@ -169,8 +172,7 @@ export function PageviewItem({
                   {item.props.text ? (
                     <Badge
                       variant="outline"
-                      className="px-1.5 py-0 h-5 text-xs bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-medium"
-                    >
+                                          >
                       <span className="text-neutral-600 dark:text-neutral-300 font-light mr-1">
                         text:
                       </span>{" "}
@@ -180,8 +182,7 @@ export function PageviewItem({
                   {item.props.target ? (
                     <Badge
                       variant="outline"
-                      className="px-1.5 py-0 h-5 text-xs bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-medium"
-                    >
+                                          >
                       <span className="text-neutral-600 dark:text-neutral-300 font-light mr-1">
                         target:
                       </span>{" "}
@@ -202,8 +203,7 @@ export function PageviewItem({
                     <Badge
                       key="message"
                       variant="outline"
-                      className="px-1.5 py-0 h-5 text-xs bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-medium"
-                    >
+                                          >
                       <span className="text-neutral-600 dark:text-neutral-300 font-light mr-1">
                         message:
                       </span>{" "}
@@ -242,7 +242,10 @@ export function PageviewItem({
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">
                   <span className="flex flex-wrap gap-2 mt-1">
                     {remainingProps.map(([key, value]) => (
-                      <Badge key={key} variant="outline">
+                      <Badge
+                        key={key}
+                        variant="outline"
+                                              >
                         <span className="text-neutral-600 dark:text-neutral-300 font-light mr-1">
                           {key}:
                         </span>{" "}
