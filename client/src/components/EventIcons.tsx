@@ -9,6 +9,7 @@ import {
   TriangleAlert,
   SquareMousePointer
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "../lib/utils";
 import { EVENT_TYPE_CONFIG, EventType } from "../lib/events";
 
@@ -24,9 +25,13 @@ const EVENT_TYPE_ICONS: Record<EventType, LucideIcon> = {
   input_change: TextCursorInput,
 };
 
-// Build color lookup from shared config
+// Build color and label lookups from shared config
 const EVENT_TYPE_COLORS: Record<string, string> = Object.fromEntries(
   EVENT_TYPE_CONFIG.map((config) => [config.value, config.colorClass])
+);
+
+const EVENT_TYPE_LABELS: Record<string, string> = Object.fromEntries(
+  EVENT_TYPE_CONFIG.map((config) => [config.value, config.label])
 );
 
 interface EventTypeIconProps {
@@ -38,7 +43,16 @@ export function EventTypeIcon({ type, className }: EventTypeIconProps) {
   const Icon = EVENT_TYPE_ICONS[type as EventType] || MousePointerClick;
   const colorClass = EVENT_TYPE_COLORS[type] || "text-amber-400";
 
-  return <Icon className={cn("h-4 w-4", className, colorClass)} />;
+  const label = EVENT_TYPE_LABELS[type] || type;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Icon className={cn("h-4 w-4", className, colorClass)} />
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  );
 }
 
 // Backwards-compatible aliases

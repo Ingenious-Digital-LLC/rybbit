@@ -1056,10 +1056,16 @@
     constructor(tracker, config) {
       this.tracker = tracker;
       this.config = config;
+      this.boundHandleSubmit = this.handleSubmit.bind(this);
+      this.boundHandleChange = this.handleChange.bind(this);
     }
     initialize() {
-      document.addEventListener("submit", this.handleSubmit.bind(this), true);
-      document.addEventListener("change", this.handleChange.bind(this), true);
+      document.addEventListener("submit", this.boundHandleSubmit, true);
+      document.addEventListener("change", this.boundHandleChange, true);
+    }
+    cleanup() {
+      document.removeEventListener("submit", this.boundHandleSubmit, true);
+      document.removeEventListener("change", this.boundHandleChange, true);
     }
     handleSubmit(event) {
       const form = event.target;

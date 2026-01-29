@@ -4,18 +4,27 @@ import { Tracker } from "./tracking.js";
 export class FormTrackingManager {
   private tracker: Tracker;
   private config: ScriptConfig;
+  private boundHandleSubmit: (event: Event) => void;
+  private boundHandleChange: (event: Event) => void;
 
   constructor(tracker: Tracker, config: ScriptConfig) {
     this.tracker = tracker;
     this.config = config;
+    this.boundHandleSubmit = this.handleSubmit.bind(this);
+    this.boundHandleChange = this.handleChange.bind(this);
   }
 
   initialize(): void {
     // Form submissions
-    document.addEventListener("submit", this.handleSubmit.bind(this), true);
+    document.addEventListener("submit", this.boundHandleSubmit, true);
 
     // Input/select/textarea change events
-    document.addEventListener("change", this.handleChange.bind(this), true);
+    document.addEventListener("change", this.boundHandleChange, true);
+  }
+
+  cleanup(): void {
+    document.removeEventListener("submit", this.boundHandleSubmit, true);
+    document.removeEventListener("change", this.boundHandleChange, true);
   }
 
   private handleSubmit(event: Event): void {
