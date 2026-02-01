@@ -179,7 +179,7 @@ Common issues you should look for:
 - Other scripts causing errors that halt JS execution before rybbit loads
 - GTM container present but may not be configured to fire the rybbit tag
 
-Be concise and actionable. Tell the user exactly what's wrong and how to fix it. Use 2-4 sentences max. If you can identify the specific CMS or platform causing the issue, mention it.`,
+IMPORTANT: Your response MUST be 2-3 sentences maximum. No bullet points, no code blocks, no lists. Just a short plain-text explanation of the problem and how to fix it. If you can identify the CMS or platform, mention it.`,
               },
               {
                 role: "user",
@@ -194,7 +194,7 @@ ${htmlContext.bodyScripts ? `Relevant <body> scripts:\n${htmlContext.bodyScripts
 ${htmlContext.cspMeta ? `CSP meta tags:\n${htmlContext.cspMeta}` : ""}`,
               },
             ],
-            { temperature: 0.2, maxTokens: 500 }
+            { temperature: 0.2, maxTokens: 200 }
           );
           console.log(aiAnalysis);
         } catch (aiError) {
