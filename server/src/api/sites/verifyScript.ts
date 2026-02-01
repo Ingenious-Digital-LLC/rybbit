@@ -93,7 +93,7 @@ export async function verifyScript(
         }
 
         return { found, siteIdCorrect, foundSiteId };
-      }, String(site.siteId));
+      }, site.id!);
 
       scriptTagFound = scriptCheck.found;
       siteIdMatch = scriptCheck.siteIdCorrect;
@@ -104,7 +104,7 @@ export async function verifyScript(
         );
       } else if (!siteIdMatch) {
         issues.push(
-          `Script tag found but data-site-id is "${scriptCheck.foundSiteId}" instead of "${site.siteId}".`
+          `Script tag found but data-site-id is "${scriptCheck.foundSiteId}" instead of "${site.id}".`
         );
       }
 
