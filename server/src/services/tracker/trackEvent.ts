@@ -256,7 +256,7 @@ export async function trackEvent(request: FastifyRequest, reply: FastifyReply) {
     // Get the site configuration to get the numeric siteId
     const siteConfiguration = await siteConfig.getConfig(validatedPayload.site_id);
     if (!siteConfiguration) {
-      logger.warn({ siteId: validatedPayload.site_id }, "Site not found");
+      // logger.warn({ siteId: validatedPayload.site_id }, "Site not found");
       return reply.status(404).send({
         success: false,
         error: "Site not found",
