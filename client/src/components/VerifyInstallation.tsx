@@ -54,11 +54,7 @@ export function VerifyInstallation({ siteId }: VerifyInstallationProps) {
               ))}
             </ul>
           )}
-          {verifyResult.aiAnalysis && (
-            <div className="mt-2 p-2.5 rounded bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-foreground whitespace-pre-wrap">
-              {verifyResult.aiAnalysis}
-            </div>
-          )}
+
         </div>
       )}
     </div>
