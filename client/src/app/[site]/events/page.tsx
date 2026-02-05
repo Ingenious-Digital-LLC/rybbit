@@ -23,7 +23,7 @@ export default function EventsPage() {
 
         <EventsChart />
 
-        <Card className="h-auto lg:h-full">
+        {/* <Card className="h-auto lg:h-full">
           <CardHeader>
 
             <CardTitle>Custom Events</CardTitle>
@@ -31,16 +31,9 @@ export default function EventsPage() {
           <CardContent>
             <EventList events={eventNamesData || []} isLoading={isLoadingEventNames} size="large" />
           </CardContent>
-        </Card>
+        </Card> */}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Event Log</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <EventLog />
-          </CardContent>
-        </Card>
+        <EventLog />
       </div>
     </DisabledOverlay>
   );

@@ -8,7 +8,9 @@ export type GetEventsResponse = {
   timestamp: string;
   event_name: string;
   properties: string; // This will be populated from the props column
+  session_id: string;
   user_id: string;
+  identified_user_id: string;
   pathname: string;
   querystring: string;
   hostname: string;
@@ -76,7 +78,9 @@ export async function getEvents(req: FastifyRequest<GetEventsRequest>, res: Fast
         timestamp,
         event_name,
         toString(props) as properties, -- Convert props Map to string
+        session_id,
         user_id,
+        identified_user_id,
         pathname,
         querystring,
         hostname,

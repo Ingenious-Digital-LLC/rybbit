@@ -66,7 +66,9 @@ export interface SessionDetails {
   channel: string;
   session_end: string;
   session_start: string;
+  session_duration: number;
   pageviews: number;
+  events: number;
   entry_page: string;
   exit_page: string;
   ip: string;

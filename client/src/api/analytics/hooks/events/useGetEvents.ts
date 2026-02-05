@@ -10,6 +10,7 @@ export interface GetEventsOptions {
   pageSize?: number;
   count?: number; // For backward compatibility
   isRealtime?: boolean;
+  refetchIntervalMs?: number;
 }
 
 export function useGetEvents(count = 10) {
@@ -33,13 +34,14 @@ export function useGetEvents(count = 10) {
 export function useGetEventsInfinite(options: GetEventsOptions = {}) {
   const { site, time, filters, timezone } = useStore();
   const pageSize = options.pageSize || 20;
+  const refetchInterval = options.isRealtime ? options.refetchIntervalMs ?? 3000 : undefined;
 
   const params = buildApiParams(time, {
     filters: filters && filters.length > 0 ? filters : undefined,
   });
 
   return useInfiniteQuery<EventsResponse, Error>({
-    queryKey: ["events-infinite", site, time, filters, pageSize, options.isRealtime, timezone],
+    queryKey: ["events-infinite", site, time, filters, pageSize, options.isRealtime, refetchInterval, timezone],
     initialPageParam: 1,
     queryFn: async ({ pageParam }) => {
       return fetchEvents(site, {
@@ -55,7 +57,7 @@ export function useGetEventsInfinite(options: GetEventsOptions = {}) {
       }
       return undefined;
     },
-    refetchInterval: options.isRealtime ? 5000 : undefined,
+    refetchInterval,
     enabled: !!site,
   });
 }

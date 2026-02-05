@@ -7,7 +7,9 @@ export type Event = {
   timestamp: string;
   event_name: string;
   properties: string;
+  session_id: string;
   user_id: string;
+  identified_user_id: string;
   hostname: string;
   pathname: string;
   querystring: string;
@@ -161,4 +163,3 @@ export async function fetchEventBucketed(
   );
   return response.data;
 }
-
