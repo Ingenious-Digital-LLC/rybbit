@@ -15,7 +15,7 @@ export function DeviceIcon({ deviceType }: { deviceType: string }) {
 }
 
 export function getEventKey(event: Event) {
-  return `${event.timestamp}-${event.user_id}-${event.type}-${event.event_name ?? ""}`;
+  return `${event.timestamp}-${event.session_id}-${event.user_id}-${event.type}-${event.event_name ?? ""}-${event.pathname}`;
 }
 
 export function parseEventProperties(event: Event): Record<string, any> {

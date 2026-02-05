@@ -1,6 +1,12 @@
+import { Filter } from "@rybbit/shared";
 import { authedFetch } from "../../utils";
-import { BucketedParams, CommonApiParams, PaginationParams, toBucketedQueryParams, toQueryParams } from "./types";
-
+import {
+  BucketedParams,
+  CommonApiParams,
+  PaginationParams,
+  toBucketedQueryParams,
+  toQueryParams,
+} from "./types";
 
 // Event type
 export type Event = {
@@ -22,7 +28,17 @@ export type Event = {
   type: string;
 };
 
-// Events response with pagination
+// Response types for cursor-based API
+export interface NewEventsResponse {
+  data: Event[];
+}
+
+export interface CursorEventsResponse {
+  data: Event[];
+  cursor: { hasMore: boolean; oldestTimestamp: string | null };
+}
+
+// Legacy response type (kept for other potential consumers)
 export interface EventsResponse {
   data: Event[];
   pagination: {
@@ -68,13 +84,61 @@ export interface EventBucketedParams extends BucketedParams {
   limit?: number;
 }
 
-
 export interface EventPropertiesParams extends CommonApiParams {
   eventName: string;
 }
 
 /**
- * Fetch paginated events
+ * Poll for events newer than sinceTimestamp (Realtime mode).
+ * Only sends filters — no time range.
+ */
+export async function fetchNewEvents(
+  site: string | number,
+  params: { sinceTimestamp: string; filters?: Filter[]; timeZone: string }
+): Promise<NewEventsResponse> {
+  const queryParams: Record<string, any> = {
+    since_timestamp: params.sinceTimestamp,
+    time_zone: params.timeZone,
+    start_date: "",
+    end_date: "",
+  };
+  if (params.filters?.length) {
+    queryParams.filters = params.filters;
+  }
+
+  return authedFetch<NewEventsResponse>(
+    `/sites/${site}/events`,
+    queryParams
+  );
+}
+
+/**
+ * Cursor-based fetch for historical scrolling / initial load.
+ */
+export async function fetchEventsCursor(
+  site: string | number,
+  params: CommonApiParams & {
+    beforeTimestamp?: string;
+    pageSize?: number;
+  }
+): Promise<CursorEventsResponse> {
+  const queryParams: Record<string, any> = {
+    ...toQueryParams(params),
+    page_size: params.pageSize ?? 50,
+  };
+
+  if (params.beforeTimestamp) {
+    queryParams.before_timestamp = params.beforeTimestamp;
+  }
+
+  return authedFetch<CursorEventsResponse>(
+    `/sites/${site}/events`,
+    queryParams
+  );
+}
+
+/**
+ * Fetch paginated events (legacy)
  * GET /api/events/:site
  */
 export async function fetchEvents(
