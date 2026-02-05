@@ -35,7 +35,7 @@ export function EventRow({ event, site, onClick }: EventRowProps) {
 
   return (
     <div
-      className="grid grid-cols-[28px_140px_220px_160px_minmax(240px,1fr)] border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50/60 dark:hover:bg-neutral-800/40 cursor-pointer"
+      className="grid grid-cols-[28px_140px_220px_100px_minmax(240px,1fr)] border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50/60 dark:hover:bg-neutral-800/40 cursor-pointer"
       onClick={() => onClick(event)}
     >
       <div className="flex items-center justify-center py-1">
