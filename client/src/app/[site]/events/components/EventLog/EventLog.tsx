@@ -2,8 +2,10 @@
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Event } from "../../../../../api/analytics/endpoints";
+import { EVENT_TYPE_CONFIG } from "../../../../../lib/events";
+import { EventTypeFilter } from "../../../../../components/EventTypeFilter";
 import { NothingFound } from "../../../../../components/NothingFound";
 import { ErrorState } from "../../../../../components/ErrorState";
 import { ScrollArea } from "../../../../../components/ui/scroll-area";
@@ -13,15 +15,31 @@ import { EventRow } from "./EventRow";
 import { RealtimeToggle } from "./RealtimeToggle";
 import { useEventLogState } from "./useEventLogState";
 
+const ALL_EVENT_TYPES = new Set(EVENT_TYPE_CONFIG.map((c) => c.value as string));
+
 export function EventLog() {
   const { site } = useParams();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [visibleTypes, setVisibleTypes] = useState<Set<string>>(ALL_EVENT_TYPES);
+
+  const handleToggleType = useCallback((type: string) => {
+    setVisibleTypes((prev) => {
+      const next = new Set(prev);
+      if (next.has(type)) {
+        next.delete(type);
+      } else {
+        next.add(type);
+      }
+      return next;
+    });
+  }, []);
 
   const {
     isRealtime,
     toggleRealtime,
     allEvents,
+    unfilteredEvents,
     isLoading,
     isError,
     scrollElement,
@@ -32,7 +50,7 @@ export function EventLog() {
     isLive,
     bufferedCount,
     flushAndScrollToTop,
-  } = useEventLogState();
+  } = useEventLogState({ visibleTypes });
 
   const rowVirtualizer = useVirtualizer({
     count: allEvents.length,
@@ -59,7 +77,7 @@ export function EventLog() {
     return (
       <div className="space-y-2">
         {Array.from({ length: 24 }).map((_, index) => (
-          <EventLogItemSkeleton key={index} />
+          <EventLogItemSkeleton key={index} showProperties={index % 3 === 0} />
         ))}
       </div>
     );
@@ -77,7 +95,10 @@ export function EventLog() {
   if (allEvents.length === 0) {
     return (
       <>
-        <RealtimeToggle isRealtime={isRealtime} onToggle={toggleRealtime} />
+        <div className="flex items-center gap-3 mb-2">
+          <RealtimeToggle isRealtime={isRealtime} onToggle={toggleRealtime} />
+          <EventTypeFilter visibleTypes={visibleTypes} onToggle={handleToggleType} events={unfilteredEvents} />
+        </div>
         <NothingFound
           title={"No events found"}
           description={"Try a different date range or filter"}
@@ -88,7 +109,10 @@ export function EventLog() {
 
   return (
     <>
-      <RealtimeToggle isRealtime={isRealtime} onToggle={toggleRealtime} />
+      <div className="flex items-center gap-3 mb-2">
+        <RealtimeToggle isRealtime={isRealtime} onToggle={toggleRealtime} />
+        <EventTypeFilter visibleTypes={visibleTypes} onToggle={handleToggleType} events={unfilteredEvents} />
+      </div>
 
       <div className="relative">
         {/* New events indicator */}
@@ -107,10 +131,10 @@ export function EventLog() {
         >
           <div className="relative h-full pr-2 font-mono text-[11px] leading-4">
             <div className="sticky top-0 z-20 bg-neutral-50/95 dark:bg-neutral-850/95 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
-              <div className="grid grid-cols-[140px_220px_160px_160px_minmax(240px,1fr)] px-2 py-1.5 uppercase tracking-wide text-[10px] text-neutral-500 dark:text-neutral-400">
+              <div className="grid grid-cols-[28px_140px_220px_160px_minmax(240px,1fr)] px-2 py-1.5 uppercase tracking-wide text-[10px] text-neutral-500 dark:text-neutral-400">
+                <div></div>
                 <div>Timestamp</div>
                 <div>User</div>
-                <div>Event Type</div>
                 <div>Device Info</div>
                 <div>Main Data</div>
               </div>

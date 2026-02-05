@@ -6,7 +6,7 @@ export function RealtimeToggle({
   onToggle: () => void;
 }) {
   return (
-    <div className="flex items-center gap-2 mb-2">
+    <div className="flex items-center gap-2 shrink-0">
       <button
         onClick={onToggle}
         className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${

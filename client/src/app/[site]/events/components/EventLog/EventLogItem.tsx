@@ -194,39 +194,42 @@ export function EventLogItem({ event }: EventLogItemProps) {
   );
 }
 
-export const EventLogItemSkeleton = memo(() => {
+export const EventLogItemSkeleton = memo(({ showProperties = false }: { showProperties?: boolean }) => {
   return (
     <div className="mb-3 rounded-lg bg-neutral-50 dark:bg-neutral-850/50 border border-neutral-100 dark:border-neutral-800 overflow-hidden p-3">
       <div className="flex flex-col space-y-2">
-        {/* Single row skeleton */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm">
           {/* Left side content */}
-          <div className="flex items-center gap-2 grow">
+          <div className="flex items-center gap-2 grow min-w-0">
+            {/* Event type icon */}
             <div className="h-4 w-4 bg-neutral-200 dark:bg-neutral-800 rounded-sm animate-pulse shrink-0"></div>
-            <div className="h-4 w-40 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse shrink-0"></div>
-            <div className="flex space-x-1 shrink-0">
+
+            {/* Event name or path */}
+            <div className="min-w-0 max-w-[40%]">
+              <div className="h-4 w-48 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse"></div>
+            </div>
+
+            {/* Device info */}
+            <div className="shrink-0 flex space-x-1 items-center">
               <div className="h-4 w-4 bg-neutral-200 dark:bg-neutral-800 rounded-sm animate-pulse"></div>
               <div className="h-4 w-4 bg-neutral-200 dark:bg-neutral-800 rounded-sm animate-pulse"></div>
               <div className="h-4 w-4 bg-neutral-200 dark:bg-neutral-800 rounded-sm animate-pulse"></div>
               <div className="h-4 w-4 bg-neutral-200 dark:bg-neutral-800 rounded-sm animate-pulse"></div>
             </div>
-            <div className="h-4 w-16 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse shrink-0"></div>
+
+            {/* User ID */}
+            <div className="h-4 w-[72px] bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse shrink-0"></div>
           </div>
 
           {/* Timestamp (right-aligned) */}
           <div className="h-4 w-24 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse shrink-0 ml-auto"></div>
         </div>
 
-        {/* Bottom row skeleton (properties) - show randomly */}
-        {Math.random() > 0.5 && (
+        {/* Bottom row (properties) */}
+        {showProperties && (
           <div className="flex flex-wrap gap-1 mt-1 ml-6">
-            {Array.from({ length: Math.floor(Math.random() * 4) + 1 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-5 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse"
-                style={{ width: `${Math.random() * 60 + 40}px` }}
-              ></div>
-            ))}
+            <div className="h-5 w-20 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse"></div>
+            <div className="h-5 w-28 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse"></div>
           </div>
         )}
       </div>

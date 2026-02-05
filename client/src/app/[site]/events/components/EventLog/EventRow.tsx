@@ -35,9 +35,22 @@ export function EventRow({ event, site, onClick }: EventRowProps) {
 
   return (
     <div
-      className="grid grid-cols-[140px_220px_160px_160px_minmax(240px,1fr)] border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50/60 dark:hover:bg-neutral-800/40 cursor-pointer"
+      className="grid grid-cols-[28px_140px_220px_160px_minmax(240px,1fr)] border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50/60 dark:hover:bg-neutral-800/40 cursor-pointer"
       onClick={() => onClick(event)}
     >
+      <div className="flex items-center justify-center py-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <EventTypeIcon type={event.type} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <span>{getEventTypeLabel(event.type)}</span>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+
       <div className="text-neutral-500 dark:text-neutral-400 px-2 py-1 flex items-center">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -58,11 +71,6 @@ export function EventRow({ event, site, onClick }: EventRowProps) {
           <Avatar size={18} id={event.user_id} lastActiveTime={eventTime} />
           <div className="text-neutral-700 dark:text-neutral-200 truncate max-w-[160px] hover:underline">{displayName}</div>
         </Link>
-      </div>
-
-      <div className="flex items-center gap-2 text-neutral-700 dark:text-neutral-200 px-2 py-1">
-        <EventTypeIcon type={event.type} />
-        <span>{getEventTypeLabel(event.type)}</span>
       </div>
 
       <div className="flex space-x-1 items-center px-2 py-1">

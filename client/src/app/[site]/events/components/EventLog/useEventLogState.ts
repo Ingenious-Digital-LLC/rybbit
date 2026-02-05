@@ -9,7 +9,9 @@ import { getEventKey } from "./eventLogUtils";
 const MAX_EVENTS = 10_000;
 const PAGE_SIZE = 100;
 
-export function useEventLogState() {
+export function useEventLogState(options: {
+  visibleTypes: Set<string>;
+} = { visibleTypes: new Set() }) {
   // --- Mode state ---
   const [isRealtime, setIsRealtime] = useState(true);
 
@@ -50,10 +52,17 @@ export function useEventLogState() {
   );
 
   // --- Combined event list ---
-  const allEvents = useMemo(() => {
+  const mergedEvents = useMemo(() => {
     if (prependedEvents.length === 0) return cursorEvents;
     return [...prependedEvents, ...cursorEvents].slice(0, MAX_EVENTS);
   }, [prependedEvents, cursorEvents]);
+
+  // --- Client-side type filter ---
+  const { visibleTypes } = options;
+  const allEvents = useMemo(() => {
+    if (visibleTypes.size === 0) return mergedEvents;
+    return mergedEvents.filter((ev) => visibleTypes.has(ev.type));
+  }, [mergedEvents, visibleTypes]);
 
   // --- Rebuild seenKeys + set latestTimestamp when cursor data changes ---
   useEffect(() => {
@@ -203,6 +212,7 @@ export function useEventLogState() {
 
     // Data
     allEvents,
+    unfilteredEvents: mergedEvents,
     isLoading,
     isError,
 
