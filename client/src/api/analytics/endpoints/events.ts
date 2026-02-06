@@ -22,8 +22,17 @@ export type Event = {
   page_title: string;
   referrer: string;
   browser: string;
+  browser_version: string;
   operating_system: string;
+  operating_system_version: string;
+  language: string;
   country: string;
+  region: string;
+  city: string;
+  lat: number;
+  lon: number;
+  screen_width: number;
+  screen_height: number;
   device_type: string;
   type: string;
 };
