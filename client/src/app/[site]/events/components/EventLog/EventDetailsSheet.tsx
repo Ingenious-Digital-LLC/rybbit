@@ -43,6 +43,10 @@ export function EventDetailsSheet({ open, onOpenChange, event, site }: EventDeta
     staleTime: 30000,
   });
 
+  const timestamp = DateTime.fromSQL(event?.timestamp || "", { zone: "utc" })
+    .setLocale(userLocale)
+    .setZone(getTimezone())
+
   return (
     <Sheet
       open={open}
@@ -70,10 +74,7 @@ export function EventDetailsSheet({ open, onOpenChange, event, site }: EventDeta
                   <div className="flex items-center justify-between border-b border-neutral-50 dark:border-neutral-850 pb-1.5">
                     <span className="text-neutral-500 dark:text-neutral-400">Timestamp</span>
                     <span>
-                      {DateTime.fromSQL(event.timestamp, { zone: "utc" })
-                        .setLocale(userLocale)
-                        .setZone(getTimezone())
-                        .toFormat(hour12 ? "MMM d, h:mm:ss a" : "dd MMM, HH:mm:ss")}
+                      {timestamp.toFormat(hour12 ? "MMM d, h:mm:ss a" : "dd MMM, HH:mm:ss")}
                     </span>
                   </div>
                   <div className="flex items-center justify-between border-b border-neutral-50 dark:border-neutral-850 pb-1.5">
@@ -171,7 +172,7 @@ export function EventDetailsSheet({ open, onOpenChange, event, site }: EventDeta
               {sessionQuery.isLoading ? (
                 <SessionCardSkeleton count={1} />
               ) : sessionQuery.data ? (
-                <SessionCard session={sessionQuery.data} expandedByDefault />
+                <SessionCard session={sessionQuery.data} expandedByDefault highlightedEventTimestamp={timestamp.toMillis()} />
               ) : (
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">No session data</div>
               )}
