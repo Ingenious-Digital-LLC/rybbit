@@ -125,7 +125,7 @@ export async function getEvents(
         : "";
 
     let cursorCondition = "";
-    const queryParams: Record<string, any> = {
+    const queryParams: Record<string, string | number> = {
       siteId: Number(siteId),
       limit: Number(limit),
     };
