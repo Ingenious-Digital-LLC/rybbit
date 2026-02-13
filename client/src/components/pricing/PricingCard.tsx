@@ -59,7 +59,7 @@ export function PricingCard({
                 <h3 className="text-xl font-bold">{title}</h3>
                 {recommended && (
                   <span className="px-2 py-0.5 text-xs font-semibold bg-emerald-500/30 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/40 dark:border-emerald-500/30">
-                    Recommended
+                    Most Popular
                   </span>
                 )}
               </div>

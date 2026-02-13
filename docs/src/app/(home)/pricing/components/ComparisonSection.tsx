@@ -264,15 +264,15 @@ function FeatureCell({ value }: FeatureCellProps) {
 export function ComparisonSection({ isAnnual }: { isAnnual: boolean }) {
   return (
     <section className="-mt-8 pb-8 w-full relative z-10">
-      <div className="max-w-[1300px] mx-auto px-4 overflow-x-auto">
+      <div className="max-w-[1040px] mx-auto px-4 overflow-x-auto">
         <div className="bg-neutral-200/40 dark:bg-neutral-900/40 p-2 rounded-3xl border border-neutral-300 dark:border-neutral-800">
           <div className="bg-neutral-50 dark:bg-neutral-900 backdrop-blur-sm rounded-2xl border border-neutral-300 dark:border-neutral-800 overflow-hidden min-w-[800px]">
             {/* Table Header */}
-            <div className="grid grid-cols-5 gap-0 py-6 bg-neutral-100/50 dark:bg-neutral-800/20">
+            <div className="grid grid-cols-4 gap-0 py-6 bg-neutral-100/50 dark:bg-neutral-800/20">
               <div className="flex items-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50 text-xl font-semibold text-neutral-800 dark:text-neutral-200">
                 Compare Plans
               </div>
-              <div className="flex flex-col items-center justify-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
+              {/* <div className="flex flex-col items-center justify-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
                 <div className="font-semibold text-lg text-center mb-3">
                   Free <span className="text-sm text-neutral-500 dark:text-neutral-400 font-normal block">$0/month</span>
                 </div>
@@ -282,7 +282,7 @@ export function ComparisonSection({ isAnnual }: { isAnnual: boolean }) {
                 >
                   Start Free
                 </AppLink>
-              </div>
+              </div> */}
               <div className="flex flex-col items-center justify-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
                 <div className="font-semibold text-lg text-center mb-3">
                   Standard{" "}
@@ -326,13 +326,13 @@ export function ComparisonSection({ isAnnual }: { isAnnual: boolean }) {
               <div key={categoryIndex}>
                 {/* Category Header - Skip for "Usage" category */}
                 {category.category !== "Usage" && (
-                  <div className="grid grid-cols-5 gap-0 py-3 border-b border-neutral-400 dark:border-neutral-700 bg-neutral-100/30 dark:bg-neutral-800/10">
+                  <div className="grid grid-cols-4 gap-0 py-3 border-b border-neutral-400 dark:border-neutral-700 bg-neutral-100/30 dark:bg-neutral-800/10">
                     <div className="flex items-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
                       <h3 className="font-semibold text-neutral-800 dark:text-neutral-100 text-base">
                         {category.category}
                       </h3>
                     </div>
-                    <div className="border-r border-neutral-400/50 dark:border-neutral-700/50"></div>
+                    {/* <div className="border-r border-neutral-400/50 dark:border-neutral-700/50"></div> */}
                     <div className="border-r border-neutral-400/50 dark:border-neutral-700/50"></div>
                     <div className="border-r border-neutral-400/50 dark:border-neutral-700/50"></div>
                     <div></div>
@@ -343,14 +343,14 @@ export function ComparisonSection({ isAnnual }: { isAnnual: boolean }) {
                 {category.features.map((feature, featureIndex) => (
                   <div
                     key={featureIndex}
-                    className="grid grid-cols-5 gap-0 py-3 hover:bg-neutral-100/50 dark:hover:bg-neutral-800/20 transition-colors border-b border-neutral-300/30 dark:border-neutral-800/30 last:border-b-0"
+                    className="grid grid-cols-4 gap-0 py-3 hover:bg-neutral-100/50 dark:hover:bg-neutral-800/20 transition-colors border-b border-neutral-300/30 dark:border-neutral-800/30 last:border-b-0"
                   >
                     <div className="flex items-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
                       <span className="text-sm text-neutral-700 dark:text-neutral-300">{feature.name}</span>
                     </div>
-                    <div className="flex items-center justify-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
+                    {/* <div className="flex items-center justify-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
                       <FeatureCell value={feature.free} />
-                    </div>
+                    </div> */}
                     <div className="flex items-center justify-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50">
                       <FeatureCell value={feature.standard} />
                     </div>

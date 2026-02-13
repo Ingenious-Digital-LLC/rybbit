@@ -239,8 +239,8 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
       </div>
 
       {/* Cards section */}
-      <div className="grid min-[1100px]:grid-cols-4 min-[600px]:grid-cols-2 min-[400px]:grid-cols-1 gap-6 max-w-[1300px] mx-auto mb-16">
-        <PricingCard
+      <div className="grid min-[1100px]:grid-cols-3 min-[400px]:grid-cols-1 gap-6 max-w-[1000px] mx-auto mb-16">
+        {/* <PricingCard
           title="Free"
           description="Perfect for hobby projects"
           priceDisplay={
@@ -255,7 +255,7 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
           variant="free"
           onClick={() => (siteId ? router.push(`/${siteId}`) : undefined)}
           disabled={!siteId}
-        />
+        /> */}
 
         <PricingCard
           title="Standard"
