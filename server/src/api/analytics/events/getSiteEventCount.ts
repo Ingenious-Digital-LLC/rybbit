@@ -1,9 +1,63 @@
 import { FilterParams } from "@rybbit/shared";
 import { FastifyReply, FastifyRequest } from "fastify";
+import SqlString from "sqlstring";
 import { clickhouse } from "../../../db/clickhouse/clickhouse.js";
 import { TimeBucket } from "../types.js";
 import { getFilterStatement } from "../utils/getFilterStatement.js";
-import { getTimeStatement, processResults, TimeBucketToFn } from "../utils/utils.js";
+import { validateTimeStatementFillParams } from "../utils/query-validation.js";
+import { getTimeStatement, processResults, TimeBucketToFn, bucketIntervalMap } from "../utils/utils.js";
+
+function getTimeStatementFill(params: FilterParams, bucket: TimeBucket) {
+  const { params: validatedParams, bucket: validatedBucket } = validateTimeStatementFillParams(params, bucket);
+
+  if (validatedParams.start_date && validatedParams.end_date && validatedParams.time_zone) {
+    const { start_date, end_date, time_zone } = validatedParams;
+    return `WITH FILL FROM toTimeZone(
+      toDateTime(${TimeBucketToFn[validatedBucket]}(toDateTime(${SqlString.escape(start_date)}, ${SqlString.escape(time_zone)}))),
+      'UTC'
+      )
+      TO if(
+        toDate(${SqlString.escape(end_date)}) = toDate(now(), ${SqlString.escape(time_zone)}),
+        now(),
+        toTimeZone(
+          toDateTime(${TimeBucketToFn[validatedBucket]}(toDateTime(${SqlString.escape(end_date)}, ${SqlString.escape(time_zone)}))) + INTERVAL 1 DAY,
+          'UTC'
+        )
+      ) STEP INTERVAL ${bucketIntervalMap[validatedBucket]}`;
+  }
+
+  if (validatedParams.past_minutes_start !== undefined && validatedParams.past_minutes_end !== undefined) {
+    const { past_minutes_start: start, past_minutes_end: end } = validatedParams;
+    const now = new Date();
+    const startTimestamp = new Date(now.getTime() - start * 60 * 1000);
+    const endTimestamp = new Date(now.getTime() - end * 60 * 1000);
+    const startIso = startTimestamp.toISOString().slice(0, 19).replace("T", " ");
+    const endIso = endTimestamp.toISOString().slice(0, 19).replace("T", " ");
+
+    return ` WITH FILL
+      FROM ${TimeBucketToFn[validatedBucket]}(toDateTime(${SqlString.escape(startIso)}))
+      TO ${TimeBucketToFn[validatedBucket]}(toDateTime(${SqlString.escape(endIso)})) + INTERVAL 1 ${
+        validatedBucket === "minute"
+          ? "MINUTE"
+          : validatedBucket === "five_minutes"
+            ? "MINUTE"
+            : validatedBucket === "ten_minutes"
+              ? "MINUTE"
+              : validatedBucket === "fifteen_minutes"
+                ? "MINUTE"
+                : validatedBucket === "month"
+                  ? "MONTH"
+                  : validatedBucket === "week"
+                    ? "WEEK"
+                    : validatedBucket === "day"
+                      ? "DAY"
+                      : "HOUR"
+      }
+      STEP INTERVAL ${bucketIntervalMap[validatedBucket]}`;
+  }
+
+  return "";
+}
 
 export type GetSiteEventCountResponse = {
   time: string;
@@ -44,6 +98,14 @@ export async function getSiteEventCount(
   const timeStatement = getTimeStatement(req.query);
   const filterStatement = getFilterStatement(req.query.filters, Number(site), timeStatement);
 
+  const { start_date, end_date, past_minutes_start, past_minutes_end } = req.query;
+  const pastMinutesRange =
+    past_minutes_start !== undefined && past_minutes_end !== undefined
+      ? { start: Number(past_minutes_start), end: Number(past_minutes_end) }
+      : undefined;
+  const isAllTime = !start_date && !end_date && !pastMinutesRange;
+  const fillStatement = isAllTime ? "" : getTimeStatementFill(req.query, bucket);
+
   const query = `
     SELECT
       toDateTime(${TimeBucketToFn[bucket]}(toTimeZone(timestamp, {timeZone:String}))) AS time,
@@ -65,7 +127,7 @@ export async function getSiteEventCount(
       ${timeStatement}
       ${filterStatement}
     GROUP BY time
-    ORDER BY time
+    ORDER BY time ${fillStatement}
   `;
 
   try {
