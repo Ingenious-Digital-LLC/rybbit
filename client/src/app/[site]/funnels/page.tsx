@@ -5,6 +5,7 @@ import { GOALS_PAGE_FILTERS } from "@/lib/filterGroups";
 import { useStore } from "@/lib/store";
 import { ArrowRight, Funnel } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { useGetFunnels } from "../../../api/analytics/hooks/funnels/useGetFunnels";
 import { SavedFunnel } from "../../../api/analytics/endpoints";
@@ -58,6 +59,7 @@ const FunnelRowSkeleton = () => (
 );
 
 export default function FunnelsPage() {
+  const t = useTranslations("funnelsPage");
   useSetPageTitle("Funnels");
 
   const { site } = useStore();
@@ -82,12 +84,12 @@ export default function FunnelsPage() {
   }, [funnels, searchQuery]);
 
   return (
-    <DisabledOverlay message="Funnels" featurePath="funnels">
+    <DisabledOverlay message={t("Funnels")} featurePath="funnels">
       <div className="p-2 md:p-4 max-w-[1300px] mx-auto space-y-3">
         <SubHeader availableFilters={GOALS_PAGE_FILTERS} />
         <div className="flex justify-between items-center">
           <Input
-            placeholder="Filter funnels"
+            placeholder={t("Filter funnels")}
             className="w-48"
             isSearch
             value={searchQuery}
@@ -104,8 +106,8 @@ export default function FunnelsPage() {
           </div>
         ) : error ? (
           <ErrorState
-            title="Failed to load funnels"
-            message="There was a problem fetching the funnels. Please try again later."
+            title={t("Failed to load funnels")}
+            message={t("There was a problem fetching the funnels. Please try again later.")}
           />
         ) : filteredFunnels?.length ? (
           <div className="space-y-4">
@@ -116,14 +118,14 @@ export default function FunnelsPage() {
         ) : funnels?.length ? (
           <NothingFound
             icon={<Funnel className="w-10 h-10" />}
-            title={"No funnels found"}
-            description={`No funnels match "${searchQuery}"`}
+            title={t("No funnels found")}
+            description={t('No funnels match "{query}"', { query: searchQuery })}
           />
         ) : (
           <NothingFound
             icon={<Funnel className="w-10 h-10" />}
-            title={"No funnels yet"}
-            description={"Create your first funnel to track conversions through your site's user journey"}
+            title={t("No funnels yet")}
+            description={t("Create your first funnel to track conversions through your site's user journey")}
             action={<CreateFunnelDialog />}
           />
         )}

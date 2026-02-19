@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { CodeSnippet } from "@/components/CodeSnippet";
 import { VerifyInstallation } from "@/components/VerifyInstallation";
 import { Input } from "@/components/ui/input";
@@ -12,6 +14,7 @@ interface ScriptBuilderProps {
 }
 
 export function ScriptBuilder({ siteId }: ScriptBuilderProps) {
+  const t = useTranslations("siteSettings");
   const [debounceValue, setDebounceValue] = useState(500);
   const [skipPatterns, setSkipPatterns] = useState<string[]>([]);
   const [skipPatternsText, setSkipPatternsText] = useState("");
@@ -94,9 +97,11 @@ export function ScriptBuilder({ siteId }: ScriptBuilderProps) {
     <div className="space-y-6">
       <div className="space-y-3">
         <div>
-          <h4 className="text-sm font-semibold text-foreground">Tracking Script</h4>
+          <h4 className="text-sm font-semibold text-foreground">{t("Tracking Script")}</h4>
           <p className="text-xs text-muted-foreground">
-            Add this script to the <code>&lt;head&gt;</code> of your website
+            {t.rich("Add this script to the <code><head></code> of your website", {
+              code: (chunks) => <code>{chunks}</code>,
+            })}
           </p>
         </div>
         <CodeSnippet language="HTML" code={trackingScript} />
@@ -109,11 +114,13 @@ export function ScriptBuilder({ siteId }: ScriptBuilderProps) {
           <div className="space-y-2">
             <div>
               <Label htmlFor="skipPatterns" className="text-sm font-medium text-foreground block">
-                Skip Patterns
+                {t("Skip Patterns")}
               </Label>
-              <p className="text-xs text-muted-foreground mt-1">URL patterns to exclude from tracking (one per line)</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("URL patterns to exclude from tracking (one per line)")}</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Use <code>*</code> for single segment wildcard, <code>**</code> for multi-segment wildcard
+                {t.rich("Use <code>*</code> for single segment wildcard, <code>**</code> for multi-segment wildcard", {
+                  code: (chunks) => <code>{chunks}</code>,
+                })}
               </p>
               <Textarea
                 id="skipPatterns"
@@ -129,13 +136,15 @@ export function ScriptBuilder({ siteId }: ScriptBuilderProps) {
           <div className="space-y-2">
             <div>
               <Label htmlFor="maskPatterns" className="text-sm font-medium text-foreground block">
-                Mask Patterns
+                {t("Mask Patterns")}
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                URL patterns to anonymize in analytics (one per line)
+                {t("URL patterns to anonymize in analytics (one per line)")}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                E.g. <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details
+                {t.rich("E.g. <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details", {
+                  code: (chunks) => <code>{chunks}</code>,
+                })}
               </p>
               <Textarea
                 id="maskPatterns"
@@ -151,7 +160,7 @@ export function ScriptBuilder({ siteId }: ScriptBuilderProps) {
           <div className="space-y-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="debounce" className="text-sm font-medium text-foreground">
-                Debounce Duration (ms)
+                {t("Debounce Duration (ms)")}
               </Label>
               <div className="flex items-center gap-2">
                 <Input
@@ -163,10 +172,10 @@ export function ScriptBuilder({ siteId }: ScriptBuilderProps) {
                   onChange={e => setDebounceValue(parseInt(e.target.value) || 0)}
                   className="max-w-[120px]"
                 />
-                <span className="text-xs text-muted-foreground">Default: 500ms</span>
+                <span className="text-xs text-muted-foreground">{t("Default: 500ms")}</span>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">Time to wait before tracking a pageview after URL changes</p>
+            <p className="text-xs text-muted-foreground">{t("Time to wait before tracking a pageview after URL changes")}</p>
           </div>
         </div>
       </div>

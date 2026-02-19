@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useGetGoals } from "../../../api/analytics/hooks/goals/useGetGoals";
 import { DisabledOverlay } from "../../../components/DisabledOverlay";
 import { NothingFound } from "../../../components/NothingFound";
@@ -57,6 +58,7 @@ const GoalCardSkeleton = () => (
 );
 
 export default function GoalsPage() {
+  const t = useTranslations("goalsPage");
   useSetPageTitle("Goals");
 
   const { site } = useStore();
@@ -137,12 +139,12 @@ export default function GoalsPage() {
     : undefined;
 
   return (
-    <DisabledOverlay message="Goals" featurePath="goals" requiredPlan="basic">
+    <DisabledOverlay message={t("Goals")} featurePath="goals" requiredPlan="basic">
       <div className="p-2 md:p-4 max-w-[1400px] mx-auto space-y-3">
         <SubHeader availableFilters={GOALS_PAGE_FILTERS} />
         <div className="flex items-center justify-between">
           <Input
-            placeholder="Filter goals"
+            placeholder={t("Filter goals")}
             className="w-48"
             isSearch
             value={searchQuery}
@@ -162,15 +164,15 @@ export default function GoalsPage() {
         ) : !goalsData || goalsData.data.length === 0 ? (
           <NothingFound
             icon={<Target className="w-10 h-10" />}
-            title={"No goals found"}
-            description={"Create your first conversion goal to start tracking important user actions."}
+            title={t("No goals found")}
+            description={t("Create your first conversion goal to start tracking important user actions.")}
             action={<CreateGoalButton siteId={Number(site)} />}
           />
         ) : filteredGoals.length === 0 ? (
           <NothingFound
             icon={<Target className="w-10 h-10" />}
-            title={"No goals found"}
-            description={`No goals match "${searchQuery}"`}
+            title={t("No goals found")}
+            description={t('No goals match "{query}"', { query: searchQuery })}
           />
         ) : (
           <div className="space-y-6">

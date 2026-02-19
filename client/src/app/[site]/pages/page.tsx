@@ -6,6 +6,7 @@ import { Pagination } from "@/components/pagination";
 import { useSetPageTitle } from "@/hooks/useSetPageTitle";
 import { useStore } from "@/lib/store";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { DisabledOverlay } from "../../../components/DisabledOverlay";
 import { SubHeader } from "../components/SubHeader/SubHeader";
 import { PageListItem } from "./components/PageListItem";
@@ -15,6 +16,7 @@ import { PageListSkeleton } from "./components/PageListSkeleton";
 const PAGE_SIZE = 10;
 
 export default function Pages() {
+  const t = useTranslations("pagesPage");
   const { site } = useStore();
 
   const [pagination, setPagination] = useState({
@@ -95,7 +97,7 @@ export default function Pages() {
   }
 
   return (
-    <DisabledOverlay message="pages" featurePath="pages">
+    <DisabledOverlay message={t("Pages")} featurePath="pages">
       <div className="p-2 md:p-4 max-w-[1100px] mx-auto space-y-3">
         <SubHeader />
 
@@ -103,7 +105,7 @@ export default function Pages() {
           <PageListSkeleton count={pagination.pageSize} />
         ) : isErrorPages ? (
           <div className="text-center p-8 text-destructive">
-            <p>Error loading pages data</p>
+            <p>{t("Error loading pages data")}</p>
             <p className="text-sm">{pagesError?.toString()}</p>
           </div>
         ) : pagesDataArray && pagesDataArray.length > 0 ? (
@@ -133,7 +135,7 @@ export default function Pages() {
           </>
         ) : !isLoadingPages && !isFetching ? (
           <div className="text-center py-12 text-muted-foreground">
-            <p>No pages data found for the selected period.</p>
+            <p>{t("No pages data found for the selected period.")}</p>
           </div>
         ) : null}
       </div>

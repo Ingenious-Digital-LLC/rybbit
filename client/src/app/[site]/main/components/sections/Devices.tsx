@@ -1,6 +1,7 @@
 "use client";
 
 import { Expand, Monitor, Smartphone, Tablet } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../../components/ui/basic-tabs";
 import { Card, CardContent } from "../../../../../components/ui/card";
@@ -13,6 +14,7 @@ import { DeviceIcon } from "../../../components/shared/icons/Device";
 type Tab = "devices" | "browsers" | "os" | "dimensions" | "browser_versions" | "os_versions";
 
 export function Devices() {
+  const t = useTranslations("analytics");
   const [tab, setTab] = useState<Tab>("browsers");
   const [expanded, setExpanded] = useState(false);
   const close = () => {
@@ -26,10 +28,10 @@ export function Devices() {
           <div className="flex flex-row gap-2 justify-between items-center">
             <div className="overflow-x-auto">
               <TabsList>
-                <TabsTrigger value="browsers">Browsers</TabsTrigger>
-                <TabsTrigger value="devices">Devices</TabsTrigger>
-                <TabsTrigger value="os">Operating Systems</TabsTrigger>
-                <TabsTrigger value="dimensions">Screen Dimensions</TabsTrigger>
+                <TabsTrigger value="browsers">{t("Browsers")}</TabsTrigger>
+                <TabsTrigger value="devices">{t("Devices")}</TabsTrigger>
+                <TabsTrigger value="os">{t("Operating Systems")}</TabsTrigger>
+                <TabsTrigger value="dimensions">{t("Screen Dimensions")}</TabsTrigger>
               </TabsList>
             </div>
             <div className="w-7">
@@ -41,7 +43,7 @@ export function Devices() {
           <TabsContent value="devices">
             <StandardSection
               filterParameter="device_type"
-              title="Devices"
+              title={t("Devices")}
               getValue={e => e.value}
               getKey={e => e.value}
               getLabel={e => (
@@ -57,7 +59,7 @@ export function Devices() {
           <TabsContent value="browsers">
             <StandardSection
               filterParameter="browser"
-              title="Browsers"
+              title={t("Browsers")}
               getValue={e => e.value}
               getKey={e => e.value}
               getLabel={e => (
@@ -82,7 +84,7 @@ export function Devices() {
           </TabsContent>
           <TabsContent value="os">
             <StandardSection
-              title="Operating Systems"
+              title={t("Operating Systems")}
               getValue={e => e.value}
               getKey={e => e.value}
               getLabel={e => (
@@ -108,7 +110,7 @@ export function Devices() {
           </TabsContent>
           <TabsContent value="dimensions">
             <StandardSection
-              title="Screen Dimensions"
+              title={t("Screen Dimensions")}
               getValue={e => e.value}
               getKey={e => e.value}
               getLabel={e => <div className="flex gap-2 items-center">{e.value || "Other"}</div>}

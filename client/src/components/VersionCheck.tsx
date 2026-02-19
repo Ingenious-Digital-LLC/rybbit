@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "@/components/ui/sonner";
 
 import { IS_CLOUD } from "../lib/const";
@@ -9,6 +10,8 @@ import { X } from "lucide-react";
 import { Button } from "./ui/button";
 
 export function VersionCheck() {
+  const t = useTranslations("versionCheck");
+  const tc = useTranslations("common");
   useEffect(() => {
     if (IS_CLOUD) return;
     if (sessionStorage.getItem("version-check-done")) return;
@@ -23,17 +26,17 @@ export function VersionCheck() {
 
         if (latest && latest !== current && isNewer(latest, current)) {
           toast.custom(
-            (t) => (
+            (toastInstance) => (
               <div
                 style={{
-                  opacity: t.visible ? 1 : 0,
-                  transform: t.visible ? "translateY(0)" : "translateY(-8px)",
+                  opacity: toastInstance.visible ? 1 : 0,
+                  transform: toastInstance.visible ? "translateY(0)" : "translateY(-8px)",
                   transition: "opacity 200ms ease, transform 200ms ease",
                 }}
                 className="flex items-center gap-3 bg-white dark:bg-neutral-850 border border-neutral-150 dark:border-neutral-850 rounded-lg shadow-lg py-2 px-3 text-sm"
               >
                 <span>
-                  Rybbit v{latest} is available (you&apos;re on v{current})
+                  {t("Rybbit v{latest} is available (you're on v{current})", { latest, current })}
                 </span>
                 <a
                   href="https://rybbit.com/docs/managing-your-installation#updating-your-installation"
@@ -41,11 +44,11 @@ export function VersionCheck() {
                   rel="noopener noreferrer"
                 >
                   <Button variant="success" size="sm">
-                    Upgrade
+                    {tc("Upgrade")}
                   </Button>
                 </a>
                 <button
-                  onClick={() => toast.dismiss(t.id)}
+                  onClick={() => toast.dismiss(toastInstance.id)}
                   className="text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
                 >
                   <X size={16} />
@@ -59,7 +62,7 @@ export function VersionCheck() {
       .catch(() => {
         // Silently ignore - user may be offline or app.rybbit.io unreachable
       });
-  }, []);
+  }, [t, tc]);
 
   return null;
 }

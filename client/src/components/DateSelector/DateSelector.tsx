@@ -15,11 +15,12 @@ import { getTimezone, useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Calendar } from "lucide-react";
 import { DateTime } from "luxon";
+import { useTranslations } from "next-intl";
 import { CustomDateRangePicker } from "./CustomDateRangePicker";
 import { Time } from "./types";
 
-// Convert wellKnown kebab-case to display labels
-const wellKnownLabels: Record<string, string> = {
+// Map wellKnown keys to translation keys
+const wellKnownToTranslationKey: Record<string, string> = {
   today: "Today",
   yesterday: "Yesterday",
   "last-3-days": "Last 3 Days",
@@ -39,10 +40,10 @@ const wellKnownLabels: Record<string, string> = {
   "all-time": "All Time",
 };
 
-const getLabel = (time: Time) => {
+const getLabel = (time: Time, t: (key: string, values?: Record<string, string | number | Date>) => string) => {
   // Check for wellKnown preset first
-  if (time.wellKnown && wellKnownLabels[time.wellKnown]) {
-    return wellKnownLabels[time.wellKnown];
+  if (time.wellKnown && wellKnownToTranslationKey[time.wellKnown]) {
+    return t(wellKnownToTranslationKey[time.wellKnown]);
   }
 
   // Use timezone-aware "now" for comparisons
@@ -58,26 +59,26 @@ const getLabel = (time: Time) => {
   if (time.mode === "past-minutes") {
     if (time.pastMinutesStart >= 60) {
       const hours = Math.floor(time.pastMinutesStart / 60);
-      return `Last ${hours} ${hours === 1 ? "Hour" : "Hours"}`;
+      return t("Last {hours} {hours, plural, one {Hour} other {Hours}}", { hours });
     }
-    return `Last ${time.pastMinutesStart} minutes`;
+    return t("Last {minutes} minutes", { minutes: time.pastMinutesStart });
   }
 
   if (time.mode === "day") {
     if (time.day === now.toISODate()) {
-      return "Today";
+      return t("Today");
     }
     if (time.day === now.minus({ days: 1 }).toISODate()) {
-      return "Yesterday";
+      return t("Yesterday");
     }
     return DateTime.fromISO(time.day).toFormat("EEEE, MMM d");
   }
   if (time.mode === "week") {
     if (time.week === now.startOf("week").toISODate()) {
-      return "This Week";
+      return t("This Week");
     }
     if (time.week === now.minus({ weeks: 1 }).startOf("week").toISODate()) {
-      return "Last Week";
+      return t("Last Week");
     }
     const startDate = DateTime.fromISO(time.week).toFormat("EEEE, MMM d");
     const endDate = DateTime.fromISO(time.week).endOf("week").toFormat("EEEE, MMM d");
@@ -85,21 +86,21 @@ const getLabel = (time: Time) => {
   }
   if (time.mode === "month") {
     if (time.month === now.startOf("month").toISODate()) {
-      return "This Month";
+      return t("This Month");
     }
     if (time.month === now.minus({ months: 1 }).startOf("month").toISODate()) {
-      return "Last Month";
+      return t("Last Month");
     }
     return DateTime.fromISO(time.month).toFormat("MMMM yyyy");
   }
   if (time.mode === "year") {
     if (time.year === now.startOf("year").toISODate()) {
-      return "This Year";
+      return t("This Year");
     }
     return DateTime.fromISO(time.year).toFormat("yyyy");
   }
   if (time.mode === "all-time") {
-    return "All Time";
+    return t("All Time");
   }
 };
 
@@ -112,13 +113,14 @@ export function DateSelector({
   setTime: (time: Time) => void;
   pastMinutesEnabled?: boolean;
 }) {
+  const t = useTranslations("dates");
   const { timezone, setTimezone } = useStore();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger size={"sm"}>
         <Calendar className="hidden sm:block w-4 h-4" />
-        {getLabel(time)}
+        {getLabel(time, t)}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuItem
@@ -133,7 +135,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "today" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          Today
+          {t("Today")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -147,7 +149,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "yesterday" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          Yesterday
+          {t("Yesterday")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -162,7 +164,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "last-3-days" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          Last 3 Days
+          {t("Last 3 Days")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -177,7 +179,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "last-7-days" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          Last 7 Days
+          {t("Last 7 Days")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -192,7 +194,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "last-14-days" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          Last 14 Days
+          {t("Last 14 Days")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -207,7 +209,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "last-30-days" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          Last 30 Days
+          {t("Last 30 Days")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -222,7 +224,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "last-60-days" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          Last 60 Days
+          {t("Last 60 Days")}
         </DropdownMenuItem>
         {pastMinutesEnabled && (
           <>
@@ -238,7 +240,7 @@ export function DateSelector({
               }
               className={cn(time.wellKnown === "last-30-minutes" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
             >
-              Last 30 Minutes
+              {t("Last 30 Minutes")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
@@ -251,7 +253,7 @@ export function DateSelector({
               }
               className={cn(time.wellKnown === "last-1-hour" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
             >
-              Last 1 Hour
+              {t("Last 1 Hour")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
@@ -264,7 +266,7 @@ export function DateSelector({
               }
               className={cn(time.wellKnown === "last-6-hours" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
             >
-              Last 6 Hours
+              {t("Last 6 Hours")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
@@ -277,7 +279,7 @@ export function DateSelector({
               }
               className={cn(time.wellKnown === "last-24-hours" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
             >
-              Last 24 Hours
+              {t("Last 24 Hours")}
             </DropdownMenuItem>
           </>
         )}
@@ -294,7 +296,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "this-week" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          This Week
+          {t("This Week")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -308,7 +310,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "this-month" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          This Month
+          {t("This Month")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -322,7 +324,7 @@ export function DateSelector({
           }}
           className={cn(time.wellKnown === "this-year" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          This Year
+          {t("This Year")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() =>
@@ -333,7 +335,7 @@ export function DateSelector({
           }
           className={cn(time.wellKnown === "all-time" && "bg-neutral-50 dark:bg-neutral-800 font-medium")}
         >
-          All Time
+          {t("All Time")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <CustomDateRangePicker setTime={setTime} time={time} />

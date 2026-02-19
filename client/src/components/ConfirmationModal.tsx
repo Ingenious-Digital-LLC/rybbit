@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,7 @@ export const ConfirmationModal: React.FC<{
   onConfirm: () => void;
   primaryAction?: ButtonProps;
 }> = ({ title, description, children, isOpen, onConfirm, setIsOpen, primaryAction }) => {
+  const t = useTranslations("confirmationModal");
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async () => {
@@ -45,13 +47,13 @@ export const ConfirmationModal: React.FC<{
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
+              <AlertTitle>{t("Error")}</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
           <DialogFooter>
             <Button type="submit" onClick={() => setIsOpen(false)} variant={"ghost"}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button type="submit" onClick={onSubmit} {...primaryAction}></Button>
           </DialogFooter>

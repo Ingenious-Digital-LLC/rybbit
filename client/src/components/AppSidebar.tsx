@@ -1,6 +1,7 @@
 "use client";
 
 import { BookOpen, Building2, HelpCircle, LogOut, Settings, ShieldUser, User } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useState } from "react";
@@ -11,6 +12,7 @@ import { authClient } from "../lib/auth";
 import { IS_CLOUD } from "../lib/const";
 import { useStripeSubscription } from "../lib/subscription/useStripeSubscription";
 import { cn } from "../lib/utils";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 import { RybbitLogo } from "./RybbitLogo";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
@@ -31,6 +33,7 @@ function AdminLink({ isExpanded }: { isExpanded: boolean }) {
 }
 
 function AppSidebarContent() {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -57,7 +60,7 @@ function AppSidebarContent() {
         <SidebarLink
           href="https://rybbit.com/docs"
           icon={<BookOpen className="w-5 h-5" />}
-          label="Documentation"
+          label={t("Documentation")}
           target="_blank"
           active={false}
           expanded={isExpanded}
@@ -66,7 +69,7 @@ function AppSidebarContent() {
           IS_CLOUD && subscription?.status === "active" && <SidebarLink
             href="mailto:hello@rybbit.com"
             icon={<HelpCircle className="w-5 h-5" />}
-            label="Email Support"
+            label={t("Email Support")}
             target="_blank"
             active={false}
             expanded={isExpanded}
@@ -82,8 +85,9 @@ function AppSidebarContent() {
         {session?.user.role === "admin" && <AdminLink isExpanded={isExpanded} />}
       </div>
       <div className="flex flex-col items-start gap-2 w-full">
-        <div className={cn("flex items-center w-full px-0.5", isExpanded ? "justify-start" : "hidden")}>
+        <div className={cn("flex items-center gap-1.5 w-full px-0.5", isExpanded ? "justify-start" : "hidden")}>
           <ThemeSwitcher />
+          <LocaleSwitcher />
         </div>
 
         {isExpanded ? (
@@ -91,21 +95,21 @@ function AppSidebarContent() {
             <SidebarLink
               href="/settings/account"
               icon={<User className="w-5 h-5" />}
-              label="Account"
+              label={t("Account")}
               active={pathname.startsWith("/settings/account")}
               expanded={isExpanded}
             />
             <SidebarLink
               href="/settings/organization"
               icon={<Building2 className="w-5 h-5" />}
-              label="Organization"
+              label={t("Organization")}
               active={pathname.startsWith("/settings/organization")}
               expanded={isExpanded}
             />
             <SidebarLink
               onClick={signout}
               icon={<LogOut className="w-5 h-5" />}
-              label="Sign out"
+              label={t("Sign out")}
               expanded={isExpanded}
             />
           </>

@@ -12,6 +12,7 @@ import { DialogDescription } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { AlertCircle, AlertTriangle, Building2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { authClient } from "../lib/auth";
 import { toast } from "@/components/ui/sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -27,6 +28,8 @@ interface CreateOrganizationDialogProps {
 }
 
 export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigger }: CreateOrganizationDialogProps) {
+  const t = useTranslations("createOrg");
+  const tc = useTranslations("common");
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [error, setError] = useState<string>("");
@@ -73,7 +76,7 @@ export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigge
       return data;
     },
     onSuccess: () => {
-      toast.success("Organization created successfully");
+      toast.success(t("Organization created successfully"));
       setName("");
       setSlug("");
       setError("");
@@ -84,7 +87,7 @@ export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigge
     },
     onError: (error: Error) => {
       setError(error.message);
-      toast.error("Failed to create organization");
+      toast.error(t("Failed to create organization"));
     },
   });
 
@@ -92,7 +95,7 @@ export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigge
     e.preventDefault();
 
     if (!name || !slug) {
-      setError("Organization name and slug are required");
+      setError(t("Organization name and slug are required"));
       return;
     }
 
@@ -107,14 +110,14 @@ export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigge
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-2">
             <Building2 className="h-6 w-6" />
-            Create Organization
+            {t("Create Organization")}
           </DialogTitle>
-          <DialogDescription>Set up a new organization to add websites and users</DialogDescription>
+          <DialogDescription>{t("Set up a new organization to add websites and users")}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Organization Name</Label>
+              <Label htmlFor="name">{t("Organization Name")}</Label>
               <Input
                 id="name"
                 type="text"
@@ -162,10 +165,9 @@ export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigge
             {subscription?.status === "active" && (
               <Alert variant="warning">
                 <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Subscription Will Not Carry Over</AlertTitle>
+                <AlertTitle>{t("Subscription Will Not Carry Over")}</AlertTitle>
                 <AlertDescription>
-                  You can create another organization, but your current subscription only applies to your current
-                  organization.
+                  {t("You can create another organization, but your current subscription only applies to your current organization.")}
                 </AlertDescription>
               </Alert>
             )}
@@ -173,10 +175,10 @@ export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigge
 
           <DialogFooter>
             <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
-              Cancel
+              {tc("Cancel")}
             </Button>
             <Button type="submit" variant="success" disabled={createOrgMutation.isPending || !name || !slug}>
-              {createOrgMutation.isPending ? "Creating..." : "Create Organization"}
+              {createOrgMutation.isPending ? tc("Creating...") : t("Create Organization")}
             </Button>
           </DialogFooter>
         </form>

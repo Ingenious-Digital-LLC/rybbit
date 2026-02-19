@@ -5,6 +5,7 @@ import { ErrorNameItem } from "@/api/analytics/endpoints";
 import { Pagination } from "@/components/pagination";
 import { useSetPageTitle } from "@/hooks/useSetPageTitle";
 import { useStore } from "@/lib/store";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { DisabledOverlay } from "../../../components/DisabledOverlay";
 import { SubHeader } from "../components/SubHeader/SubHeader";
@@ -17,6 +18,7 @@ import { NothingFound } from "../../../components/NothingFound";
 const PAGE_SIZE = 10;
 
 export default function Errors() {
+  const t = useTranslations("errorsPage");
   const { site } = useStore();
 
   const [pagination, setPagination] = useState({
@@ -97,7 +99,7 @@ export default function Errors() {
   }
 
   return (
-    <DisabledOverlay message="errors" featurePath="errors">
+    <DisabledOverlay message={t("Errors")} featurePath="errors">
       <div className="p-2 md:p-4 max-w-[1100px] mx-auto space-y-3">
         <SubHeader />
         <EnableErrorTracking />
@@ -106,7 +108,7 @@ export default function Errors() {
           <ErrorListSkeleton count={pagination.pageSize} />
         ) : isErrorErrors ? (
           <div className="text-center p-8 text-destructive">
-            <p>Error loading errors data</p>
+            <p>{t("Error loading errors data")}</p>
             <p className="text-sm">{errorsError?.toString()}</p>
           </div>
         ) : errorsDataArray && errorsDataArray.length > 0 ? (
@@ -127,8 +129,8 @@ export default function Errors() {
           </>
         ) : !isLoadingErrors && !isFetching ? (
           <NothingFound
-            title={"No error events found"}
-            description={"Errors will appear here once error tracking is enabled and errors occur on your site."}
+            title={t("No error events found")}
+            description={t("Errors will appear here once error tracking is enabled and errors occur on your site.")}
           />
         ) : null}
       </div>

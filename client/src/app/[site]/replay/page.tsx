@@ -1,6 +1,7 @@
 "use client";
 
 import { useMeasure, useWindowSize } from "@uidotdev/usehooks";
+import { useTranslations } from "next-intl";
 import { useGetSessionReplays } from "../../../api/analytics/hooks/sessionReplay/useGetSessionReplays";
 import { DisabledOverlay } from "../../../components/DisabledOverlay";
 import { useSetPageTitle } from "../../../hooks/useSetPageTitle";
@@ -15,6 +16,7 @@ import { useReplayStore } from "@/components/replay/replayStore";
 import { Video } from "lucide-react";
 
 export default function SessionReplayPage() {
+  const t = useTranslations("replayPage");
   useSetPageTitle("Session Replay");
 
   const { minDuration } = useReplayStore();
@@ -27,15 +29,15 @@ export default function SessionReplayPage() {
   const { height: windowHeight } = useWindowSize();
 
   return (
-    <DisabledOverlay message="Replay" featurePath="replay" requiredPlan="pro">
+    <DisabledOverlay message={t("Replay")} featurePath="replay" requiredPlan="pro">
       <div className="p-2 md:p-4 max-w-[2000px] mx-auto flex flex-col gap-1 h-dvh overflow-hidden">
         <SubHeader availableFilters={SESSION_REPLAY_PAGE_FILTERS} />
         <EnableSessionReplay />
         {hasNoReplays ? (
           <NothingFound
             icon={<Video className="w-10 h-10" />}
-            title={"No session replays found"}
-            description={"Replays will appear here once session replay is enabled."}
+            title={t("No session replays found")}
+            description={t("Replays will appear here once session replay is enabled.")}
           />
         ) : (
           <div className="grid grid-cols-[200px_1fr_300px] gap-3 flex-1 min-h-0">

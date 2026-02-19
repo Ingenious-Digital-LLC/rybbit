@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import "./globe.css";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useTranslations } from "next-intl";
 import { DisabledOverlay } from "../../../components/DisabledOverlay";
 import { SessionCard } from "../../../components/Sessions/SessionCard";
 import { Dialog, DialogContent, DialogTitle } from "../../../components/ui/dialog";
@@ -29,6 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { WINDOW_SIZE_OPTIONS } from "./timelineUtils";
 
 export default function GlobePage() {
+  const t = useTranslations("globePage");
   useSetPageTitle("Globe");
   const mapContainer = useRef<HTMLDivElement>(null);
   const { windowSize, setManualWindowSize } = useTimelineStore();
@@ -83,7 +85,7 @@ export default function GlobePage() {
   useLayerVisibility(map, mapView, mapMode === "3D" && mapLoaded);
 
   return (
-    <DisabledOverlay message="Globe" featurePath="globe">
+    <DisabledOverlay message={t("Globe")} featurePath="globe">
       <div className="relative w-full h-dvh overflow-hidden">
         <div className="p-2 md:p-4 relative z-50 dark">
           <SubHeader />
@@ -138,7 +140,7 @@ export default function GlobePage() {
 
       <Dialog open={!!selectedSession} onOpenChange={open => !open && setSelectedSession(null)}>
         <VisuallyHidden>
-          <DialogTitle>Session Details</DialogTitle>
+          <DialogTitle>{t("Session Details")}</DialogTitle>
         </VisuallyHidden>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-transparent border-0 p-0 shadow-none [&>button]:hidden">
           {selectedSession && <SessionCard session={selectedSession} expandedByDefault />}

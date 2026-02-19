@@ -2,6 +2,7 @@
 
 import { ChartColumnDecreasing } from "lucide-react";
 import { DateTime } from "luxon"; // Import Luxon for date formatting
+import { useTranslations } from "next-intl";
 import { Fragment, useMemo, useState } from "react";
 import { useGetRetention } from "../../../api/analytics/hooks/useGetRetention";
 import { RetentionMode } from "../../../api/analytics/endpoints";
@@ -16,16 +17,19 @@ import { MobileSidebar } from "../components/Sidebar/MobileSidebar";
 import { RetentionChart } from "./RetentionChart";
 import { ErrorState } from "../../../components/ErrorState";
 
-// Available time range options (in days)
-const RANGE_OPTIONS = [
-  { value: "7", label: "Last 7 days" },
-  { value: "14", label: "Last 14 days" },
-  { value: "30", label: "Last 30 days" },
-  { value: "60", label: "Last 60 days" },
-  { value: "90", label: "Last 90 days" },
-  { value: "180", label: "Last 6 months" },
-  { value: "365", label: "Last 1 year" },
-];
+// Available time range option values (in days)
+const RANGE_OPTION_VALUES = ["7", "14", "30", "60", "90", "180", "365"] as const;
+
+// Translation keys for each range option
+const RANGE_OPTION_KEYS: Record<string, string> = {
+  "7": "Last 7 days",
+  "14": "Last 14 days",
+  "30": "Last 30 days",
+  "60": "Last 60 days",
+  "90": "Last 90 days",
+  "180": "Last 6 months",
+  "365": "Last 1 year",
+};
 
 // Dynamic color function that creates a smooth gradient based on retention percentage
 const getRetentionColor = (
@@ -68,6 +72,7 @@ const getRetentionColor = (
 };
 
 export default function RetentionPage() {
+  const t = useTranslations("retentionPage");
   useSetPageTitle("Retention");
 
   // State for the retention mode (day or week)
@@ -122,7 +127,7 @@ export default function RetentionPage() {
 
   // Labels for column headers based on mode
   const getPeriodLabel = (index: number) => {
-    return mode === "day" ? `Day ${index}` : `Week ${index}`;
+    return mode === "day" ? t("Day {number}", { number: index }) : t("Week {number}", { number: index });
   };
 
   const handleModeChange = (newMode: string) => {
@@ -146,9 +151,9 @@ export default function RetentionPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {RANGE_OPTIONS.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+              {RANGE_OPTION_VALUES.map(value => (
+                <SelectItem key={value} value={value}>
+                  {t(RANGE_OPTION_KEYS[value])}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -157,10 +162,10 @@ export default function RetentionPage() {
         <Tabs value={mode} onValueChange={handleModeChange}>
           <TabsList>
             <TabsTrigger value="day" disabled={isLoading}>
-              Daily
+              {t("Daily")}
             </TabsTrigger>
             <TabsTrigger value="week" disabled={isLoading}>
-              Weekly
+              {t("Weekly")}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -175,8 +180,8 @@ export default function RetentionPage() {
         <Card>
           <CardContent>
             <ErrorState
-              title="Failed to load retention data"
-              message="There was a problem fetching the retention data. Please try again later."
+              title={t("Failed to load retention data")}
+              message={t("There was a problem fetching the retention data. Please try again later.")}
             />
           </CardContent>
         </Card>
@@ -190,8 +195,8 @@ export default function RetentionPage() {
       <div className="p-2 md:p-4 max-w-[1300px] mx-auto flex flex-col gap-3">
         <NothingFound
           icon={<ChartColumnDecreasing className="w-10 h-10" />}
-          title={"No retention data available"}
-          description={"Try selecting a different time range or make sure you have tracking data in the system."}
+          title={t("No retention data available")}
+          description={t("Try selecting a different time range or make sure you have tracking data in the system.")}
         />
       </div>
     );
@@ -201,13 +206,13 @@ export default function RetentionPage() {
     !isLoading && data ? Array.from({ length: data.maxPeriods + 1 }, (_, i) => getPeriodLabel(i)) : [];
 
   return (
-    <DisabledOverlay message="Retention" featurePath="retention">
+    <DisabledOverlay message={t("Retention")} featurePath="retention">
       <div className="p-2 md:p-4 max-w-[1300px] mx-auto flex flex-col gap-3">
         {/* Single Card containing both chart and grid */}
         <FilterControls />
         <Card className="overflow-visible">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle>Retention</CardTitle>
+            <CardTitle>{t("Retention")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 overflow-visible">
             {isLoading ? (
@@ -232,7 +237,7 @@ export default function RetentionPage() {
                   >
                     {/* Header Row */}
                     <div className="p-2 text-sm font-semibold bg-white dark:bg-neutral-900 text-neutral-600 dark:text-neutral-100 text-center sticky left-0 z-10 border-b border-r border-neutral-50 dark:border-neutral-700">
-                      Cohort
+                      {t("Cohort")}
                     </div>
                     {periodHeaders.map(header => (
                       <div
@@ -252,7 +257,7 @@ export default function RetentionPage() {
                             {formatDate(cohortPeriod)}
                           </div>
                           <div className="text-xs text-neutral-500 dark:text-neutral-300 mt-1 whitespace-nowrap">
-                            {data.cohorts[cohortPeriod].size.toLocaleString()} users
+                            {t("{count} users", { count: data.cohorts[cohortPeriod].size.toLocaleString() })}
                           </div>
                         </div>
                         {/* Retention Cells */}

@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/sonner";
+import { useTranslations } from "next-intl";
 import { useUpdateAccountSettings } from "../../../../api/admin/hooks/useAccountSettings";
 import { Button } from "../../../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/card";
@@ -18,6 +19,8 @@ import { DeleteAccount } from "./DeleteAccount";
 import { useSignout } from "../../../../hooks/useSignout";
 
 export function AccountInner() {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
   const session = authClient.useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -36,7 +39,7 @@ export function AccountInner() {
 
   const handleNameUpdate = async () => {
     if (!name) {
-      toast.error("Name cannot be empty");
+      toast.error(t("Name cannot be empty"));
       return;
     }
 
@@ -47,14 +50,14 @@ export function AccountInner() {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || "Failed to update name");
+        throw new Error(response.error.message || t("Failed to update name"));
       }
 
-      toast.success("Name updated successfully");
+      toast.success(t("Name updated successfully"));
       session.refetch();
     } catch (error) {
       console.error("Error updating name:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to update name");
+      toast.error(error instanceof Error ? error.message : t("Failed to update name"));
     } finally {
       setIsUpdatingName(false);
     }
@@ -62,12 +65,12 @@ export function AccountInner() {
 
   const handleEmailUpdate = async () => {
     if (!email) {
-      toast.error("Email cannot be empty");
+      toast.error(t("Email cannot be empty"));
       return;
     }
 
     if (!validateEmail(email)) {
-      toast.error("Please enter a valid email address");
+      toast.error(t("Please enter a valid email address"));
       return;
     }
 
@@ -78,14 +81,14 @@ export function AccountInner() {
       });
 
       if (response.error) {
-        throw new Error(response.error.message || "Failed to update email");
+        throw new Error(response.error.message || t("Failed to update email"));
       }
 
-      toast.success("Email updated successfully");
+      toast.success(t("Email updated successfully"));
       session.refetch();
     } catch (error) {
       console.error("Error updating email:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to update email");
+      toast.error(error instanceof Error ? error.message : t("Failed to update email"));
     } finally {
       setIsUpdatingEmail(false);
     }
@@ -96,11 +99,11 @@ export function AccountInner() {
       await updateAccountSettings.mutateAsync({
         sendAutoEmailReports: checked,
       });
-      toast.success(`Email reports ${checked ? "enabled" : "disabled"}`);
+      toast.success(checked ? t("Email reports enabled") : t("Email reports disabled"));
       session.refetch();
     } catch (error) {
       console.error("Error updating email reports setting:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to update email reports setting");
+      toast.error(error instanceof Error ? error.message : t("Failed to update email reports setting"));
     }
   };
 
@@ -108,12 +111,12 @@ export function AccountInner() {
     <div className="flex flex-col gap-4">
       <Card className="p-2">
         <CardHeader>
-          <CardTitle className="text-xl">Account</CardTitle>
+          <CardTitle className="text-xl">{t("Account")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <h4 className="text-sm font-medium">Name</h4>
-            <p className="text-xs text-neutral-500">Update your name displayed across the platform</p>
+            <h4 className="text-sm font-medium">{t("Name")}</h4>
+            <p className="text-xs text-neutral-500">{t("Update your name displayed across the platform")}</p>
             <div className="flex space-x-2">
               <Input id="name" value={name} onChange={({ target }) => setName(target.value)} placeholder="name" />
               <Button
@@ -121,13 +124,13 @@ export function AccountInner() {
                 onClick={handleNameUpdate}
                 disabled={isUpdatingName || name === session.data?.user.name}
               >
-                {isUpdatingName ? "Updating..." : "Update"}
+                {isUpdatingName ? tc("Updating...") : tc("Update")}
               </Button>
             </div>
           </div>
           <div className="space-y-2">
-            <h4 className="text-sm font-medium">Email</h4>
-            <p className="text-xs text-neutral-500">Update your email address for account notifications</p>
+            <h4 className="text-sm font-medium">{t("Email")}</h4>
+            <p className="text-xs text-neutral-500">{t("Update your email address for account notifications")}</p>
             <div className="flex space-x-2">
               <Input
                 id="email"
@@ -141,15 +144,15 @@ export function AccountInner() {
                 onClick={handleEmailUpdate}
                 disabled={isUpdatingEmail || email === session.data?.user.email}
               >
-                {isUpdatingEmail ? "Updating..." : "Update"}
+                {isUpdatingEmail ? tc("Updating...") : tc("Update")}
               </Button>
             </div>
           </div>
           {(session.data?.user as any)?.sendAutoEmailReports !== undefined && IS_CLOUD && (
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Send Weekly Email Reports</h4>
-                <p className="text-xs text-neutral-500">Enable or disable automatic email reports for your account.</p>
+                <h4 className="text-sm font-medium">{t("Send Weekly Email Reports")}</h4>
+                <p className="text-xs text-neutral-500">{t("Enable or disable automatic email reports for your account.")}</p>
               </div>
               <div className="flex space-x-2">
                 <Switch
@@ -161,27 +164,27 @@ export function AccountInner() {
             </div>
           )}
           <Button variant="outline" onClick={signout}>
-            Sign out
+            {tc("Sign out")}
           </Button>
         </CardContent>
       </Card>
 
       <Card className="p-2">
         <CardHeader>
-          <CardTitle className="text-xl">Security</CardTitle>
+          <CardTitle className="text-xl">{t("Security")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <h4 className="text-sm font-medium">Password</h4>
-            <p className="text-xs text-neutral-500">Change your account password</p>
+            <h4 className="text-sm font-medium">{t("Password")}</h4>
+            <p className="text-xs text-neutral-500">{t("Change your account password")}</p>
             <div className="w-[200px]">
               <ChangePassword />
             </div>
           </div>
 
           <div className="space-y-2">
-            <h4 className="text-sm font-medium text-red-500">Danger Zone</h4>
-            <p className="text-xs text-neutral-500">Permanently delete your account and all associated data</p>
+            <h4 className="text-sm font-medium text-red-500">{t("Danger Zone")}</h4>
+            <p className="text-xs text-neutral-500">{t("Permanently delete your account and all associated data")}</p>
             <div className="w-[200px]">
               <DeleteAccount />
             </div>
