@@ -1,15 +1,15 @@
 {
   "common": {
-    "Loading...": "Wird geladen...",
+    "Loading…": "Wird geladen…",
     "Save": "Speichern",
     "Cancel": "Abbrechen",
     "Delete": "Löschen",
     "Confirm": "Bestätigen",
     "Close": "Schließen",
     "Update": "Aktualisieren",
-    "Updating...": "Wird aktualisiert...",
+    "Updating…": "Wird aktualisiert…",
     "Create": "Erstellen",
-    "Creating...": "Wird erstellt...",
+    "Creating…": "Wird erstellt…",
     "Add": "Hinzufügen",
     "Error": "Fehler",
     "Retry": "Erneut versuchen",
@@ -30,7 +30,7 @@
     "Copied to clipboard": "In die Zwischenablage kopiert",
     "Copy to clipboard": "In die Zwischenablage kopieren",
     "Copied!": "Kopiert!",
-    "Saving...": "Wird gespeichert...",
+    "Saving…": "Wird gespeichert…",
     "Save Changes": "Änderungen speichern",
     "Reset": "Zurücksetzen"
   },
@@ -65,7 +65,7 @@
   },
   "auth": {
     "Login": "Anmelden",
-    "Logging in...": "Anmeldung läuft...",
+    "Logging in…": "Anmeldung läuft…",
     "Signup": "Registrierung",
     "Sign up": "Registrieren",
     "Welcome back": "Willkommen zurück",
@@ -76,53 +76,83 @@
     "Log in": "Anmelden",
     "Email": "E-Mail",
     "Password": "Passwort",
-    "example@email.com": "beispiel@email.com",
+    "example@email": {
+      "com": "beispiel@email.com"
+    },
     "••••••••": "••••••••",
     "Please complete the captcha verification": "Bitte vervollständigen Sie die Captcha-Verifizierung",
     "Error Logging In": "Fehler bei der Anmeldung",
     "Open source web analytics powered by Rybbit": "Open-Source-Webanalyse von Rybbit",
-    "Creating account...": "Konto wird erstellt...",
+    "Creating account…": "Konto wird erstellt…",
     "Account": "Konto",
     "Organization": "Organisation",
     "Website": "Website",
     "Create your organization": "Erstellen Sie Ihre Organisation",
     "Organization Name": "Organisationsname",
-    "Acme Inc.": "Firma GmbH",
+    "Acme Inc": {
+      "": "Firma GmbH"
+    },
     "How did you find Rybbit?": "Wie haben Sie Rybbit gefunden?",
     "Select an option": "Option auswählen",
     "I'm joining someone else's organization": "Ich trete der Organisation einer anderen Person bei",
     "Add your site": "Fügen Sie Ihre Website hinzu",
     "Website Domain": "Website-Domain",
-    "example.com or sub.example.com": "beispiel.de oder sub.beispiel.de",
+    "example": {
+      "com or sub": {
+        "example": {
+          "com": "beispiel.de oder sub.beispiel.de"
+        }
+      }
+    },
     "Enter the domain of the website you want to track": "Geben Sie die Domain der Website ein, die Sie verfolgen möchten",
-    "Invalid domain format. Must be a valid domain like example.com or sub.example.com": "Ungültiges Domain-Format. Muss eine gültige Domain wie beispiel.de sein",
+    "Invalid domain format": {
+      " Must be a valid domain like example": {
+        "com or sub": {
+          "example": {
+            "com": "Ungültiges Domain-Format. Muss eine gültige Domain wie beispiel.de sein"
+          }
+        }
+      }
+    },
     "Sign Up Disabled": "Registrierung deaktiviert",
-    "New account registration is currently disabled. If you have an account, you can": "Die Registrierung neuer Konten ist derzeit deaktiviert. Wenn Sie ein Konto haben, können Sie sich",
+    "New account registration is currently disabled": {
+      " If you have an account, you can": "Die Registrierung neuer Konten ist derzeit deaktiviert. Wenn Sie ein Konto haben, können Sie sich"
+    },
     "sign in": "anmelden",
     "Reset Password": "Passwort zurücksetzen",
     "Password Reset Successful": "Passwort erfolgreich zurückgesetzt",
     "Enter OTP Code": "OTP-Code eingeben",
-    "Enter your email address and we'll send you a verification code to reset your password.": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Bestätigungscode zum Zurücksetzen Ihres Passworts.",
+    "Enter your email address and we'll send you a verification code to reset your password": {
+      "": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Bestätigungscode zum Zurücksetzen Ihres Passworts."
+    },
     "Send Verification Code": "Bestätigungscode senden",
-    "Sending code...": "Code wird gesendet...",
+    "Sending code…": "Code wird gesendet…",
     "Error Sending Code": "Fehler beim Senden des Codes",
     "Remember your password?": "Passwort bekannt?",
-    "We've sent a verification code to {email}. Please enter the code below along with your new password.": "Wir haben einen Bestätigungscode an {email} gesendet. Bitte geben Sie den Code unten zusammen mit Ihrem neuen Passwort ein.",
+    "We've sent a verification code to {email}": {
+      " Please enter the code below along with your new password": {
+        "": "Wir haben einen Bestätigungscode an {email} gesendet. Bitte geben Sie den Code unten zusammen mit Ihrem neuen Passwort ein."
+      }
+    },
     "Verification Code": "Bestätigungscode",
     "New Password": "Neues Passwort",
-    "Resetting password...": "Passwort wird zurückgesetzt...",
+    "Resetting password…": "Passwort wird zurückgesetzt…",
     "Error Resetting Password": "Fehler beim Zurücksetzen des Passworts",
     "Use a different email": "Andere E-Mail verwenden",
     "Success!": "Erfolg!",
-    "Your password has been reset successfully.": "Ihr Passwort wurde erfolgreich zurückgesetzt.",
-    "Redirecting to login page...": "Weiterleitung zur Anmeldeseite...",
+    "Your password has been reset successfully": {
+      "": "Ihr Passwort wurde erfolgreich zurückgesetzt."
+    },
+    "Redirecting to login page…": "Weiterleitung zur Anmeldeseite…",
     "Password must be at least 8 characters long": "Passwort muss mindestens 8 Zeichen lang sein"
   },
   "home": {
-    "Filter by domain...": "Nach Domain filtern...",
-    "Filter by tags...": "Nach Tags filtern...",
-    "Search tags...": "Tags suchen...",
-    "No tags found.": "Keine Tags gefunden.",
+    "Filter by domain…": "Nach Domain filtern…",
+    "Filter by tags…": "Nach Tags filtern…",
+    "Search tags…": "Tags suchen…",
+    "No tags found": {
+      "": "Keine Tags gefunden."
+    },
     "No websites yet": "Noch keine Websites",
     "Add your first website to start tracking analytics": "Fügen Sie Ihre erste Website hinzu, um mit der Analyse zu beginnen",
     "Add Website": "Website hinzufügen"
@@ -130,7 +160,11 @@
   "notFound": {
     "404": "404",
     "Page Not Found": "Seite nicht gefunden",
-    "The page you're looking for doesn't exist or has been moved. Let's get you back to analyzing your data.": "Die gesuchte Seite existiert nicht oder wurde verschoben. Kehren wir zur Datenanalyse zurück.",
+    "The page you're looking for doesn't exist or has been moved": {
+      " Let's get you back to analyzing your data": {
+        "": "Die gesuchte Seite existiert nicht oder wurde verschoben. Kehren wir zur Datenanalyse zurück."
+      }
+    },
     "Go to Dashboard": "Zum Dashboard",
     "Go Back": "Zurück",
     "Need help? Check out our resources:": "Brauchen Sie Hilfe? Schauen Sie sich unsere Ressourcen an:",
@@ -154,7 +188,9 @@
     "Email updated successfully": "E-Mail erfolgreich aktualisiert",
     "Failed to update email": "E-Mail konnte nicht aktualisiert werden",
     "Send Weekly Email Reports": "Wöchentliche E-Mail-Berichte senden",
-    "Enable or disable automatic email reports for your account.": "Aktivieren oder deaktivieren Sie automatische E-Mail-Berichte für Ihr Konto.",
+    "Enable or disable automatic email reports for your account": {
+      "": "Aktivieren oder deaktivieren Sie automatische E-Mail-Berichte für Ihr Konto."
+    },
     "Email reports enabled": "E-Mail-Berichte aktiviert",
     "Email reports disabled": "E-Mail-Berichte deaktiviert",
     "Failed to update email reports setting": "E-Mail-Berichte-Einstellung konnte nicht aktualisiert werden",
@@ -175,7 +211,7 @@
     "New password and confirm password do not match": "Neues Passwort und Bestätigung stimmen nicht überein",
     "Please use a stronger password": "Bitte verwenden Sie ein stärkeres Passwort",
     "Password changed successfully": "Passwort erfolgreich geändert",
-    "Changing...": "Wird geändert...",
+    "Changing…": "Wird geändert…",
     "Weak": "Schwach",
     "Good": "Gut",
     "Strong": "Stark",
@@ -186,14 +222,24 @@
     "Delete Account": "Konto löschen",
     "Delete your account?": "Konto löschen?",
     "Cannot delete account": "Konto kann nicht gelöscht werden",
-    "You have an active subscription. Please cancel your subscription before deleting your account.": "Sie haben ein aktives Abonnement. Bitte kündigen Sie Ihr Abonnement, bevor Sie Ihr Konto löschen.",
-    "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.": "Diese Aktion kann nicht rückgängig gemacht werden. Ihr Konto und alle zugehörigen Daten werden dauerhaft gelöscht.",
-    "Deleting...": "Wird gelöscht...",
+    "You have an active subscription": {
+      " Please cancel your subscription before deleting your account": {
+        "": "Sie haben ein aktives Abonnement. Bitte kündigen Sie Ihr Abonnement, bevor Sie Ihr Konto löschen."
+      }
+    },
+    "This action cannot be undone": {
+      " This will permanently delete your account and remove all your data from our servers": {
+        "": "Diese Aktion kann nicht rückgängig gemacht werden. Ihr Konto und alle zugehörigen Daten werden dauerhaft gelöscht."
+      }
+    },
+    "Deleting…": "Wird gelöscht…",
     "Account successfully deleted": "Konto erfolgreich gelöscht",
     "Failed to delete account": "Konto konnte nicht gelöscht werden",
     "Organization Members": "Organisationsmitglieder",
-    "Loading organization...": "Organisation wird geladen...",
-    "You need to create or be added to an organization before you can manage members.": "Sie müssen eine Organisation erstellen oder einer beitreten, bevor Sie Mitglieder verwalten können.",
+    "Loading organization…": "Organisation wird geladen…",
+    "You need to create or be added to an organization before you can manage members": {
+      "": "Sie müssen eine Organisation erstellen oder einer beitreten, bevor Sie Mitglieder verwalten können."
+    },
     "Organization Name": "Organisationsname",
     "Update your organization name": "Aktualisieren Sie den Namen Ihrer Organisation",
     "Delete Organization": "Organisation löschen",
@@ -219,45 +265,75 @@
     "API key deleted successfully": "API-Schlüssel erfolgreich gelöscht",
     "Failed to delete API key": "API-Schlüssel konnte nicht gelöscht werden",
     "Your API Keys": "Ihre API-Schlüssel",
-    "Loading API keys...": "API-Schlüssel werden geladen...",
+    "Loading API keys…": "API-Schlüssel werden geladen…",
     "Failed to load API keys": "API-Schlüssel konnten nicht geladen werden",
     "Key": "Schlüssel",
     "Created": "Erstellt",
     "Unnamed": "Unbenannt",
     "No API keys created yet": "Noch keine API-Schlüssel erstellt",
     "API Key Created": "API-Schlüssel erstellt",
-    "Save this API key securely. You won't be able to see it again.": "Speichern Sie diesen API-Schlüssel sicher. Er wird nicht erneut angezeigt.",
+    "Save this API key securely": {
+      " You won't be able to see it again": {
+        "": "Speichern Sie diesen API-Schlüssel sicher. Er wird nicht erneut angezeigt."
+      }
+    },
     "Your API Key": "Ihr API-Schlüssel",
-    "Store this key securely. It won't be displayed again.": "Speichern Sie diesen Schlüssel sicher. Er wird nicht erneut angezeigt."
+    "Store this key securely": {
+      " It won't be displayed again": {
+        "": "Speichern Sie diesen Schlüssel sicher. Er wird nicht erneut angezeigt."
+      }
+    }
   },
   "createOrg": {
     "Create Organization": "Organisation erstellen",
     "Set up a new organization to add websites and users": "Richten Sie eine neue Organisation ein, um Websites und Benutzer hinzuzufügen",
     "Organization Name": "Organisationsname",
-    "Acme Inc.": "Firma GmbH",
+    "Acme Inc": {
+      "": "Firma GmbH"
+    },
     "Organization name and slug are required": "Organisationsname und Slug sind erforderlich",
     "Organization created successfully": "Organisation erfolgreich erstellt",
     "Failed to create organization": "Organisation konnte nicht erstellt werden",
     "Subscription Will Not Carry Over": "Abonnement wird nicht übertragen",
-    "You can create another organization, but your current subscription only applies to your current organization.": "Sie können eine weitere Organisation erstellen, aber Ihr aktuelles Abonnement gilt nur für Ihre aktuelle Organisation.",
+    "You can create another organization, but your current subscription only applies to your current organization": {
+      "": "Sie können eine weitere Organisation erstellen, aber Ihr aktuelles Abonnement gilt nur für Ihre aktuelle Organisation."
+    },
     "No Organization": "Keine Organisation",
-    "You need to create or be added to an organization before you can add a website.": "Sie müssen eine Organisation erstellen oder einer beitreten, bevor Sie eine Website hinzufügen können.",
+    "You need to create or be added to an organization before you can add a website": {
+      "": "Sie müssen eine Organisation erstellen oder einer beitreten, bevor Sie eine Website hinzufügen können."
+    },
     "Create an Organization": "Organisation erstellen"
   },
   "addSite": {
     "Add Website": "Website hinzufügen",
     "Track analytics for a new website in your organization": "Verfolgen Sie die Analyse für eine neue Website in Ihrer Organisation",
     "Domain": "Domain",
-    "example.com or sub.example.com": "beispiel.de oder sub.beispiel.de",
+    "example": {
+      "com or sub": {
+        "example": {
+          "com": "beispiel.de oder sub.beispiel.de"
+        }
+      }
+    },
     "Public Analytics": "Öffentliche Analyse",
     "When enabled, anyone can view analytics without logging in": "Wenn aktiviert, kann jeder die Analyse ohne Anmeldung einsehen",
     "Enable User ID Salting": "Benutzer-ID-Salting aktivieren",
     "Enhance privacy with daily rotating salts for user IDs": "Verbessern Sie den Datenschutz mit täglich rotierenden Salts für Benutzer-IDs",
     "Error Adding Website": "Fehler beim Hinzufügen der Website",
     "Please select an organization": "Bitte wählen Sie eine Organisation",
-    "Invalid domain format. Must be a valid domain like example.com or sub.example.com": "Ungültiges Domain-Format. Muss eine gültige Domain wie beispiel.de sein",
+    "Invalid domain format": {
+      " Must be a valid domain like example": {
+        "com or sub": {
+          "example": {
+            "com": "Ungültiges Domain-Format. Muss eine gültige Domain wie beispiel.de sein"
+          }
+        }
+      }
+    },
     "You need to be on an active subscription to add websites": "Sie benötigen ein aktives Abonnement, um Websites hinzuzufügen",
-    "You have reached the limit of {limit} websites. Upgrade to add more websites": "Sie haben das Limit von {limit} Websites erreicht. Upgraden Sie, um weitere hinzuzufügen"
+    "You have reached the limit of {limit} websites": {
+      " Upgrade to add more websites": "Sie haben das Limit von {limit} Websites erreicht. Upgraden Sie, um weitere hinzuzufügen"
+    }
   },
   "siteSettings": {
     "Site Settings": "Website-Einstellungen",
@@ -280,7 +356,9 @@
     "Bot blocking enabled": "Bot-Blockierung aktiviert",
     "Bot blocking disabled": "Bot-Blockierung deaktiviert",
     "Track IP Address": "IP-Adresse erfassen",
-    "Track the IP address of the user. This is definitely not GDPR compliant!": "IP-Adresse des Benutzers erfassen. Dies ist definitiv nicht DSGVO-konform!",
+    "Track the IP address of the user": {
+      " This is definitely not GDPR compliant!": "IP-Adresse des Benutzers erfassen. Dies ist definitiv nicht DSGVO-konform!"
+    },
     "IP address tracking enabled": "IP-Adress-Erfassung aktiviert",
     "IP address tracking disabled": "IP-Adress-Erfassung deaktiviert",
     "Session Replay": "Sitzungswiedergabe",
@@ -330,8 +408,12 @@
     "Failed to update domain": "Domain konnte nicht aktualisiert werden",
     "Delete Site": "Website löschen",
     "Are you absolutely sure?": "Sind Sie absolut sicher?",
-    "This action cannot be undone. This will permanently delete the site \"{name}\" and all of its analytics data.": "Diese Aktion kann nicht rückgängig gemacht werden. Die Website \"{name}\" und alle zugehörigen Analysedaten werden dauerhaft gelöscht.",
-    "Deleting...": "Wird gelöscht...",
+    "This action cannot be undone": {
+      " This will permanently delete the site \"{name}\" and all of its analytics data": {
+        "": "Diese Aktion kann nicht rückgängig gemacht werden. Die Website \"{name}\" und alle zugehörigen Analysedaten werden dauerhaft gelöscht."
+      }
+    },
+    "Deleting…": "Wird gelöscht…",
     "Yes, delete site": "Ja, Website löschen",
     "Site deleted successfully": "Website erfolgreich gelöscht",
     "Failed to delete site": "Website konnte nicht gelöscht werden",
@@ -341,7 +423,11 @@
     "Use <code>*</code> for single segment wildcard, <code>**</code> for multi-segment wildcard": "Verwenden Sie <code>*</code> für Einzelsegment-Platzhalter, <code>**</code> für Mehrsegment-Platzhalter",
     "Mask Patterns": "Maskierungsmuster",
     "URL patterns to anonymize in analytics (one per line)": "URL-Muster, die in der Analyse anonymisiert werden sollen (eines pro Zeile)",
-    "E.g. <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details": "Z.B. <code>/users/*/profile</code> verbirgt Benutzernamen, <code>/orders/**</code> verbirgt Bestelldetails",
+    "E": {
+      "g": {
+        " <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details": "Z.B. <code>/users/*/profile</code> verbirgt Benutzernamen, <code>/orders/**</code> verbirgt Bestelldetails"
+      }
+    },
     "Debounce Duration (ms)": "Entprellungsdauer (ms)",
     "Default: 500ms": "Standard: 500ms",
     "Time to wait before tracking a pageview after URL changes": "Wartezeit vor der Erfassung eines Seitenaufrufs nach URL-Änderungen",
@@ -349,43 +435,99 @@
     "Connect your Google Search Console account to view search performance data": "Verbinden Sie Ihr Google Search Console-Konto, um Suchleistungsdaten anzuzeigen",
     "Connected to:": "Verbunden mit:",
     "Disconnect Google Search Console?": "Google Search Console trennen?",
-    "This will remove the connection to Google Search Console. You can reconnect at any time.": "Die Verbindung zur Google Search Console wird entfernt. Sie können sich jederzeit wieder verbinden.",
+    "This will remove the connection to Google Search Console": {
+      " You can reconnect at any time": {
+        "": "Die Verbindung zur Google Search Console wird entfernt. Sie können sich jederzeit wieder verbinden."
+      }
+    },
     "Disconnect": "Trennen",
-    "Disconnecting...": "Wird getrennt...",
-    "Connecting...": "Verbindung wird hergestellt...",
+    "Disconnecting…": "Wird getrennt…",
+    "Connecting…": "Verbindung wird hergestellt…",
     "Connect Google Search Console": "Google Search Console verbinden",
     "Google Search Console connected successfully": "Google Search Console erfolgreich verbunden",
     "Google Search Console disconnected": "Google Search Console getrennt",
     "Failed to disconnect Google Search Console": "Google Search Console konnte nicht getrennt werden",
-    "Loading IP exclusions...": "IP-Ausschlüsse werden geladen...",
+    "Loading IP exclusions…": "IP-Ausschlüsse werden geladen…",
     "IP Exclusions": "IP-Ausschlüsse",
-    "Exclude traffic from specific IP addresses or ranges. Supports single IPs (192.168.1.1), CIDR notation (192.168.1.0/24), and ranges (192.168.1.1-192.168.1.10).": "Schließen Sie Traffic von bestimmten IP-Adressen oder -Bereichen aus. Unterstützt einzelne IPs (192.168.1.1), CIDR-Notation (192.168.1.0/24) und Bereiche (192.168.1.1-192.168.1.10).",
+    "Exclude traffic from specific IP addresses or ranges": {
+      " Supports single IPs (192": {
+        "168": {
+          "1": {
+            "1), CIDR notation (192": {
+              "168": {
+                "1": {
+                  "0/24), and ranges (192": {
+                    "168": {
+                      "1": {
+                        "1-192": {
+                          "168": {
+                            "1": {
+                              "10)": {
+                                "": "Schließen Sie Traffic von bestimmten IP-Adressen oder -Bereichen aus. Unterstützt einzelne IPs (192.168.1.1), CIDR-Notation (192.168.1.0/24) und Bereiche (192.168.1.1-192.168.1.10)."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Add IP": "IP hinzufügen",
     "Maximum 100 IP exclusions allowed": "Maximal 100 IP-Ausschlüsse erlaubt",
-    "Loading country exclusions...": "Länder-Ausschlüsse werden geladen...",
+    "Loading country exclusions…": "Länder-Ausschlüsse werden geladen…",
     "Country Exclusions": "Länder-Ausschlüsse",
-    "Exclude traffic from specific countries. Events from these countries will not be tracked in your analytics.": "Schließen Sie Traffic aus bestimmten Ländern aus. Ereignisse aus diesen Ländern werden nicht in Ihrer Analyse erfasst.",
+    "Exclude traffic from specific countries": {
+      " Events from these countries will not be tracked in your analytics": {
+        "": "Schließen Sie Traffic aus bestimmten Ländern aus. Ereignisse aus diesen Ländern werden nicht in Ihrer Analyse erfasst."
+      }
+    },
     "Excluded Countries ({count})": "Ausgeschlossene Länder ({count})",
     "All countries excluded": "Alle Länder ausgeschlossen",
-    "Select country to exclude...": "Land zum Ausschließen auswählen...",
-    "Search countries...": "Länder suchen...",
-    "No country found.": "Kein Land gefunden.",
+    "Select country to exclude…": "Land zum Ausschließen auswählen…",
+    "Search countries…": "Länder suchen…",
+    "No country found": {
+      "": "Kein Land gefunden."
+    },
     "Data Import": "Datenimport",
     "Import Data": "Daten importieren",
-    "Import data from other analytics platforms.": "Importieren Sie Daten von anderen Analyseplattformen.",
-    "You have an active import in progress. Please wait for it to complete before starting a new import.": "Sie haben einen aktiven Import. Bitte warten Sie, bis dieser abgeschlossen ist, bevor Sie einen neuen Import starten.",
+    "Import data from other analytics platforms": {
+      "": "Importieren Sie Daten von anderen Analyseplattformen."
+    },
+    "You have an active import in progress": {
+      " Please wait for it to complete before starting a new import": {
+        "": "Sie haben einen aktiven Import. Bitte warten Sie, bis dieser abgeschlossen ist, bevor Sie einen neuen Import starten."
+      }
+    },
     "Platform": "Plattform",
     "Select platform": "Plattform auswählen",
     "CSV File": "CSV-Datei",
-    "Importing...": "Wird importiert...",
+    "Importing…": "Wird importiert…",
     "Please select a file": "Bitte wählen Sie eine Datei",
     "Only CSV files are accepted": "Nur CSV-Dateien werden akzeptiert",
-    "Failed to import file. Please try again.": "Datei konnte nicht importiert werden. Bitte versuchen Sie es erneut.",
-    "Failed to delete import. Please try again.": "Import konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "Failed to import file": {
+      " Please try again": {
+        "": "Datei konnte nicht importiert werden. Bitte versuchen Sie es erneut."
+      }
+    },
+    "Failed to delete import": {
+      " Please try again": {
+        "": "Import konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+      }
+    },
     "Import History": "Import-Verlauf",
     "Track the status of your data imports": "Verfolgen Sie den Status Ihrer Datenimporte",
-    "Loading import history...": "Import-Verlauf wird geladen...",
-    "Failed to load import history. Please try refreshing the page.": "Import-Verlauf konnte nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+    "Loading import history…": "Import-Verlauf wird geladen…",
+    "Failed to load import history": {
+      " Please try refreshing the page": {
+        "": "Import-Verlauf konnte nicht geladen werden. Bitte aktualisieren Sie die Seite."
+      }
+    },
     "No imports yet": "Noch keine Importe",
     "Upload a CSV file to get started": "Laden Sie eine CSV-Datei hoch, um zu beginnen",
     "Started At": "Gestartet am",
@@ -398,10 +540,18 @@
     "Events exceeded quota or date range limits": "Ereignisse haben Kontingent- oder Datumsbereichsgrenzen überschritten",
     "Events failed validation": "Ereignisse haben die Validierung nicht bestanden",
     "Confirm Large File Import": "Großen Dateiimport bestätigen",
-    "You are about to import a large file ({size}). This may take several minutes to process. Are you sure you want to continue?": "Sie sind dabei, eine große Datei ({size}) zu importieren. Die Verarbeitung kann mehrere Minuten dauern. Möchten Sie fortfahren?",
+    "You are about to import a large file ({size})": {
+      " This may take several minutes to process": {
+        " Are you sure you want to continue?": "Sie sind dabei, eine große Datei ({size}) zu importieren. Die Verarbeitung kann mehrere Minuten dauern. Möchten Sie fortfahren?"
+      }
+    },
     "Yes, Import File": "Ja, Datei importieren",
     "Delete Import": "Import löschen",
-    "Are you sure you want to delete this import? This action cannot be undone. The imported data will be permanently removed.": "Sind Sie sicher, dass Sie diesen Import löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden. Die importierten Daten werden dauerhaft entfernt."
+    "Are you sure you want to delete this import? This action cannot be undone": {
+      " The imported data will be permanently removed": {
+        "": "Sind Sie sicher, dass Sie diesen Import löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden. Die importierten Daten werden dauerhaft entfernt."
+      }
+    }
   },
   "dates": {
     "Today": "Heute",
@@ -469,13 +619,25 @@
     "Upgrade": "Upgrade",
     "Free trial: {days} days remaining – Using {used} of {limit} events": "Kostenlose Testversion: {days} Tage verbleibend – {used} von {limit} Ereignissen verwendet",
     "Your Free Trial Has Ended": "Ihre kostenlose Testversion ist abgelaufen",
-    "Your 14-day free trial has expired. Subscribe to continue tracking visits again.": "Ihre 14-tägige kostenlose Testversion ist abgelaufen. Abonnieren Sie, um weiterhin Besuche zu verfolgen.",
-    "Choose a subscription plan to continue collecting analytics data.": "Wählen Sie einen Abonnementplan, um weiterhin Analysedaten zu erfassen.",
+    "Your 14-day free trial has expired": {
+      " Subscribe to continue tracking visits again": {
+        "": "Ihre 14-tägige kostenlose Testversion ist abgelaufen. Abonnieren Sie, um weiterhin Besuche zu verfolgen."
+      }
+    },
+    "Choose a subscription plan to continue collecting analytics data": {
+      "": "Wählen Sie einen Abonnementplan, um weiterhin Analysedaten zu erfassen."
+    },
     "Subscribe Now": "Jetzt abonnieren",
     "No organization selected": "Keine Organisation ausgewählt",
-    "Failed to create portal session.": "Portal-Sitzung konnte nicht erstellt werden.",
-    "Portal URL not received.": "Portal-URL nicht erhalten.",
-    "Could not open billing portal.": "Abrechnungsportal konnte nicht geöffnet werden.",
+    "Failed to create portal session": {
+      "": "Portal-Sitzung konnte nicht erstellt werden."
+    },
+    "Portal URL not received": {
+      "": "Portal-URL nicht erhalten."
+    },
+    "Could not open billing portal": {
+      "": "Abrechnungsportal konnte nicht geöffnet werden."
+    },
     "Change Plan": "Plan ändern",
     "View Details": "Details anzeigen",
     "{price} · {limit} events": "{price} · {limit} Ereignisse",
@@ -486,10 +648,16 @@
     "Usage this month": "Nutzung diesen Monat",
     "Events": "Ereignisse",
     "Usage limit reached!": "Nutzungslimit erreicht!",
-    "You have exceeded your plan event limit.": "Sie haben das Ereignislimit Ihres Plans überschritten.",
+    "You have exceeded your plan event limit": {
+      "": "Sie haben das Ereignislimit Ihres Plans überschritten."
+    },
     "Upgrade Plan": "Plan upgraden",
     "Annual Billing": "Jährliche Abrechnung",
-    "You are on annual billing which saves you money compared to monthly billing. Your subscription will renew once per year on {date}.": "Sie nutzen die jährliche Abrechnung, die im Vergleich zur monatlichen Abrechnung Geld spart. Ihr Abonnement verlängert sich einmal pro Jahr am {date}.",
+    "You are on annual billing which saves you money compared to monthly billing": {
+      " Your subscription will renew once per year on {date}": {
+        "": "Sie nutzen die jährliche Abrechnung, die im Vergleich zur monatlichen Abrechnung Geld spart. Ihr Abonnement verlängert sich einmal pro Jahr am {date}."
+      }
+    },
     "Cancel Subscription": "Abonnement kündigen",
     "Choose Your Plan": "Wählen Sie Ihren Plan",
     "For personal projects": "Für persönliche Projekte",
@@ -507,11 +675,13 @@
     "Unused time credit": "Guthaben für nicht genutzte Zeit",
     "Due now": "Jetzt fällig",
     "Your next billing date: {date}": "Ihr nächstes Abrechnungsdatum: {date}",
-    "Confirm Change": "Änderung bestätigen"
+    "Confirm Change": "Änderung bestätigen",
+    "Failed to preview subscription change": "Vorschau der Abonnementänderung fehlgeschlagen",
+    "Checkout failed": "Checkout fehlgeschlagen"
   },
   "orgSelector": {
     "No organizations": "Keine Organisationen",
-    "Loading organizations...": "Organisationen werden geladen...",
+    "Loading organizations…": "Organisationen werden geladen…",
     "Select an organization": "Organisation auswählen",
     "No organizations available": "Keine Organisationen verfügbar"
   },
@@ -531,7 +701,9 @@
     "Security": "Sicherheit",
     "DPA": "AVV",
     "Support": "Support",
-    "All rights reserved.": "Alle Rechte vorbehalten.",
+    "All rights reserved": {
+      "": "Alle Rechte vorbehalten."
+    },
     "Made with ❤️ by frogs": "Mit ❤️ von Fröschen gemacht"
   },
   "versionCheck": {
@@ -548,13 +720,19 @@
     "Errors": "Fehler",
     "Error loading errors data": "Fehler beim Laden der Fehlerdaten",
     "No error events found": "Keine Fehlerereignisse gefunden",
-    "Errors will appear here once error tracking is enabled and errors occur on your site.": "Fehler werden hier angezeigt, sobald die Fehlererfassung aktiviert ist und Fehler auf Ihrer Website auftreten."
+    "Errors will appear here once error tracking is enabled and errors occur on your site": {
+      "": "Fehler werden hier angezeigt, sobald die Fehlererfassung aktiviert ist und Fehler auf Ihrer Website auftreten."
+    }
   },
   "funnelsPage": {
     "Funnels": "Trichter",
     "Filter funnels": "Trichter filtern",
     "Failed to load funnels": "Trichter konnten nicht geladen werden",
-    "There was a problem fetching the funnels. Please try again later.": "Beim Abrufen der Trichter ist ein Problem aufgetreten. Bitte versuchen Sie es später erneut.",
+    "There was a problem fetching the funnels": {
+      " Please try again later": {
+        "": "Beim Abrufen der Trichter ist ein Problem aufgetreten. Bitte versuchen Sie es später erneut."
+      }
+    },
     "No funnels found": "Keine Trichter gefunden",
     "No funnels match \"{query}\"": "Keine Trichter entsprechen \"{query}\"",
     "No funnels yet": "Noch keine Trichter",
@@ -565,13 +743,19 @@
     "User Journeys": "User Journeys",
     "{count} steps": "{count} Schritte",
     "{count} journeys": "{count} Journeys",
-    "Loading journey data...": "Journey-Daten werden geladen...",
+    "Loading journey data…": "Journey-Daten werden geladen…",
     "Step {number}": "Schritt {number}",
     "Path filter": "Pfadfilter",
     "Use * to match a single path segment, ** to match multiple segments": "Verwenden Sie * für ein einzelnes Pfadsegment, ** für mehrere Segmente",
-    "Failed to load journey data. Please try again.": "Journey-Daten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "Failed to load journey data": {
+      " Please try again": {
+        "": "Journey-Daten konnten nicht geladen werden. Bitte versuchen Sie es erneut."
+      }
+    },
     "No Data": "Keine Daten",
-    "No journey data found for the selected criteria.": "Keine Journey-Daten für die ausgewählten Kriterien gefunden."
+    "No journey data found for the selected criteria": {
+      "": "Keine Journey-Daten für die ausgewählten Kriterien gefunden."
+    }
   },
   "retentionPage": {
     "Retention": "Bindung",
@@ -587,9 +771,15 @@
     "Daily": "Täglich",
     "Weekly": "Wöchentlich",
     "Failed to load retention data": "Bindungsdaten konnten nicht geladen werden",
-    "There was a problem fetching the retention data. Please try again later.": "Beim Abrufen der Bindungsdaten ist ein Problem aufgetreten. Bitte versuchen Sie es später erneut.",
+    "There was a problem fetching the retention data": {
+      " Please try again later": {
+        "": "Beim Abrufen der Bindungsdaten ist ein Problem aufgetreten. Bitte versuchen Sie es später erneut."
+      }
+    },
     "No retention data available": "Keine Bindungsdaten verfügbar",
-    "Try selecting a different time range or make sure you have tracking data in the system.": "Versuchen Sie einen anderen Zeitraum auszuwählen oder stellen Sie sicher, dass Tracking-Daten im System vorhanden sind.",
+    "Try selecting a different time range or make sure you have tracking data in the system": {
+      "": "Versuchen Sie einen anderen Zeitraum auszuwählen oder stellen Sie sicher, dass Tracking-Daten im System vorhanden sind."
+    },
     "Cohort": "Kohorte",
     "{count} users": "{count} Benutzer"
   },
@@ -609,14 +799,18 @@
     "Goals": "Ziele",
     "Filter goals": "Ziele filtern",
     "No goals found": "Keine Ziele gefunden",
-    "Create your first conversion goal to start tracking important user actions.": "Erstellen Sie Ihr erstes Konversionsziel, um wichtige Benutzeraktionen zu verfolgen.",
+    "Create your first conversion goal to start tracking important user actions": {
+      "": "Erstellen Sie Ihr erstes Konversionsziel, um wichtige Benutzeraktionen zu verfolgen."
+    },
     "No goals match \"{query}\"": "Keine Ziele entsprechen \"{query}\""
   },
   "replayPage": {
     "Session Replay": "Sitzungswiedergabe",
     "Replay": "Wiedergabe",
     "No session replays found": "Keine Sitzungswiedergaben gefunden",
-    "Replays will appear here once session replay is enabled.": "Wiedergaben werden hier angezeigt, sobald die Sitzungswiedergabe aktiviert ist."
+    "Replays will appear here once session replay is enabled": {
+      "": "Wiedergaben werden hier angezeigt, sobald die Sitzungswiedergabe aktiviert ist."
+    }
   },
   "performancePage": {
     "Performance": "Leistung"
@@ -627,20 +821,34 @@
   },
   "apiPlaygroundPage": {
     "API Playground": "API Playground",
-    "Test API endpoints and view code examples in multiple languages.": "Testen Sie API-Endpunkte und sehen Sie Codebeispiele in mehreren Sprachen.",
+    "Test API endpoints and view code examples in multiple languages": {
+      "": "Testen Sie API-Endpunkte und sehen Sie Codebeispiele in mehreren Sprachen."
+    },
     "Get your API key": "Holen Sie sich Ihren API-Schlüssel"
   },
   "pagesPage": {
     "Pages": "Seiten",
     "Error loading pages data": "Fehler beim Laden der Seitendaten",
-    "No pages data found for the selected period.": "Keine Seitendaten für den ausgewählten Zeitraum gefunden."
+    "No pages data found for the selected period": {
+      "": "Keine Seitendaten für den ausgewählten Zeitraum gefunden."
+    }
   },
   "pricing": {
     "Pricing": "Preise",
-    "Try Rybbit today risk-free with our 30-day money-back guarantee.": "Testen Sie Rybbit heute risikofrei mit unserer 30-Tage-Geld-zurück-Garantie.",
-    "Please log in to subscribe.": "Bitte melden Sie sich an, um zu abonnieren.",
-    "Please select an organization to subscribe.": "Bitte wählen Sie eine Organisation zum Abonnieren.",
-    "Selected pricing plan not found. Please adjust the slider.": "Ausgewählter Preisplan nicht gefunden. Bitte passen Sie den Schieberegler an.",
+    "Try Rybbit today risk-free with our 30-day money-back guarantee": {
+      "": "Testen Sie Rybbit heute risikofrei mit unserer 30-Tage-Geld-zurück-Garantie."
+    },
+    "Please log in to subscribe": {
+      "": "Bitte melden Sie sich an, um zu abonnieren."
+    },
+    "Please select an organization to subscribe": {
+      "": "Bitte wählen Sie eine Organisation zum Abonnieren."
+    },
+    "Selected pricing plan not found": {
+      " Please adjust the slider": {
+        "": "Ausgewählter Preisplan nicht gefunden. Bitte passen Sie den Schieberegler an."
+      }
+    },
     "Subscription failed": "Abonnement fehlgeschlagen",
     "Monthly pageviews": "Monatliche Seitenaufrufe",
     "Monthly": "Monatlich",
@@ -649,7 +857,7 @@
     "Basic": "Basic",
     "For personal projects and small sites": "Für persönliche Projekte und kleine Websites",
     "Up to {limit} only": "Nur bis zu {limit}",
-    "Processing...": "Wird verarbeitet...",
+    "Processing…": "Wird verarbeitet…",
     "Get started": "Loslegen",
     "Standard": "Standard",
     "Everything you need to get started as a small business": "Alles, was Sie für den Einstieg als kleines Unternehmen brauchen",
@@ -673,11 +881,17 @@
     "CTR": "CTR",
     "Position": "Position",
     "No Data": "Keine Daten",
-    "Google Search Console data has a 2-3 day delay. Try selecting a wider date range.": "Google Search Console-Daten haben eine Verzögerung von 2-3 Tagen. Versuchen Sie, einen größeren Zeitraum auszuwählen.",
-    "Connect your Google Search Console account to view search performance data including top keywords and pages.": "Verbinden Sie Ihr Google Search Console-Konto, um Suchergebnisdaten einschließlich der wichtigsten Schlüsselwörter und Seiten anzuzeigen.",
-    "Connecting...": "Verbindung wird hergestellt...",
+    "Google Search Console data has a 2-3 day delay": {
+      " Try selecting a wider date range": {
+        "": "Google Search Console-Daten haben eine Verzögerung von 2-3 Tagen. Versuchen Sie, einen größeren Zeitraum auszuwählen."
+      }
+    },
+    "Connect your Google Search Console account to view search performance data including top keywords and pages": {
+      "": "Verbinden Sie Ihr Google Search Console-Konto, um Suchergebnisdaten einschließlich der wichtigsten Schlüsselwörter und Seiten anzuzeigen."
+    },
+    "Connecting…": "Verbindung wird hergestellt…",
     "Connect Google Search Console": "Google Search Console verbinden",
-    "Filter {count} items...": "{count} Einträge filtern...",
+    "Filter {count} items…": "{count} Einträge filtern…",
     "No results found": "Keine Ergebnisse gefunden",
     "Desktop": "Desktop",
     "Mobile": "Mobil",
@@ -690,9 +904,11 @@
   },
   "tagEditor": {
     "Edit Tags": "Tags bearbeiten",
-    "Add tags to organize and filter your sites.": "Fügen Sie Tags hinzu, um Ihre Websites zu organisieren und zu filtern.",
+    "Add tags to organize and filter your sites": {
+      "": "Fügen Sie Tags hinzu, um Ihre Websites zu organisieren und zu filtern."
+    },
     "No tags added yet": "Noch keine Tags hinzugefügt",
-    "Type a new tag...": "Neuen Tag eingeben...",
+    "Type a new tag…": "Neuen Tag eingeben…",
     "Existing tags:": "Vorhandene Tags:"
   }
 }

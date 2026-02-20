@@ -86,7 +86,9 @@ export function PlanDialog({ open, onOpenChange, currentPlanName, hasActiveSubsc
         }
       }
     } catch (error: any) {
-      toast.error(`${hasActiveSubscription ? t("Failed to preview subscription") : t("Checkout")} ${t("failed")}: ${error.message}`);
+      toast.error(hasActiveSubscription
+        ? `${t("Failed to preview subscription change")}: ${error.message}`
+        : `${t("Checkout failed")}: ${error.message}`);
     }
   };
 

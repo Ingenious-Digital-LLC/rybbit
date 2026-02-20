@@ -257,7 +257,7 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
             isAnnual={isAnnual}
             isCustomTier={!isBasicAvailable}
             customPriceLabel="-"
-            buttonText={!isBasicAvailable ? t("Up to {limit} only", { limit: "250k" }) : isLoading ? t("Processing...") : t("Get started")}
+            buttonText={!isBasicAvailable ? t("Up to {limit} only", { limit: "250k" }) : isLoading ? t("Processing…") : t("Get started")}
             features={BASIC_FEATURES}
             onClick={() => handleSubscribe("basic")}
             disabled={isLoading || !isBasicAvailable}
@@ -270,7 +270,7 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
           annualPrice={standardAnnualPrice}
           isAnnual={isAnnual}
           isCustomTier={isCustomTier}
-          buttonText={isLoading ? t("Processing...") : isCustomTier ? t("Contact us") : t("Get started")}
+          buttonText={isLoading ? t("Processing…") : isCustomTier ? t("Contact us") : t("Get started")}
           features={STANDARD_FEATURES}
           onClick={() => handleSubscribe("standard")}
           disabled={isLoading}
@@ -282,7 +282,7 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
           monthlyPrice={proMonthlyPrice}
           annualPrice={proAnnualPrice}
           isAnnual={isAnnual}
-          buttonText={isLoading ? t("Processing...") : isCustomTier ? t("Contact us") : t("Get started")}
+          buttonText={isLoading ? t("Processing…") : isCustomTier ? t("Contact us") : t("Get started")}
           features={PRO_FEATURES}
           recommended={true}
           onClick={() => handleSubscribe("pro")}
@@ -294,7 +294,7 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
             title="Test"
             description="$1 test subscription for development"
             isCustomTier={isCustomTier}
-            buttonText={isLoading ? t("Processing...") : "Subscribe ($1)"}
+            buttonText={isLoading ? t("Processing…") : "Subscribe ($1)"}
             features={["Test plan"]}
             onClick={() => handleTestSubscribe()}
             disabled={isLoading}

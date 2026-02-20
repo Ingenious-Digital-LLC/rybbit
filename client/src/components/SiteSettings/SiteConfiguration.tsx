@@ -363,7 +363,7 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
             onClick={handleDomainChange}
             disabled={isChangingDomain || newDomain === siteMetadata.domain || disabled}
           >
-            {isChangingDomain ? tc("Updating...") : tc("Update")}
+            {isChangingDomain ? tc("Updating…") : tc("Update")}
           </Button>
         </div>
       </div>
@@ -388,7 +388,7 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
             <AlertDialogFooter>
               <AlertDialogCancel>{tc("Cancel")}</AlertDialogCancel>
               <AlertDialogAction onClick={handleDelete} disabled={isDeleting} variant="destructive">
-                {isDeleting ? t("Deleting...") : t("Yes, delete site")}
+                {isDeleting ? t("Deleting…") : t("Yes, delete site")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

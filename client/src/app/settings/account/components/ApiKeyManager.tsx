@@ -90,7 +90,7 @@ export function ApiKeyManager() {
                 onClick={handleCreateApiKey}
                 disabled={createApiKey.isPending || !apiKeyName.trim()}
               >
-                {createApiKey.isPending ? tc("Creating...") : tc("Create")}
+                {createApiKey.isPending ? tc("Creating…") : tc("Create")}
               </Button>
             </div>
           </div>
@@ -98,7 +98,7 @@ export function ApiKeyManager() {
           <div className="space-y-2">
             <h4 className="text-sm font-medium">{t("Your API Keys")}</h4>
             {isLoadingApiKeys ? (
-              <p className="text-xs text-neutral-500">{t("Loading API keys...")}</p>
+              <p className="text-xs text-neutral-500">{t("Loading API keys…")}</p>
             ) : isError ? (
               <div className="space-y-2">
                 <p className="text-xs text-red-500">

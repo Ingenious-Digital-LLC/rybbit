@@ -66,7 +66,7 @@ export function CountryExclusionManager({ siteId, disabled = false }: CountryExc
   };
 
   if (isLoading) {
-    return <div className="text-sm text-muted-foreground">{t("Loading country exclusions...")}</div>;
+    return <div className="text-sm text-muted-foreground">{t("Loading country exclusions…")}</div>;
   }
 
   return (
@@ -111,7 +111,7 @@ export function CountryExclusionManager({ siteId, disabled = false }: CountryExc
             disabled={disabled || updateExcludedCountriesMutation.isPending}
             size="sm"
           >
-            {updateExcludedCountriesMutation.isPending ? tc("Saving...") : tc("Save Changes")}
+            {updateExcludedCountriesMutation.isPending ? tc("Saving…") : tc("Save Changes")}
           </Button>
           <Button
             variant="outline"

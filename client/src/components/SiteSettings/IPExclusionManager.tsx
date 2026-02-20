@@ -102,7 +102,7 @@ export function IPExclusionManager({ siteId, disabled = false }: IPExclusionMana
   };
 
   if (isLoading) {
-    return <div className="text-sm text-muted-foreground">{t("Loading IP exclusions...")}</div>;
+    return <div className="text-sm text-muted-foreground">{t("Loading IP exclusions…")}</div>;
   }
 
   return (
@@ -161,7 +161,7 @@ export function IPExclusionManager({ siteId, disabled = false }: IPExclusionMana
       {hasUnsavedChanges && (
         <div className="flex items-center space-x-2 pt-2">
           <Button onClick={handleSave} disabled={disabled || updateExcludedIPsMutation.isPending} size="sm">
-            {updateExcludedIPsMutation.isPending ? tc("Saving...") : tc("Save Changes")}
+            {updateExcludedIPsMutation.isPending ? tc("Saving…") : tc("Save Changes")}
           </Button>
           <Button
             variant="outline"

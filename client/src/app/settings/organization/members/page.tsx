@@ -127,7 +127,7 @@ function Organization({
               <div className="flex space-x-2">
                 <Input id="name" value={name} onChange={({ target }) => setName(target.value)} placeholder="name" />
                 <Button variant="outline" onClick={handleOrganizationNameUpdate} disabled={name === org.name}>
-                  {isUpdating ? tc("Updating...") : tc("Update")}
+                  {isUpdating ? tc("Updating…") : tc("Update")}
                 </Button>
               </div>
             </div>
@@ -274,7 +274,7 @@ export default function MembersPage() {
   if (isPending) {
     return (
       <div className="flex justify-center py-8">
-        <div className="animate-pulse">{t("Loading organization...")}</div>
+        <div className="animate-pulse">{t("Loading organization…")}</div>
       </div>
     );
   }

@@ -115,7 +115,7 @@ export function TagEditor({ siteId, currentTags, allTags, onTagsUpdated, trigger
           {/* New tag input */}
           <div className="flex gap-2">
             <Input
-              placeholder={t("Type a new tag...")}
+              placeholder={t("Type a new tag…")}
               value={newTagInput}
               onChange={e => setNewTagInput(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -156,7 +156,7 @@ export function TagEditor({ siteId, currentTags, allTags, onTagsUpdated, trigger
             {tc("Cancel")}
           </Button>
           <Button onClick={handleSave} disabled={isSaving} variant="success">
-            {isSaving ? tc("Saving...") : tc("Save")}
+            {isSaving ? tc("Saving…") : tc("Save")}
           </Button>
         </DialogFooter>
       </DialogContent>

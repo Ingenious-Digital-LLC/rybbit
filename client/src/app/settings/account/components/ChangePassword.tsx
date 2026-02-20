@@ -268,7 +268,7 @@ export function ChangePassword() {
             </Button>
           </DialogClose>
           <Button onClick={handleSubmit} disabled={!canSubmit || isSubmitting} variant="success" className="sm:flex-1">
-            {isSubmitting ? t("Changing...") : t("Change Password")}
+            {isSubmitting ? t("Changing…") : t("Change Password")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -123,7 +123,7 @@ export function SearchConsoleDialog({ title, dimension, renderName, expanded, cl
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-600 dark:text-neutral-400" />
           <Input
             type="text"
-            placeholder={t("Filter {count} items...", { count: data.length })}
+            placeholder={t("Filter {count} items…", { count: data.length })}
             className="pl-9 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 text-xs"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}

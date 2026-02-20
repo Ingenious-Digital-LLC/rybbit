@@ -122,7 +122,7 @@ export default function Home() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
             <Input
-              placeholder={t("Filter by domain...")}
+              placeholder={t("Filter by domain…")}
               value={domainFilter}
               onChange={e => setDomainFilter(e.target.value)}
               className="pl-9"
@@ -134,8 +134,8 @@ export default function Home() {
                 options={allTags.map(tag => ({ value: tag, label: tag }))}
                 value={selectedTags}
                 onValueChange={setSelectedTags}
-                placeholder={t("Filter by tags...")}
-                searchPlaceholder={t("Search tags...")}
+                placeholder={t("Filter by tags…")}
+                searchPlaceholder={t("Search tags…")}
                 emptyText={t("No tags found.")}
                 className="border-neutral-150 dark:border-neutral-800"
               />

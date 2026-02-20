@@ -178,7 +178,7 @@ export function CreateOrganizationDialog({ open, onOpenChange, onSuccess, trigge
               {tc("Cancel")}
             </Button>
             <Button type="submit" variant="success" disabled={createOrgMutation.isPending || !name || !slug}>
-              {createOrgMutation.isPending ? tc("Creating...") : t("Create Organization")}
+              {createOrgMutation.isPending ? tc("Creating…") : t("Create Organization")}
             </Button>
           </DialogFooter>
         </form>

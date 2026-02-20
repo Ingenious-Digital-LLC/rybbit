@@ -226,7 +226,7 @@ function SignupPageContent() {
               )}
               <AuthButton
                 isLoading={isLoading}
-                loadingText={t("Creating account...")}
+                loadingText={t("Creating account…")}
                 onClick={handleAccountSubmit}
                 type="button"
                 className="mt-6 transition-all duration-300 h-11"

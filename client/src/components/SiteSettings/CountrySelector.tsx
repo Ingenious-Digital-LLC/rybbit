@@ -231,13 +231,13 @@ export function CountrySelector({ onSelect, selectedCountries, disabled = false 
           className="w-full justify-between"
           disabled={disabled || availableCountries.length === 0}
         >
-          {availableCountries.length === 0 ? t("All countries excluded") : t("Select country to exclude...")}
+          {availableCountries.length === 0 ? t("All countries excluded") : t("Select country to exclude…")}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
         <Command>
-          <CommandInput placeholder={t("Search countries...")} />
+          <CommandInput placeholder={t("Search countries…")} />
           <CommandList>
             <CommandEmpty>{t("No country found.")}</CommandEmpty>
             <CommandGroup>

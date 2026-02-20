@@ -252,7 +252,7 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
                 {createImportMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    {t("Importing...")}
+                    {t("Importing…")}
                   </>
                 ) : (
                   <>
@@ -299,7 +299,7 @@ export function ImportManager({ siteId, disabled }: ImportManagerProps) {
             {isLoading && !data ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                <span>{t("Loading import history...")}</span>
+                <span>{t("Loading import history…")}</span>
               </div>
             ) : error ? (
               <Alert variant="destructive">

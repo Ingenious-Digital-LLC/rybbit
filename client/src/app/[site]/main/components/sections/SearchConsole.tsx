@@ -30,7 +30,7 @@ function ConnectPrompt() {
       </div>
       <Button onClick={() => connect()} disabled={isPending}>
         <SiGoogle />
-        {isPending ? t("Connecting...") : t("Connect Google Search Console")}
+        {isPending ? t("Connecting…") : t("Connect Google Search Console")}
       </Button>
     </div>
   );

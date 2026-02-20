@@ -44,11 +44,11 @@ export function OrganizationSelector() {
     return (
       <Select disabled>
         <SelectTrigger className="w-full">
-          <SelectValue placeholder={t("Loading organizations...")} />
+          <SelectValue placeholder={t("Loading organizations…")} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="placeholder" disabled>
-            {t("Loading organizations...")}
+            {t("Loading organizations…")}
           </SelectItem>
         </SelectContent>
       </Select>

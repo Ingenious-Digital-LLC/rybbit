@@ -124,7 +124,7 @@ export function AccountInner() {
                 onClick={handleNameUpdate}
                 disabled={isUpdatingName || name === session.data?.user.name}
               >
-                {isUpdatingName ? tc("Updating...") : tc("Update")}
+                {isUpdatingName ? tc("Updating…") : tc("Update")}
               </Button>
             </div>
           </div>
@@ -144,7 +144,7 @@ export function AccountInner() {
                 onClick={handleEmailUpdate}
                 disabled={isUpdatingEmail || email === session.data?.user.email}
               >
-                {isUpdatingEmail ? tc("Updating...") : tc("Update")}
+                {isUpdatingEmail ? tc("Updating…") : tc("Update")}
               </Button>
             </div>
           </div>

@@ -1,15 +1,15 @@
 {
   "common": {
-    "Loading...": "Loading...",
+    "Loading…": "Loading…",
     "Save": "Save",
     "Cancel": "Cancel",
     "Delete": "Delete",
     "Confirm": "Confirm",
     "Close": "Close",
     "Update": "Update",
-    "Updating...": "Updating...",
+    "Updating…": "Updating…",
     "Create": "Create",
-    "Creating...": "Creating...",
+    "Creating…": "Creating…",
     "Add": "Add",
     "Error": "Error",
     "Retry": "Retry",
@@ -30,7 +30,7 @@
     "Copied to clipboard": "Copied to clipboard",
     "Copy to clipboard": "Copy to clipboard",
     "Copied!": "Copied!",
-    "Saving...": "Saving...",
+    "Saving…": "Saving…",
     "Save Changes": "Save Changes",
     "Reset": "Reset"
   },
@@ -65,7 +65,7 @@
   },
   "auth": {
     "Login": "Login",
-    "Logging in...": "Logging in...",
+    "Logging in…": "Logging in…",
     "Signup": "Signup",
     "Sign up": "Sign up",
     "Welcome back": "Welcome back",
@@ -76,53 +76,83 @@
     "Log in": "Log in",
     "Email": "Email",
     "Password": "Password",
-    "example@email.com": "example@email.com",
+    "example@email": {
+      "com": "example@email.com"
+    },
     "••••••••": "••••••••",
     "Please complete the captcha verification": "Please complete the captcha verification",
     "Error Logging In": "Error Logging In",
     "Open source web analytics powered by Rybbit": "Open source web analytics powered by Rybbit",
-    "Creating account...": "Creating account...",
+    "Creating account…": "Creating account…",
     "Account": "Account",
     "Organization": "Organization",
     "Website": "Website",
     "Create your organization": "Create your organization",
     "Organization Name": "Organization Name",
-    "Acme Inc.": "Acme Inc.",
+    "Acme Inc": {
+      "": "Acme Inc."
+    },
     "How did you find Rybbit?": "How did you find Rybbit?",
     "Select an option": "Select an option",
     "I'm joining someone else's organization": "I'm joining someone else's organization",
     "Add your site": "Add your site",
     "Website Domain": "Website Domain",
-    "example.com or sub.example.com": "example.com or sub.example.com",
+    "example": {
+      "com or sub": {
+        "example": {
+          "com": "example.com or sub.example.com"
+        }
+      }
+    },
     "Enter the domain of the website you want to track": "Enter the domain of the website you want to track",
-    "Invalid domain format. Must be a valid domain like example.com or sub.example.com": "Invalid domain format. Must be a valid domain like example.com or sub.example.com",
+    "Invalid domain format": {
+      " Must be a valid domain like example": {
+        "com or sub": {
+          "example": {
+            "com": "Invalid domain format. Must be a valid domain like example.com or sub.example.com"
+          }
+        }
+      }
+    },
     "Sign Up Disabled": "Sign Up Disabled",
-    "New account registration is currently disabled. If you have an account, you can": "New account registration is currently disabled. If you have an account, you can",
+    "New account registration is currently disabled": {
+      " If you have an account, you can": "New account registration is currently disabled. If you have an account, you can"
+    },
     "sign in": "sign in",
     "Reset Password": "Reset Password",
     "Password Reset Successful": "Password Reset Successful",
     "Enter OTP Code": "Enter OTP Code",
-    "Enter your email address and we'll send you a verification code to reset your password.": "Enter your email address and we'll send you a verification code to reset your password.",
+    "Enter your email address and we'll send you a verification code to reset your password": {
+      "": "Enter your email address and we'll send you a verification code to reset your password."
+    },
     "Send Verification Code": "Send Verification Code",
-    "Sending code...": "Sending code...",
+    "Sending code…": "Sending code…",
     "Error Sending Code": "Error Sending Code",
     "Remember your password?": "Remember your password?",
-    "We've sent a verification code to {email}. Please enter the code below along with your new password.": "We've sent a verification code to {email}. Please enter the code below along with your new password.",
+    "We've sent a verification code to {email}": {
+      " Please enter the code below along with your new password": {
+        "": "We've sent a verification code to {email}. Please enter the code below along with your new password."
+      }
+    },
     "Verification Code": "Verification Code",
     "New Password": "New Password",
-    "Resetting password...": "Resetting password...",
+    "Resetting password…": "Resetting password…",
     "Error Resetting Password": "Error Resetting Password",
     "Use a different email": "Use a different email",
     "Success!": "Success!",
-    "Your password has been reset successfully.": "Your password has been reset successfully.",
-    "Redirecting to login page...": "Redirecting to login page...",
+    "Your password has been reset successfully": {
+      "": "Your password has been reset successfully."
+    },
+    "Redirecting to login page…": "Redirecting to login page…",
     "Password must be at least 8 characters long": "Password must be at least 8 characters long"
   },
   "home": {
-    "Filter by domain...": "Filter by domain...",
-    "Filter by tags...": "Filter by tags...",
-    "Search tags...": "Search tags...",
-    "No tags found.": "No tags found.",
+    "Filter by domain…": "Filter by domain…",
+    "Filter by tags…": "Filter by tags…",
+    "Search tags…": "Search tags…",
+    "No tags found": {
+      "": "No tags found."
+    },
     "No websites yet": "No websites yet",
     "Add your first website to start tracking analytics": "Add your first website to start tracking analytics",
     "Add Website": "Add Website"
@@ -130,7 +160,11 @@
   "notFound": {
     "404": "404",
     "Page Not Found": "Page Not Found",
-    "The page you're looking for doesn't exist or has been moved. Let's get you back to analyzing your data.": "The page you're looking for doesn't exist or has been moved. Let's get you back to analyzing your data.",
+    "The page you're looking for doesn't exist or has been moved": {
+      " Let's get you back to analyzing your data": {
+        "": "The page you're looking for doesn't exist or has been moved. Let's get you back to analyzing your data."
+      }
+    },
     "Go to Dashboard": "Go to Dashboard",
     "Go Back": "Go Back",
     "Need help? Check out our resources:": "Need help? Check out our resources:",
@@ -154,7 +188,9 @@
     "Email updated successfully": "Email updated successfully",
     "Failed to update email": "Failed to update email",
     "Send Weekly Email Reports": "Send Weekly Email Reports",
-    "Enable or disable automatic email reports for your account.": "Enable or disable automatic email reports for your account.",
+    "Enable or disable automatic email reports for your account": {
+      "": "Enable or disable automatic email reports for your account."
+    },
     "Email reports enabled": "Email reports enabled",
     "Email reports disabled": "Email reports disabled",
     "Failed to update email reports setting": "Failed to update email reports setting",
@@ -175,7 +211,7 @@
     "New password and confirm password do not match": "New password and confirm password do not match",
     "Please use a stronger password": "Please use a stronger password",
     "Password changed successfully": "Password changed successfully",
-    "Changing...": "Changing...",
+    "Changing…": "Changing…",
     "Weak": "Weak",
     "Good": "Good",
     "Strong": "Strong",
@@ -186,14 +222,24 @@
     "Delete Account": "Delete Account",
     "Delete your account?": "Delete your account?",
     "Cannot delete account": "Cannot delete account",
-    "You have an active subscription. Please cancel your subscription before deleting your account.": "You have an active subscription. Please cancel your subscription before deleting your account.",
-    "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.": "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.",
-    "Deleting...": "Deleting...",
+    "You have an active subscription": {
+      " Please cancel your subscription before deleting your account": {
+        "": "You have an active subscription. Please cancel your subscription before deleting your account."
+      }
+    },
+    "This action cannot be undone": {
+      " This will permanently delete your account and remove all your data from our servers": {
+        "": "This action cannot be undone. This will permanently delete your account and remove all your data from our servers."
+      }
+    },
+    "Deleting…": "Deleting…",
     "Account successfully deleted": "Account successfully deleted",
     "Failed to delete account": "Failed to delete account",
     "Organization Members": "Organization Members",
-    "Loading organization...": "Loading organization...",
-    "You need to create or be added to an organization before you can manage members.": "You need to create or be added to an organization before you can manage members.",
+    "Loading organization…": "Loading organization…",
+    "You need to create or be added to an organization before you can manage members": {
+      "": "You need to create or be added to an organization before you can manage members."
+    },
     "Organization Name": "Organization Name",
     "Update your organization name": "Update your organization name",
     "Delete Organization": "Delete Organization",
@@ -219,45 +265,75 @@
     "API key deleted successfully": "API key deleted successfully",
     "Failed to delete API key": "Failed to delete API key",
     "Your API Keys": "Your API Keys",
-    "Loading API keys...": "Loading API keys...",
+    "Loading API keys…": "Loading API keys…",
     "Failed to load API keys": "Failed to load API keys",
     "Key": "Key",
     "Created": "Created",
     "Unnamed": "Unnamed",
     "No API keys created yet": "No API keys created yet",
     "API Key Created": "API Key Created",
-    "Save this API key securely. You won't be able to see it again.": "Save this API key securely. You won't be able to see it again.",
+    "Save this API key securely": {
+      " You won't be able to see it again": {
+        "": "Save this API key securely. You won't be able to see it again."
+      }
+    },
     "Your API Key": "Your API Key",
-    "Store this key securely. It won't be displayed again.": "Store this key securely. It won't be displayed again."
+    "Store this key securely": {
+      " It won't be displayed again": {
+        "": "Store this key securely. It won't be displayed again."
+      }
+    }
   },
   "createOrg": {
     "Create Organization": "Create Organization",
     "Set up a new organization to add websites and users": "Set up a new organization to add websites and users",
     "Organization Name": "Organization Name",
-    "Acme Inc.": "Acme Inc.",
+    "Acme Inc": {
+      "": "Acme Inc."
+    },
     "Organization name and slug are required": "Organization name and slug are required",
     "Organization created successfully": "Organization created successfully",
     "Failed to create organization": "Failed to create organization",
     "Subscription Will Not Carry Over": "Subscription Will Not Carry Over",
-    "You can create another organization, but your current subscription only applies to your current organization.": "You can create another organization, but your current subscription only applies to your current organization.",
+    "You can create another organization, but your current subscription only applies to your current organization": {
+      "": "You can create another organization, but your current subscription only applies to your current organization."
+    },
     "No Organization": "No Organization",
-    "You need to create or be added to an organization before you can add a website.": "You need to create or be added to an organization before you can add a website.",
+    "You need to create or be added to an organization before you can add a website": {
+      "": "You need to create or be added to an organization before you can add a website."
+    },
     "Create an Organization": "Create an Organization"
   },
   "addSite": {
     "Add Website": "Add Website",
     "Track analytics for a new website in your organization": "Track analytics for a new website in your organization",
     "Domain": "Domain",
-    "example.com or sub.example.com": "example.com or sub.example.com",
+    "example": {
+      "com or sub": {
+        "example": {
+          "com": "example.com or sub.example.com"
+        }
+      }
+    },
     "Public Analytics": "Public Analytics",
     "When enabled, anyone can view analytics without logging in": "When enabled, anyone can view analytics without logging in",
     "Enable User ID Salting": "Enable User ID Salting",
     "Enhance privacy with daily rotating salts for user IDs": "Enhance privacy with daily rotating salts for user IDs",
     "Error Adding Website": "Error Adding Website",
     "Please select an organization": "Please select an organization",
-    "Invalid domain format. Must be a valid domain like example.com or sub.example.com": "Invalid domain format. Must be a valid domain like example.com or sub.example.com",
+    "Invalid domain format": {
+      " Must be a valid domain like example": {
+        "com or sub": {
+          "example": {
+            "com": "Invalid domain format. Must be a valid domain like example.com or sub.example.com"
+          }
+        }
+      }
+    },
     "You need to be on an active subscription to add websites": "You need to be on an active subscription to add websites",
-    "You have reached the limit of {limit} websites. Upgrade to add more websites": "You have reached the limit of {limit} websites. Upgrade to add more websites"
+    "You have reached the limit of {limit} websites": {
+      " Upgrade to add more websites": "You have reached the limit of {limit} websites. Upgrade to add more websites"
+    }
   },
   "siteSettings": {
     "Site Settings": "Site Settings",
@@ -280,7 +356,9 @@
     "Bot blocking enabled": "Bot blocking enabled",
     "Bot blocking disabled": "Bot blocking disabled",
     "Track IP Address": "Track IP Address",
-    "Track the IP address of the user. This is definitely not GDPR compliant!": "Track the IP address of the user. This is definitely not GDPR compliant!",
+    "Track the IP address of the user": {
+      " This is definitely not GDPR compliant!": "Track the IP address of the user. This is definitely not GDPR compliant!"
+    },
     "IP address tracking enabled": "IP address tracking enabled",
     "IP address tracking disabled": "IP address tracking disabled",
     "Session Replay": "Session Replay",
@@ -330,8 +408,12 @@
     "Failed to update domain": "Failed to update domain",
     "Delete Site": "Delete Site",
     "Are you absolutely sure?": "Are you absolutely sure?",
-    "This action cannot be undone. This will permanently delete the site \"{name}\" and all of its analytics data.": "This action cannot be undone. This will permanently delete the site \"{name}\" and all of its analytics data.",
-    "Deleting...": "Deleting...",
+    "This action cannot be undone": {
+      " This will permanently delete the site \"{name}\" and all of its analytics data": {
+        "": "This action cannot be undone. This will permanently delete the site \"{name}\" and all of its analytics data."
+      }
+    },
+    "Deleting…": "Deleting…",
     "Yes, delete site": "Yes, delete site",
     "Site deleted successfully": "Site deleted successfully",
     "Failed to delete site": "Failed to delete site",
@@ -341,7 +423,11 @@
     "Use <code>*</code> for single segment wildcard, <code>**</code> for multi-segment wildcard": "Use <code>*</code> for single segment wildcard, <code>**</code> for multi-segment wildcard",
     "Mask Patterns": "Mask Patterns",
     "URL patterns to anonymize in analytics (one per line)": "URL patterns to anonymize in analytics (one per line)",
-    "E.g. <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details": "E.g. <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details",
+    "E": {
+      "g": {
+        " <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details": "E.g. <code>/users/*/profile</code> will hide usernames, <code>/orders/**</code> will hide order details"
+      }
+    },
     "Debounce Duration (ms)": "Debounce Duration (ms)",
     "Default: 500ms": "Default: 500ms",
     "Time to wait before tracking a pageview after URL changes": "Time to wait before tracking a pageview after URL changes",
@@ -349,43 +435,99 @@
     "Connect your Google Search Console account to view search performance data": "Connect your Google Search Console account to view search performance data",
     "Connected to:": "Connected to:",
     "Disconnect Google Search Console?": "Disconnect Google Search Console?",
-    "This will remove the connection to Google Search Console. You can reconnect at any time.": "This will remove the connection to Google Search Console. You can reconnect at any time.",
+    "This will remove the connection to Google Search Console": {
+      " You can reconnect at any time": {
+        "": "This will remove the connection to Google Search Console. You can reconnect at any time."
+      }
+    },
     "Disconnect": "Disconnect",
-    "Disconnecting...": "Disconnecting...",
-    "Connecting...": "Connecting...",
+    "Disconnecting…": "Disconnecting…",
+    "Connecting…": "Connecting…",
     "Connect Google Search Console": "Connect Google Search Console",
     "Google Search Console connected successfully": "Google Search Console connected successfully",
     "Google Search Console disconnected": "Google Search Console disconnected",
     "Failed to disconnect Google Search Console": "Failed to disconnect Google Search Console",
-    "Loading IP exclusions...": "Loading IP exclusions...",
+    "Loading IP exclusions…": "Loading IP exclusions…",
     "IP Exclusions": "IP Exclusions",
-    "Exclude traffic from specific IP addresses or ranges. Supports single IPs (192.168.1.1), CIDR notation (192.168.1.0/24), and ranges (192.168.1.1-192.168.1.10).": "Exclude traffic from specific IP addresses or ranges. Supports single IPs (192.168.1.1), CIDR notation (192.168.1.0/24), and ranges (192.168.1.1-192.168.1.10).",
+    "Exclude traffic from specific IP addresses or ranges": {
+      " Supports single IPs (192": {
+        "168": {
+          "1": {
+            "1), CIDR notation (192": {
+              "168": {
+                "1": {
+                  "0/24), and ranges (192": {
+                    "168": {
+                      "1": {
+                        "1-192": {
+                          "168": {
+                            "1": {
+                              "10)": {
+                                "": "Exclude traffic from specific IP addresses or ranges. Supports single IPs (192.168.1.1), CIDR notation (192.168.1.0/24), and ranges (192.168.1.1-192.168.1.10)."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Add IP": "Add IP",
     "Maximum 100 IP exclusions allowed": "Maximum 100 IP exclusions allowed",
-    "Loading country exclusions...": "Loading country exclusions...",
+    "Loading country exclusions…": "Loading country exclusions…",
     "Country Exclusions": "Country Exclusions",
-    "Exclude traffic from specific countries. Events from these countries will not be tracked in your analytics.": "Exclude traffic from specific countries. Events from these countries will not be tracked in your analytics.",
+    "Exclude traffic from specific countries": {
+      " Events from these countries will not be tracked in your analytics": {
+        "": "Exclude traffic from specific countries. Events from these countries will not be tracked in your analytics."
+      }
+    },
     "Excluded Countries ({count})": "Excluded Countries ({count})",
     "All countries excluded": "All countries excluded",
-    "Select country to exclude...": "Select country to exclude...",
-    "Search countries...": "Search countries...",
-    "No country found.": "No country found.",
+    "Select country to exclude…": "Select country to exclude…",
+    "Search countries…": "Search countries…",
+    "No country found": {
+      "": "No country found."
+    },
     "Data Import": "Data Import",
     "Import Data": "Import Data",
-    "Import data from other analytics platforms.": "Import data from other analytics platforms.",
-    "You have an active import in progress. Please wait for it to complete before starting a new import.": "You have an active import in progress. Please wait for it to complete before starting a new import.",
+    "Import data from other analytics platforms": {
+      "": "Import data from other analytics platforms."
+    },
+    "You have an active import in progress": {
+      " Please wait for it to complete before starting a new import": {
+        "": "You have an active import in progress. Please wait for it to complete before starting a new import."
+      }
+    },
     "Platform": "Platform",
     "Select platform": "Select platform",
     "CSV File": "CSV File",
-    "Importing...": "Importing...",
+    "Importing…": "Importing…",
     "Please select a file": "Please select a file",
     "Only CSV files are accepted": "Only CSV files are accepted",
-    "Failed to import file. Please try again.": "Failed to import file. Please try again.",
-    "Failed to delete import. Please try again.": "Failed to delete import. Please try again.",
+    "Failed to import file": {
+      " Please try again": {
+        "": "Failed to import file. Please try again."
+      }
+    },
+    "Failed to delete import": {
+      " Please try again": {
+        "": "Failed to delete import. Please try again."
+      }
+    },
     "Import History": "Import History",
     "Track the status of your data imports": "Track the status of your data imports",
-    "Loading import history...": "Loading import history...",
-    "Failed to load import history. Please try refreshing the page.": "Failed to load import history. Please try refreshing the page.",
+    "Loading import history…": "Loading import history…",
+    "Failed to load import history": {
+      " Please try refreshing the page": {
+        "": "Failed to load import history. Please try refreshing the page."
+      }
+    },
     "No imports yet": "No imports yet",
     "Upload a CSV file to get started": "Upload a CSV file to get started",
     "Started At": "Started At",
@@ -398,10 +540,18 @@
     "Events exceeded quota or date range limits": "Events exceeded quota or date range limits",
     "Events failed validation": "Events failed validation",
     "Confirm Large File Import": "Confirm Large File Import",
-    "You are about to import a large file ({size}). This may take several minutes to process. Are you sure you want to continue?": "You are about to import a large file ({size}). This may take several minutes to process. Are you sure you want to continue?",
+    "You are about to import a large file ({size})": {
+      " This may take several minutes to process": {
+        " Are you sure you want to continue?": "You are about to import a large file ({size}). This may take several minutes to process. Are you sure you want to continue?"
+      }
+    },
     "Yes, Import File": "Yes, Import File",
     "Delete Import": "Delete Import",
-    "Are you sure you want to delete this import? This action cannot be undone. The imported data will be permanently removed.": "Are you sure you want to delete this import? This action cannot be undone. The imported data will be permanently removed."
+    "Are you sure you want to delete this import? This action cannot be undone": {
+      " The imported data will be permanently removed": {
+        "": "Are you sure you want to delete this import? This action cannot be undone. The imported data will be permanently removed."
+      }
+    }
   },
   "dates": {
     "Today": "Today",
@@ -469,13 +619,25 @@
     "Upgrade": "Upgrade",
     "Free trial: {days} days remaining – Using {used} of {limit} events": "Free trial: {days} days remaining – Using {used} of {limit} events",
     "Your Free Trial Has Ended": "Your Free Trial Has Ended",
-    "Your 14-day free trial has expired. Subscribe to continue tracking visits again.": "Your 14-day free trial has expired. Subscribe to continue tracking visits again.",
-    "Choose a subscription plan to continue collecting analytics data.": "Choose a subscription plan to continue collecting analytics data.",
+    "Your 14-day free trial has expired": {
+      " Subscribe to continue tracking visits again": {
+        "": "Your 14-day free trial has expired. Subscribe to continue tracking visits again."
+      }
+    },
+    "Choose a subscription plan to continue collecting analytics data": {
+      "": "Choose a subscription plan to continue collecting analytics data."
+    },
     "Subscribe Now": "Subscribe Now",
     "No organization selected": "No organization selected",
-    "Failed to create portal session.": "Failed to create portal session.",
-    "Portal URL not received.": "Portal URL not received.",
-    "Could not open billing portal.": "Could not open billing portal.",
+    "Failed to create portal session": {
+      "": "Failed to create portal session."
+    },
+    "Portal URL not received": {
+      "": "Portal URL not received."
+    },
+    "Could not open billing portal": {
+      "": "Could not open billing portal."
+    },
     "Change Plan": "Change Plan",
     "View Details": "View Details",
     "{price} · {limit} events": "{price} · {limit} events",
@@ -486,10 +648,16 @@
     "Usage this month": "Usage this month",
     "Events": "Events",
     "Usage limit reached!": "Usage limit reached!",
-    "You have exceeded your plan event limit.": "You have exceeded your plan event limit.",
+    "You have exceeded your plan event limit": {
+      "": "You have exceeded your plan event limit."
+    },
     "Upgrade Plan": "Upgrade Plan",
     "Annual Billing": "Annual Billing",
-    "You are on annual billing which saves you money compared to monthly billing. Your subscription will renew once per year on {date}.": "You are on annual billing which saves you money compared to monthly billing. Your subscription will renew once per year on {date}.",
+    "You are on annual billing which saves you money compared to monthly billing": {
+      " Your subscription will renew once per year on {date}": {
+        "": "You are on annual billing which saves you money compared to monthly billing. Your subscription will renew once per year on {date}."
+      }
+    },
     "Cancel Subscription": "Cancel Subscription",
     "Choose Your Plan": "Choose Your Plan",
     "For personal projects": "For personal projects",
@@ -507,11 +675,13 @@
     "Unused time credit": "Unused time credit",
     "Due now": "Due now",
     "Your next billing date: {date}": "Your next billing date: {date}",
-    "Confirm Change": "Confirm Change"
+    "Confirm Change": "Confirm Change",
+    "Failed to preview subscription change": "Failed to preview subscription change",
+    "Checkout failed": "Checkout failed"
   },
   "orgSelector": {
     "No organizations": "No organizations",
-    "Loading organizations...": "Loading organizations...",
+    "Loading organizations…": "Loading organizations…",
     "Select an organization": "Select an organization",
     "No organizations available": "No organizations available"
   },
@@ -531,7 +701,9 @@
     "Security": "Security",
     "DPA": "DPA",
     "Support": "Support",
-    "All rights reserved.": "All rights reserved.",
+    "All rights reserved": {
+      "": "All rights reserved."
+    },
     "Made with ❤️ by frogs": "Made with ❤️ by frogs"
   },
   "versionCheck": {
@@ -548,13 +720,19 @@
     "Errors": "Errors",
     "Error loading errors data": "Error loading errors data",
     "No error events found": "No error events found",
-    "Errors will appear here once error tracking is enabled and errors occur on your site.": "Errors will appear here once error tracking is enabled and errors occur on your site."
+    "Errors will appear here once error tracking is enabled and errors occur on your site": {
+      "": "Errors will appear here once error tracking is enabled and errors occur on your site."
+    }
   },
   "funnelsPage": {
     "Funnels": "Funnels",
     "Filter funnels": "Filter funnels",
     "Failed to load funnels": "Failed to load funnels",
-    "There was a problem fetching the funnels. Please try again later.": "There was a problem fetching the funnels. Please try again later.",
+    "There was a problem fetching the funnels": {
+      " Please try again later": {
+        "": "There was a problem fetching the funnels. Please try again later."
+      }
+    },
     "No funnels found": "No funnels found",
     "No funnels match \"{query}\"": "No funnels match \"{query}\"",
     "No funnels yet": "No funnels yet",
@@ -565,13 +743,19 @@
     "User Journeys": "User Journeys",
     "{count} steps": "{count} steps",
     "{count} journeys": "{count} journeys",
-    "Loading journey data...": "Loading journey data...",
+    "Loading journey data…": "Loading journey data…",
     "Step {number}": "Step {number}",
     "Path filter": "Path filter",
     "Use * to match a single path segment, ** to match multiple segments": "Use * to match a single path segment, ** to match multiple segments",
-    "Failed to load journey data. Please try again.": "Failed to load journey data. Please try again.",
+    "Failed to load journey data": {
+      " Please try again": {
+        "": "Failed to load journey data. Please try again."
+      }
+    },
     "No Data": "No Data",
-    "No journey data found for the selected criteria.": "No journey data found for the selected criteria."
+    "No journey data found for the selected criteria": {
+      "": "No journey data found for the selected criteria."
+    }
   },
   "retentionPage": {
     "Retention": "Retention",
@@ -587,9 +771,15 @@
     "Daily": "Daily",
     "Weekly": "Weekly",
     "Failed to load retention data": "Failed to load retention data",
-    "There was a problem fetching the retention data. Please try again later.": "There was a problem fetching the retention data. Please try again later.",
+    "There was a problem fetching the retention data": {
+      " Please try again later": {
+        "": "There was a problem fetching the retention data. Please try again later."
+      }
+    },
     "No retention data available": "No retention data available",
-    "Try selecting a different time range or make sure you have tracking data in the system.": "Try selecting a different time range or make sure you have tracking data in the system.",
+    "Try selecting a different time range or make sure you have tracking data in the system": {
+      "": "Try selecting a different time range or make sure you have tracking data in the system."
+    },
     "Cohort": "Cohort",
     "{count} users": "{count} users"
   },
@@ -609,14 +799,18 @@
     "Goals": "Goals",
     "Filter goals": "Filter goals",
     "No goals found": "No goals found",
-    "Create your first conversion goal to start tracking important user actions.": "Create your first conversion goal to start tracking important user actions.",
+    "Create your first conversion goal to start tracking important user actions": {
+      "": "Create your first conversion goal to start tracking important user actions."
+    },
     "No goals match \"{query}\"": "No goals match \"{query}\""
   },
   "replayPage": {
     "Session Replay": "Session Replay",
     "Replay": "Replay",
     "No session replays found": "No session replays found",
-    "Replays will appear here once session replay is enabled.": "Replays will appear here once session replay is enabled."
+    "Replays will appear here once session replay is enabled": {
+      "": "Replays will appear here once session replay is enabled."
+    }
   },
   "performancePage": {
     "Performance": "Performance"
@@ -627,20 +821,34 @@
   },
   "apiPlaygroundPage": {
     "API Playground": "API Playground",
-    "Test API endpoints and view code examples in multiple languages.": "Test API endpoints and view code examples in multiple languages.",
+    "Test API endpoints and view code examples in multiple languages": {
+      "": "Test API endpoints and view code examples in multiple languages."
+    },
     "Get your API key": "Get your API key"
   },
   "pagesPage": {
     "Pages": "Pages",
     "Error loading pages data": "Error loading pages data",
-    "No pages data found for the selected period.": "No pages data found for the selected period."
+    "No pages data found for the selected period": {
+      "": "No pages data found for the selected period."
+    }
   },
   "pricing": {
     "Pricing": "Pricing",
-    "Try Rybbit today risk-free with our 30-day money-back guarantee.": "Try Rybbit today risk-free with our 30-day money-back guarantee.",
-    "Please log in to subscribe.": "Please log in to subscribe.",
-    "Please select an organization to subscribe.": "Please select an organization to subscribe.",
-    "Selected pricing plan not found. Please adjust the slider.": "Selected pricing plan not found. Please adjust the slider.",
+    "Try Rybbit today risk-free with our 30-day money-back guarantee": {
+      "": "Try Rybbit today risk-free with our 30-day money-back guarantee."
+    },
+    "Please log in to subscribe": {
+      "": "Please log in to subscribe."
+    },
+    "Please select an organization to subscribe": {
+      "": "Please select an organization to subscribe."
+    },
+    "Selected pricing plan not found": {
+      " Please adjust the slider": {
+        "": "Selected pricing plan not found. Please adjust the slider."
+      }
+    },
     "Subscription failed": "Subscription failed",
     "Monthly pageviews": "Monthly pageviews",
     "Monthly": "Monthly",
@@ -649,7 +857,7 @@
     "Basic": "Basic",
     "For personal projects and small sites": "For personal projects and small sites",
     "Up to {limit} only": "Up to {limit} only",
-    "Processing...": "Processing...",
+    "Processing…": "Processing…",
     "Get started": "Get started",
     "Standard": "Standard",
     "Everything you need to get started as a small business": "Everything you need to get started as a small business",
@@ -673,11 +881,17 @@
     "CTR": "CTR",
     "Position": "Position",
     "No Data": "No Data",
-    "Google Search Console data has a 2-3 day delay. Try selecting a wider date range.": "Google Search Console data has a 2-3 day delay. Try selecting a wider date range.",
-    "Connect your Google Search Console account to view search performance data including top keywords and pages.": "Connect your Google Search Console account to view search performance data including top keywords and pages.",
-    "Connecting...": "Connecting...",
+    "Google Search Console data has a 2-3 day delay": {
+      " Try selecting a wider date range": {
+        "": "Google Search Console data has a 2-3 day delay. Try selecting a wider date range."
+      }
+    },
+    "Connect your Google Search Console account to view search performance data including top keywords and pages": {
+      "": "Connect your Google Search Console account to view search performance data including top keywords and pages."
+    },
+    "Connecting…": "Connecting…",
     "Connect Google Search Console": "Connect Google Search Console",
-    "Filter {count} items...": "Filter {count} items...",
+    "Filter {count} items…": "Filter {count} items…",
     "No results found": "No results found",
     "Desktop": "Desktop",
     "Mobile": "Mobile",
@@ -690,9 +904,11 @@
   },
   "tagEditor": {
     "Edit Tags": "Edit Tags",
-    "Add tags to organize and filter your sites.": "Add tags to organize and filter your sites.",
+    "Add tags to organize and filter your sites": {
+      "": "Add tags to organize and filter your sites."
+    },
     "No tags added yet": "No tags added yet",
-    "Type a new tag...": "Type a new tag...",
+    "Type a new tag…": "Type a new tag…",
     "Existing tags:": "Existing tags:"
   }
 }

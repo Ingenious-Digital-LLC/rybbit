@@ -127,7 +127,7 @@ export default function Page() {
 
                 <AuthButton
                   isLoading={isLoading}
-                  loadingText={t("Logging in...")}
+                  loadingText={t("Logging in…")}
                   disabled={turnstileEnabled ? !turnstileToken || isLoading : isLoading}
                 >
                   {t("Login")}

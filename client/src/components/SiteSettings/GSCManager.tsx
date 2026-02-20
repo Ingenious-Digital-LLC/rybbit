@@ -53,7 +53,7 @@ export function GSCManager({ disabled = false }: GSCManagerProps) {
       <div className="space-y-3">
         <div>
           <h4 className="text-sm font-semibold text-foreground">{t("Google Search Console")}</h4>
-          <p className="text-xs text-muted-foreground">{tc("Loading...")}</p>
+          <p className="text-xs text-muted-foreground">{tc("Loading…")}</p>
         </div>
       </div>
     );
@@ -95,14 +95,14 @@ export function GSCManager({ disabled = false }: GSCManagerProps) {
             primaryAction={{ variant: "destructive", children: t("Disconnect") }}
           >
             <Button variant="outline" disabled={disabled || isDisconnecting}>
-              {isDisconnecting ? t("Disconnecting...") : t("Disconnect")}
+              {isDisconnecting ? t("Disconnecting…") : t("Disconnect")}
             </Button>
           </ConfirmationModal>
         </div>
       ) : (
         <Button onClick={() => connect()} disabled={disabled || isConnecting}>
           <SiGoogle />
-          {isConnecting ? t("Connecting...") : t("Connect Google Search Console")}
+          {isConnecting ? t("Connecting…") : t("Connect Google Search Console")}
         </Button>
       )}
     </div>

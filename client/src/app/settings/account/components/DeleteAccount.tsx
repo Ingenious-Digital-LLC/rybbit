@@ -88,7 +88,7 @@ export function DeleteAccount() {
               variant="destructive"
               disabled={isDeleting}
             >
-              {isDeleting ? t("Deleting...") : t("Delete Account")}
+              {isDeleting ? t("Deleting…") : t("Delete Account")}
             </AlertDialogAction>
           )}
         </AlertDialogFooter>

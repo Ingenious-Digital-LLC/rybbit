@@ -121,7 +121,7 @@ export default function ResetPasswordPage() {
               </div>
               <div className="w-full rounded-md bg-neutral-100 dark:bg-neutral-800/30 p-3 mt-4">
                 <div className="flex justify-center">
-                  <p className="text-sm text-muted-foreground">{t("Redirecting to login page...")}</p>
+                  <p className="text-sm text-muted-foreground">{t("Redirecting to login page…")}</p>
                 </div>
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function ResetPasswordPage() {
                 onChange={e => setNewPassword(e.target.value)}
               />
 
-              <AuthButton isLoading={isLoading} loadingText={t("Resetting password...")}>
+              <AuthButton isLoading={isLoading} loadingText={t("Resetting password…")}>
                 {t("Reset Password")}
               </AuthButton>
 
@@ -194,7 +194,7 @@ export default function ResetPasswordPage() {
 
               <AuthButton
                 isLoading={isLoading}
-                loadingText={t("Sending code...")}
+                loadingText={t("Sending code…")}
                 disabled={IS_CLOUD && process.env.NODE_ENV === "production" ? !turnstileToken || isLoading : isLoading}
               >
                 {t("Send Verification Code")}
