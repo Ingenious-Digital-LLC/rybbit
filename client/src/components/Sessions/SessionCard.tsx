@@ -4,6 +4,7 @@ import { addFilter, getTimezone } from "@/lib/store";
 import { FilterParameter } from "@rybbit/shared";
 import { ArrowRight, ChevronDown, ChevronRight, Video } from "lucide-react";
 import { DateTime } from "luxon";
+import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { memo, useCallback, useState } from "react";
@@ -34,6 +35,7 @@ interface SessionCardProps {
 
 export function SessionCard({ session, onClick, userId, expandedByDefault, highlightedEventTimestamp }: SessionCardProps) {
   const { site } = useParams();
+  const t = useExtracted();
   const [expanded, setExpanded] = useState(expandedByDefault || false);
   const [replayDrawerOpen, setReplayDrawerOpen] = useState(false);
   // Calculate session duration in minutes
@@ -131,7 +133,7 @@ export function SessionCard({ session, onClick, userId, expandedByDefault, highl
                     <Video className="w-4 h-4" />
                   </Badge>
                 </TooltipTrigger>
-                <TooltipContent>Watch Session Replay</TooltipContent>
+                <TooltipContent>{t("Watch Session Replay")}</TooltipContent>
               </Tooltip>
             )}
             <Tooltip>
@@ -141,7 +143,7 @@ export function SessionCard({ session, onClick, userId, expandedByDefault, highl
                   <span>{formatter(session.pageviews)}</span>
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>Pageviews</TooltipContent>
+              <TooltipContent>{t("Pageviews")}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -150,7 +152,7 @@ export function SessionCard({ session, onClick, userId, expandedByDefault, highl
                   <span>{formatter(session.events + (session.button_clicks || 0) + (session.copies || 0) + (session.form_submits || 0) + (session.input_changes || 0))}</span>
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>Events</TooltipContent>
+              <TooltipContent>{t("Events")}</TooltipContent>
             </Tooltip>
             <Channel
               channel={session.channel}
@@ -221,7 +223,7 @@ export function SessionCard({ session, onClick, userId, expandedByDefault, highl
                     <Video className="w-4 h-4" />
                   </Badge>
                 </TooltipTrigger>
-                <TooltipContent>Watch Session Replay</TooltipContent>
+                <TooltipContent>{t("Watch Session Replay")}</TooltipContent>
               </Tooltip>
             )}
             <Tooltip>
@@ -231,7 +233,7 @@ export function SessionCard({ session, onClick, userId, expandedByDefault, highl
                   <span>{formatter(session.pageviews)}</span>
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>Pageviews</TooltipContent>
+              <TooltipContent>{t("Pageviews")}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -240,7 +242,7 @@ export function SessionCard({ session, onClick, userId, expandedByDefault, highl
                   <span>{formatter(session.events + (session.button_clicks || 0) + (session.copies || 0) + (session.form_submits || 0) + (session.input_changes || 0))}</span>
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>Events</TooltipContent>
+              <TooltipContent>{t("Events")}</TooltipContent>
             </Tooltip>
             <Channel
               channel={session.channel}

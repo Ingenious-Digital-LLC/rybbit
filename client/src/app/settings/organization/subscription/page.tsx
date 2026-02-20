@@ -11,12 +11,14 @@ import { useSetPageTitle } from "../../../../hooks/useSetPageTitle";
 import { FreePlan } from "../../../../components/subscription/FreePlan";
 import { OverridePlan } from "../../../../components/subscription/OverridePlan";
 import { Building } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { authClient } from "@/lib/auth";
 import { useEffect } from "react";
 import { AppSumoPlan } from "../../../../components/subscription/AppSumoPlan";
 
 export default function OrganizationSubscriptionPage() {
   useSetPageTitle("Organization Subscription");
+  const t = useExtracted();
   const { data: activeSubscription, isLoading: isLoadingSubscription } = useStripeSubscription();
 
   const { data: activeOrg, isPending } = authClient.useActiveOrganization();
@@ -38,7 +40,7 @@ export default function OrganizationSubscriptionPage() {
   // Determine which plan to display
   const renderPlanComponent = () => {
     if (!activeOrg && !isPending) {
-      return <NoOrganization message="You need to select an organization to manage your subscription." />;
+      return <NoOrganization message={t("You need to select an organization to manage your subscription.")} />;
     }
 
     if (!isOwner) {
@@ -47,9 +49,9 @@ export default function OrganizationSubscriptionPage() {
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Building className="h-6 w-6 text-primary" />
           </div>
-          <CardTitle className="mb-2 text-xl">Not an owner</CardTitle>
+          <CardTitle className="mb-2 text-xl">{t("Not an owner")}</CardTitle>
           <CardDescription className="mb-6">
-            Only the owner of the organization can manage the subscription.
+            {t("Only the owner of the organization can manage the subscription.")}
           </CardDescription>
         </Card>
       );

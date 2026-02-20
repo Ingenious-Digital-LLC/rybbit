@@ -1,5 +1,6 @@
 "use client";
 
+import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { DateTime } from "luxon";
 import { Event } from "../../../../../api/analytics/endpoints";
@@ -22,6 +23,7 @@ interface EventRowProps {
 }
 
 export function EventRow({ event, site, onClick }: EventRowProps) {
+  const t = useExtracted();
   const eventProperties = parseEventProperties(event);
   const eventTime = DateTime.fromSQL(event.timestamp, { zone: "utc" })
     .setLocale(userLocale)
@@ -96,7 +98,7 @@ export function EventRow({ event, site, onClick }: EventRowProps) {
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{event.browser || "Unknown browser"}</p>
+            <p>{event.browser || t("Unknown browser")}</p>
           </TooltipContent>
         </Tooltip>
         <Tooltip>
@@ -106,7 +108,7 @@ export function EventRow({ event, site, onClick }: EventRowProps) {
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{event.operating_system || "Unknown OS"}</p>
+            <p>{event.operating_system || t("Unknown OS")}</p>
           </TooltipContent>
         </Tooltip>
         <Tooltip>
@@ -116,7 +118,7 @@ export function EventRow({ event, site, onClick }: EventRowProps) {
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{event.device_type || "Unknown device"}</p>
+            <p>{event.device_type || t("Unknown device")}</p>
           </TooltipContent>
         </Tooltip>
       </div>

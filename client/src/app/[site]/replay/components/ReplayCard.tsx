@@ -1,6 +1,7 @@
 import { getTimezone } from "@/lib/store";
 import { Clock, MousePointerClick, Trash2 } from "lucide-react";
 import { DateTime } from "luxon";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useDeleteSessionReplay } from "../../../../api/analytics/hooks/sessionReplay/useDeleteSessionReplay";
 import { Avatar } from "../../../../components/Avatar";
@@ -51,6 +52,7 @@ interface SessionReplayListItem {
 }
 
 export function ReplayCard({ replay }: { replay: SessionReplayListItem }) {
+  const t = useExtracted();
   const { sessionId, setSessionId, resetPlayerState } = useReplayStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const deleteSessionReplay = useDeleteSessionReplay();
@@ -128,14 +130,13 @@ export function ReplayCard({ replay }: { replay: SessionReplayListItem }) {
           </AlertDialogTrigger>
           <AlertDialogContent onClick={e => e.stopPropagation()}>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete Session Replay</AlertDialogTitle>
+              <AlertDialogTitle>{t("Delete Session Replay")}</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete this session replay? This action cannot be undone and will permanently
-                remove the replay data.
+                {t("Are you sure you want to delete this session replay? This action cannot be undone and will permanently remove the replay data.")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={e => e.stopPropagation()}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel onClick={e => e.stopPropagation()}>{t("Cancel")}</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
                 onClick={e => {
@@ -144,7 +145,7 @@ export function ReplayCard({ replay }: { replay: SessionReplayListItem }) {
                 }}
                 disabled={deleteSessionReplay.isPending}
               >
-                {deleteSessionReplay.isPending ? "Deleting..." : "Delete"}
+                {deleteSessionReplay.isPending ? t("Deleting...") : t("Delete")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

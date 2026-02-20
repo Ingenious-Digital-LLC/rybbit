@@ -1,5 +1,6 @@
 import { ArrowRight, Crown, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useExtracted } from "next-intl";
 import React, { ReactNode, useMemo, useRef, useEffect, useState } from "react";
 import { useCurrentSite } from "../api/admin/hooks/useSites";
 import { DEFAULT_EVENT_LIMIT } from "../lib/subscription/constants";
@@ -19,16 +20,16 @@ interface DisabledOverlayProps {
   requiredPlan?: "pro" | "standard" | "basic";
 }
 
-function ownerMessage(message: string, featurePath?: string, requiredPlan?: "pro" | "standard" | "basic") {
+function OwnerMessage({ message, featurePath, requiredPlan }: { message: string; featurePath?: string; requiredPlan?: "pro" | "standard" | "basic" }) {
+  const t = useExtracted();
+  const planName = requiredPlan === "pro" ? t("Pro") : requiredPlan === "basic" ? t("Basic") : t("Standard");
   return (
     <div className="bg-neutral-900 rounded-lg  border border-neutral-700 shadow-xl flex flex-col gap-3 p-4">
       <div className="flex gap-3">
         <Crown className="h-5 w-5 text-amber-500 shrink-0" />
         <div className="flex-1 space-y-1">
           <p className="text-sm text-muted-foreground">
-            Upgrade to{" "}
-            <span className="font-medium text-foreground">{requiredPlan === "pro" ? "Pro" : requiredPlan === "basic" ? "Basic" : "Standard"}</span> to unlock{" "}
-            {message}
+            {t("Upgrade to {planName} to unlock {message}", { planName, message })}
           </p>
           {featurePath && (
             <Link
@@ -36,14 +37,14 @@ function ownerMessage(message: string, featurePath?: string, requiredPlan?: "pro
               target="_blank"
               className="text-sm text-neutral-100 hover:underline flex items-center gap-1"
             >
-              See a demo of this feature
+              {t("See a demo of this feature")}
               <ExternalLink className="ml-1 h-4 w-4" />
             </Link>
           )}
         </div>
         <Button asChild size="sm" variant="success">
           <Link href="/subscribe">
-            Upgrade <ArrowRight className="h-3 w-3" />
+            {t("Upgrade")} <ArrowRight className="h-3 w-3" />
           </Link>
         </Button>
       </div>
@@ -51,15 +52,15 @@ function ownerMessage(message: string, featurePath?: string, requiredPlan?: "pro
   );
 }
 
-function userMessage(message: string, featurePath?: string) {
+function UserMessage({ message, featurePath }: { message: string; featurePath?: string }) {
+  const t = useExtracted();
   return (
     <div className="bg-neutral-900 rounded-lg  border border-neutral-700 shadow-xl flex flex-col gap-3 p-4">
       <div className="flex gap-3">
         <Crown className="h-5 w-5 text-amber-500 shrink-0" />
         <div className="flex-1 space-y-1">
           <p className="text-sm text-muted-foreground">
-            Ask your organization owner to upgrade to <span className="font-medium text-foreground">Pro</span> to unlock{" "}
-            {message}
+            {t("Ask your organization owner to upgrade to Pro to unlock {message}", { message })}
           </p>
           {featurePath && (
             <Link
@@ -67,7 +68,7 @@ function userMessage(message: string, featurePath?: string) {
               target="_blank"
               className="text-sm text-neutral-100 hover:underline flex items-center gap-1"
             >
-              See a demo of this feature
+              {t("See a demo of this feature")}
               <ExternalLink className="h-4 w-4" />
             </Link>
           )}
@@ -201,7 +202,7 @@ export const DisabledOverlay: React.FC<DisabledOverlayProps> = ({
       >
         {showMessage && (
           <div className="flex items-center justify-center">
-            {site?.isOwner ? ownerMessage(message, featurePath, requiredPlan) : userMessage(message, featurePath)}
+            {site?.isOwner ? <OwnerMessage message={message} featurePath={featurePath} requiredPlan={requiredPlan} /> : <UserMessage message={message} featurePath={featurePath} />}
           </div>
         )}
       </div>
