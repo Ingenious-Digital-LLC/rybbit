@@ -16,6 +16,7 @@ import { IS_CLOUD } from "../../../../lib/const";
 import { ApiKeyManager } from "./ApiKeyManager";
 import { ChangePassword } from "./ChangePassword";
 import { DeleteAccount } from "./DeleteAccount";
+import { LanguageSwitcher } from "../../../../components/LanguageSwitcher";
 import { useSignout } from "../../../../hooks/useSignout";
 
 export function AccountInner() {
@@ -162,6 +163,11 @@ export function AccountInner() {
               </div>
             </div>
           )}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">{t("Language")}</h4>
+            <p className="text-xs text-neutral-500">{t("Select your preferred language")}</p>
+            <LanguageSwitcher />
+          </div>
           <Button variant="outline" onClick={signout}>
             {t("Sign out")}
           </Button>
