@@ -120,9 +120,21 @@ export function Invitations({ organizationId, isOwner }: InvitationsProps) {
                   invitations.map(invitation => (
                     <TableRow key={invitation.id}>
                       <TableCell>{invitation.email}</TableCell>
-                      <TableCell className="capitalize">{invitation.role}</TableCell>
+                      <TableCell className="capitalize">
+                        {invitation.role === "admin" ? t("Admin") : invitation.role === "owner" ? t("Owner") : t("Member")}
+                      </TableCell>
                       <TableCell>
-                        <Badge variant={getBadgeVariant(invitation.status)}>{invitation.status}</Badge>
+                        <Badge variant={getBadgeVariant(invitation.status)}>
+                          {invitation.status === "pending"
+                            ? t("Pending")
+                            : invitation.status === "accepted"
+                              ? t("Accepted")
+                              : invitation.status === "rejected"
+                                ? t("Rejected")
+                                : invitation.status === "canceled"
+                                  ? t("Canceled")
+                                  : invitation.status}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         {DateTime.fromJSDate(new Date(invitation.expiresAt)).toLocaleString(DateTime.DATE_SHORT)}

@@ -207,7 +207,9 @@ function Organization({
                     <TableRow key={member.id}>
                       <TableCell>{member.user?.name || "—"}</TableCell>
                       <TableCell>{member.user?.email}</TableCell>
-                      <TableCell className="capitalize">{member.role}</TableCell>
+                      <TableCell className="capitalize">
+                        {member.role === "admin" ? t("Admin") : member.role === "owner" ? t("Owner") : t("Member")}
+                      </TableCell>
                       <TableCell>
                         {member.role === "member" ? (
                           <Badge
