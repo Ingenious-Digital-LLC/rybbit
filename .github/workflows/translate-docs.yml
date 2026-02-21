@@ -112,35 +112,17 @@ jobs:
             - Keep translations natural and idiomatic, not literal
             - Maintain consistent terminology within each language file
             - Do NOT modify en.json
-            - Only edit the translation JSON files. Do not run any git commands or create PRs.
             - If there are no missing translations, do nothing
+
+            After translating, commit and open a PR using these exact steps (run each command separately, use only single-line messages with no newlines):
+            1. git checkout -b update-docs-translations
+            2. git add docs/messages/
+            3. git commit -m "Update docs translations"
+            4. git push origin update-docs-translations
+            5. gh pr create --title "Update docs translations" --body "Automated translation update: filled missing/empty translation keys across all locale files."
           claude_args: >-
             --model claude-sonnet-4-6
             --max-turns 50
             --allowedTools "Edit" "Read" "Write" "Glob" "Grep"
-            "Bash(python3 *)"
-
-      - name: Commit and open PR
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-
-          if git diff --quiet docs/messages/; then
-            echo "No translation changes to commit."
-            exit 0
-          fi
-
-          BRANCH="update-docs-translations-$(date +%Y%m%d%H%M%S)"
-          git checkout -b "$BRANCH"
-          git add docs/messages/
-          git commit -m "Update docs translations"
-          git push origin "$BRANCH"
-
-          gh pr create \
-            --title "Update docs translations" \
-            --body "Automated translation update: filled missing/empty translation keys across all locale files." \
-            --base master \
-            --head "$BRANCH"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            "Bash(python3 *)" "Bash(git checkout *)" "Bash(git add *)"
+            "Bash(git commit *)" "Bash(git push *)" "Bash(gh pr create *)"
