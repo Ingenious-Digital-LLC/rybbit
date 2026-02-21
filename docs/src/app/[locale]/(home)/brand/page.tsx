@@ -1,4 +1,5 @@
 import { Download } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { createMetadata, createOGImageUrl } from "@/lib/metadata";
 
 export const metadata = createMetadata({
@@ -25,54 +26,7 @@ type LogoSection = {
   variants: Variant[];
 };
 
-const SECTIONS: LogoSection[] = [
-  {
-    title: "Horizontal",
-    type: "horizontal",
-    variants: [
-      { name: "Default", file: "horizontal", bg: "light" },
-      { name: "For Dark BG", file: "horizontal_for dark BG", bg: "dark" },
-      { name: "Light Green", file: "horizontal_light green", bg: "dark" },
-      { name: "Dark Green", file: "horizontal_dark green", bg: "light" },
-      { name: "White", file: "horizontal_white", bg: "dark" },
-      { name: "Black", file: "horizontal_black", bg: "light" },
-    ],
-  },
-  {
-    title: "Vertical",
-    type: "vertical",
-    variants: [
-      { name: "Default", file: "vertical", bg: "light" },
-      { name: "For Dark BG", file: "vertical_for dark BG", bg: "dark" },
-      { name: "Light Green", file: "vertical_light green", bg: "dark" },
-      { name: "Dark Green", file: "vertical_dark green", bg: "light" },
-      { name: "White", file: "vertical_white", bg: "dark" },
-      { name: "Black", file: "vertical_black", bg: "light" },
-    ],
-  },
-  {
-    title: "Frog Icon",
-    type: "frog",
-    variants: [
-      { name: "Light Green", file: "frog_light green", bg: "dark" },
-      { name: "Dark Green", file: "frog_dark green", bg: "light" },
-      { name: "White", file: "frog_white", bg: "dark" },
-      { name: "Black", file: "frog_black", bg: "light" },
-    ],
-  },
-  {
-    title: "Wordmark",
-    type: "type",
-    variants: [
-      { name: "Dark Green", file: "type_dark green", bg: "light" },
-      { name: "Light Green", file: "type_light green", bg: "dark" },
-      { name: "White", file: "type_white", bg: "dark" },
-      { name: "Black", file: "type_black", bg: "light" },
-    ],
-  },
-];
-
-function LogoCard({ variant }: { variant: Variant }) {
+function LogoCard({ variant, svgLabel, pngLabel }: { variant: Variant; svgLabel: string; pngLabel: string }) {
   const pngPath = `/rybbit/${variant.file}.png`;
   const svgPath = `/rybbit/${variant.file}.svg`;
 
@@ -99,7 +53,7 @@ function LogoCard({ variant }: { variant: Variant }) {
             className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
           >
             <Download className="w-3 h-3" />
-            SVG
+            {svgLabel}
           </a>
           <a
             href={pngPath}
@@ -107,7 +61,7 @@ function LogoCard({ variant }: { variant: Variant }) {
             className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
           >
             <Download className="w-3 h-3" />
-            PNG
+            {pngLabel}
           </a>
         </div>
       </div>
@@ -116,12 +70,63 @@ function LogoCard({ variant }: { variant: Variant }) {
 }
 
 export default function BrandKit() {
+  const t = useExtracted();
+
+  const svgLabel = t("SVG");
+  const pngLabel = t("PNG");
+
+  const SECTIONS: LogoSection[] = [
+    {
+      title: t("Horizontal"),
+      type: "horizontal",
+      variants: [
+        { name: t("Default"), file: "horizontal", bg: "light" },
+        { name: t("For Dark BG"), file: "horizontal_for dark BG", bg: "dark" },
+        { name: t("Light Green"), file: "horizontal_light green", bg: "dark" },
+        { name: t("Dark Green"), file: "horizontal_dark green", bg: "light" },
+        { name: t("White"), file: "horizontal_white", bg: "dark" },
+        { name: t("Black"), file: "horizontal_black", bg: "light" },
+      ],
+    },
+    {
+      title: t("Vertical"),
+      type: "vertical",
+      variants: [
+        { name: t("Default"), file: "vertical", bg: "light" },
+        { name: t("For Dark BG"), file: "vertical_for dark BG", bg: "dark" },
+        { name: t("Light Green"), file: "vertical_light green", bg: "dark" },
+        { name: t("Dark Green"), file: "vertical_dark green", bg: "light" },
+        { name: t("White"), file: "vertical_white", bg: "dark" },
+        { name: t("Black"), file: "vertical_black", bg: "light" },
+      ],
+    },
+    {
+      title: t("Frog Icon"),
+      type: "frog",
+      variants: [
+        { name: t("Light Green"), file: "frog_light green", bg: "dark" },
+        { name: t("Dark Green"), file: "frog_dark green", bg: "light" },
+        { name: t("White"), file: "frog_white", bg: "dark" },
+        { name: t("Black"), file: "frog_black", bg: "light" },
+      ],
+    },
+    {
+      title: t("Wordmark"),
+      type: "type",
+      variants: [
+        { name: t("Dark Green"), file: "type_dark green", bg: "light" },
+        { name: t("Light Green"), file: "type_light green", bg: "dark" },
+        { name: t("White"), file: "type_white", bg: "dark" },
+        { name: t("Black"), file: "type_black", bg: "light" },
+      ],
+    },
+  ];
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
-      <h1 className="text-3xl md:text-4xl font-bold mb-4">Brand Kit</h1>
+      <h1 className="text-3xl md:text-4xl font-bold mb-4">{t("Brand Kit")}</h1>
       <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-12 max-w-2xl">
-        Download official Rybbit logos and assets. All logos are available in SVG
-        and PNG formats for use in your projects, integrations, and content.
+        {t("Download official Rybbit logos and assets. All logos are available in SVG and PNG formats for use in your projects, integrations, and content.")}
       </p>
 
       {SECTIONS.map((section) => (
@@ -129,37 +134,35 @@ export default function BrandKit() {
           <h2 className="text-2xl font-semibold mb-6">{section.title}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {section.variants.map((variant) => (
-              <LogoCard key={variant.file} variant={variant} />
+              <LogoCard key={variant.file} variant={variant} svgLabel={svgLabel} pngLabel={pngLabel} />
             ))}
           </div>
         </section>
       ))}
 
       <section className="border border-neutral-300/50 dark:border-neutral-700/50 rounded-xl p-6 md:p-8">
-        <h2 className="text-2xl font-semibold mb-4">Usage Guidelines</h2>
+        <h2 className="text-2xl font-semibold mb-4">{t("Usage Guidelines")}</h2>
         <div className="grid md:grid-cols-2 gap-8">
           <div>
             <h3 className="font-medium text-green-600 dark:text-green-400 mb-3">
-              Do
+              {t("Do")}
             </h3>
             <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
-              <li>Use the logo in its original proportions</li>
-              <li>
-                Use the &quot;For Dark BG&quot; variants on dark backgrounds
-              </li>
-              <li>Maintain clear space around the logo</li>
-              <li>Use SVG format when possible for best quality</li>
+              <li>{t("Use the logo in its original proportions")}</li>
+              <li>{t('Use the "For Dark BG" variants on dark backgrounds')}</li>
+              <li>{t("Maintain clear space around the logo")}</li>
+              <li>{t("Use SVG format when possible for best quality")}</li>
             </ul>
           </div>
           <div>
             <h3 className="font-medium text-red-600 dark:text-red-400 mb-3">
-              Don&apos;t
+              {t("Don't")}
             </h3>
             <ul className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
-              <li>Stretch or distort the logo</li>
-              <li>Change the logo colors beyond provided variants</li>
-              <li>Add effects like shadows or gradients to the logo</li>
-              <li>Use the logo in a way that implies endorsement</li>
+              <li>{t("Stretch or distort the logo")}</li>
+              <li>{t("Change the logo colors beyond provided variants")}</li>
+              <li>{t("Add effects like shadows or gradients to the logo")}</li>
+              <li>{t("Use the logo in a way that implies endorsement")}</li>
             </ul>
           </div>
         </div>

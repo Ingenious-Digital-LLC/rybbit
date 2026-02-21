@@ -1,5 +1,6 @@
 import { BackgroundGrid } from "@/components/BackgroundGrid";
 import { CheckCircle } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { Tilt_Warp } from "next/font/google";
 import { TrackedButton } from "@/components/TrackedButton";
 import { cn } from "@/lib/utils";
@@ -34,26 +35,28 @@ export const metadata: Metadata = {
   },
 };
 
-const perks = [
-  {
-    title: "50% Commission",
-    description: "Earn 50% of every payment your referrals make",
-  },
-  {
-    title: "12 Months Recurring",
-    description: "Get paid every month for a full year per referral",
-  },
-  {
-    title: "60-Day Cookie",
-    description: "Generous 60-day attribution window on all referral links",
-  },
-  {
-    title: "Monthly Payouts",
-    description: "Reliable payouts every month via Rewardful",
-  },
-];
-
 export default function AffiliatePage() {
+  const t = useExtracted();
+
+  const perks = [
+    {
+      title: t("50% Commission"),
+      description: t("Earn 50% of every payment your referrals make"),
+    },
+    {
+      title: t("12 Months Recurring"),
+      description: t("Get paid every month for a full year per referral"),
+    },
+    {
+      title: t("60-Day Cookie"),
+      description: t("Generous 60-day attribution window on all referral links"),
+    },
+    {
+      title: t("Monthly Payouts"),
+      description: t("Reliable payouts every month via Rewardful"),
+    },
+  ];
+
   return (
     <div className="flex flex-col items-center justify-center overflow-x-hidden pt-16 md:pt-24">
       <BackgroundGrid />
@@ -64,11 +67,10 @@ export default function AffiliatePage() {
             tilt_wrap.className
           )}
         >
-          50% Affiliate Program
+          {t("50% Affiliate Program")}
         </h1>
         <h2 className="relative z-10 text-base md:text-xl pt-4 md:pt-6 px-4 tracking-tight max-w-4xl text-center text-neutral-600 dark:text-neutral-300 font-light">
-          Earn 50% recurring commission for 12 months by referring customers to
-          Rybbit.
+          {t("Earn 50% recurring commission for 12 months by referring customers to Rybbit.")}
         </h2>
 
         <div className="relative z-10 flex flex-col items-center my-8 md:my-10">
@@ -84,7 +86,7 @@ export default function AffiliatePage() {
               rel="noopener noreferrer"
               className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer"
             >
-              Join the Program
+              {t("Join the Program")}
             </TrackedButton>
           </div>
         </div>
@@ -116,27 +118,24 @@ export default function AffiliatePage() {
       {/* How It Works */}
       <section className="pb-16 w-full max-w-5xl mx-auto px-4 z-10">
         <h3 className="text-2xl font-medium text-center mb-8 text-neutral-900 dark:text-white">
-          How It Works
+          {t("How It Works")}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
               step: "1",
-              title: "Sign Up",
-              description:
-                "Create your free affiliate account and get your unique referral link.",
+              title: t("Sign Up"),
+              description: t("Create your free affiliate account and get your unique referral link."),
             },
             {
               step: "2",
-              title: "Share",
-              description:
-                "Share your link with your audience — blog posts, social media, newsletters, etc.",
+              title: t("Share"),
+              description: t("Share your link with your audience — blog posts, social media, newsletters, etc."),
             },
             {
               step: "3",
-              title: "Earn",
-              description:
-                "Earn 50% of every payment for 12 months when someone subscribes through your link.",
+              title: t("Earn"),
+              description: t("Earn 50% of every payment for 12 months when someone subscribes through your link."),
             },
           ].map((item) => (
             <div

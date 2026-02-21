@@ -4,277 +4,7 @@ import { CircleCheckBig, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AppLink } from "@/components/AppLink";
 import { BASIC_SITE_LIMIT, BASIC_TEAM_LIMIT, DEFAULT_EVENT_LIMIT, FREE_SITE_LIMIT, STANDARD_SITE_LIMIT, STANDARD_TEAM_LIMIT } from "@/lib/const";
-
-const COMPARISON_FEATURES = [
-  {
-    category: "Usage",
-    features: [
-      {
-        name: "Monthly pageviews",
-        free: DEFAULT_EVENT_LIMIT.toLocaleString(),
-        basic: "100K - 250K",
-        standard: "100K - 20M+",
-        pro: "100K - 20M+",
-        enterprise: "Custom",
-      },
-      {
-        name: "Number of websites",
-        free: `${FREE_SITE_LIMIT}`,
-        basic: `${BASIC_SITE_LIMIT}`,
-        standard: `Up to ${STANDARD_SITE_LIMIT}`,
-        pro: "Unlimited",
-        enterprise: "Unlimited",
-      },
-      {
-        name: "Team members",
-        free: "1",
-        basic: `${BASIC_TEAM_LIMIT}`,
-        standard: `Up to ${STANDARD_TEAM_LIMIT}`,
-        pro: "Unlimited",
-        enterprise: "Unlimited",
-      },
-    ],
-  },
-  {
-    category: "Features",
-    features: [
-      {
-        name: "Core analytics dashboard",
-        free: true,
-        basic: true,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Advanced filtering",
-        free: true,
-        basic: true,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Custom events",
-        free: true,
-        basic: true,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Bot filtering",
-        free: true,
-        basic: true,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Goals",
-        free: false,
-        basic: true,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Real-time globe",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Web vitals",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Error tracking",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Pages view",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Sessions",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "User profiles",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Funnels",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Journeys",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Retention",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Email reports",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "API",
-        free: false,
-        basic: false,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Session replays",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Single Sign-On (SSO)",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: false,
-        enterprise: true,
-      },
-      {
-        name: "Dedicated isolated instance",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: false,
-        enterprise: true,
-      },
-      {
-        name: "On-premise installation",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: false,
-        enterprise: true,
-      },
-      {
-        name: "Custom features",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: false,
-        enterprise: true,
-      },
-      {
-        name: "Whitelabeling",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: false,
-        enterprise: true,
-      },
-    ],
-  },
-  {
-    category: "Data & Privacy",
-    features: [
-      {
-        name: "Privacy-friendly",
-        free: true,
-        basic: true,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "No cookies required",
-        free: true,
-        basic: true,
-        standard: true,
-        pro: true,
-        enterprise: true,
-      },
-      {
-        name: "Data retention",
-        free: "6 months",
-        basic: "2 years",
-        standard: "2 years",
-        pro: "5 years",
-        enterprise: "Infinite",
-      },
-    ],
-  },
-  {
-    category: "Support & Integrations",
-    features: [
-      {
-        name: "Support",
-        free: "Community",
-        basic: "Email",
-        standard: "Email",
-        pro: "Priority",
-        enterprise: "Enterprise + Slack",
-      },
-      {
-        name: "Manual invoicing",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: false,
-        enterprise: true,
-      },
-      {
-        name: "Uptime SLA",
-        free: false,
-        basic: false,
-        standard: false,
-        pro: false,
-        enterprise: true,
-      },
-    ],
-  },
-];
+import { useExtracted } from "next-intl";
 
 interface FeatureCellProps {
   value: boolean | string;
@@ -293,6 +23,279 @@ function FeatureCell({ value }: FeatureCellProps) {
 }
 
 export function ComparisonSection({ isAnnual }: { isAnnual: boolean }) {
+  const t = useExtracted();
+
+  const COMPARISON_FEATURES = [
+    {
+      category: t("Usage"),
+      features: [
+        {
+          name: t("Monthly pageviews"),
+          free: DEFAULT_EVENT_LIMIT.toLocaleString(),
+          basic: t("100K - 250K"),
+          standard: t("100K - 20M+"),
+          pro: t("100K - 20M+"),
+          enterprise: t("Custom"),
+        },
+        {
+          name: t("Number of websites"),
+          free: `${FREE_SITE_LIMIT}`,
+          basic: `${BASIC_SITE_LIMIT}`,
+          standard: t("Up to {count}", { count: String(STANDARD_SITE_LIMIT) }),
+          pro: t("Unlimited"),
+          enterprise: t("Unlimited"),
+        },
+        {
+          name: t("Team members"),
+          free: "1",
+          basic: `${BASIC_TEAM_LIMIT}`,
+          standard: t("Up to {count}", { count: String(STANDARD_TEAM_LIMIT) }),
+          pro: t("Unlimited"),
+          enterprise: t("Unlimited"),
+        },
+      ],
+    },
+    {
+      category: t("Features"),
+      features: [
+        {
+          name: t("Core analytics dashboard"),
+          free: true,
+          basic: true,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Advanced filtering"),
+          free: true,
+          basic: true,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Custom events"),
+          free: true,
+          basic: true,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Bot filtering"),
+          free: true,
+          basic: true,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Goals"),
+          free: false,
+          basic: true,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Real-time globe"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Web vitals"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Error tracking"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Pages view"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Sessions"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("User profiles"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Funnels"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Journeys"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Retention"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Email reports"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("API"),
+          free: false,
+          basic: false,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Session replays"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Single Sign-On (SSO)"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: false,
+          enterprise: true,
+        },
+        {
+          name: t("Dedicated isolated instance"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: false,
+          enterprise: true,
+        },
+        {
+          name: t("On-premise installation"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: false,
+          enterprise: true,
+        },
+        {
+          name: t("Custom features"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: false,
+          enterprise: true,
+        },
+        {
+          name: t("Whitelabeling"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: false,
+          enterprise: true,
+        },
+      ],
+    },
+    {
+      category: t("Data & Privacy"),
+      features: [
+        {
+          name: t("Privacy-friendly"),
+          free: true,
+          basic: true,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("No cookies required"),
+          free: true,
+          basic: true,
+          standard: true,
+          pro: true,
+          enterprise: true,
+        },
+        {
+          name: t("Data retention"),
+          free: t("6 months"),
+          basic: t("2 years"),
+          standard: t("2 years"),
+          pro: t("5 years"),
+          enterprise: t("Infinite"),
+        },
+      ],
+    },
+    {
+      category: t("Support & Integrations"),
+      features: [
+        {
+          name: t("Support"),
+          free: t("Community"),
+          basic: t("Email"),
+          standard: t("Email"),
+          pro: t("Priority"),
+          enterprise: t("Enterprise + Slack"),
+        },
+        {
+          name: t("Manual invoicing"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: false,
+          enterprise: true,
+        },
+        {
+          name: t("Uptime SLA"),
+          free: false,
+          basic: false,
+          standard: false,
+          pro: false,
+          enterprise: true,
+        },
+      ],
+    },
+  ];
+
   return (
     <section className="-mt-8 pb-8 w-full relative z-10">
       <div className="max-w-[1200px] mx-auto px-4 overflow-x-auto">
@@ -301,54 +304,54 @@ export function ComparisonSection({ isAnnual }: { isAnnual: boolean }) {
             {/* Table Header */}
             <div className="grid grid-cols-5 gap-0 py-6 bg-neutral-100/50 dark:bg-neutral-800/20">
               <div className="flex items-center px-6 border-r border-neutral-400/50 dark:border-neutral-700/50 text-xl font-semibold text-neutral-800 dark:text-neutral-200">
-                Compare Plans
+                {t("Compare Plans")}
               </div>
               <div className="flex flex-col items-center justify-center px-4 border-r border-neutral-400/50 dark:border-neutral-700/50">
                 <div className="font-semibold text-lg text-center mb-3">
-                  Basic{" "}
+                  {t("Basic")}{" "}
                   <span className="text-sm text-neutral-500 dark:text-neutral-400 font-normal block">From ${isAnnual ? "9" : "14"} /month</span>
                 </div>
                 <AppLink
                   href="https://app.rybbit.io/signup"
                   className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  Get started
+                  {t("Get started")}
                 </AppLink>
               </div>
               <div className="flex flex-col items-center justify-center px-4 border-r border-neutral-400/50 dark:border-neutral-700/50">
                 <div className="font-semibold text-lg text-center mb-3">
-                  Standard{" "}
+                  {t("Standard")}{" "}
                   <span className="text-sm text-neutral-500 dark:text-neutral-400 font-normal block">From ${isAnnual ? "13" : "19"} /month</span>
                 </div>
                 <AppLink
                   href="https://app.rybbit.io/signup"
                   className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  Get started
+                  {t("Get started")}
                 </AppLink>
               </div>
               <div className="flex flex-col items-center justify-center px-4 border-r border-neutral-400/50 dark:border-neutral-700/50">
                 <div className="font-semibold text-lg text-emerald-600 dark:text-emerald-400 text-center mb-3">
-                  Pro{" "}
+                  {t("Pro")}{" "}
                   <span className="text-sm text-neutral-500 dark:text-neutral-400 font-normal block">From ${isAnnual ? "26" : "39"} /month</span>
                 </div>
                 <AppLink
                   href="https://app.rybbit.io/signup"
                   className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  Get started
+                  {t("Get started")}
                 </AppLink>
               </div>
               <div className="flex flex-col items-center justify-center px-4">
                 <div className="font-semibold text-lg text-center mb-3">
-                  Enterprise{" "}
-                  <span className="text-sm text-neutral-500 dark:text-neutral-400 font-normal block">Custom</span>
+                  {t("Enterprise")}{" "}
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400 font-normal block">{t("Custom")}</span>
                 </div>
                 <a
                   href="https://www.rybbit.com/contact"
                   className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  Contact us
+                  {t("Contact us")}
                 </a>
               </div>
             </div>

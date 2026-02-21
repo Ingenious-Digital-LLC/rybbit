@@ -2,6 +2,7 @@ import { BackgroundGrid } from "@/components/BackgroundGrid";
 import { CTASection } from "@/components/CTASection";
 import { DEFAULT_EVENT_LIMIT } from "@/lib/const";
 import { CheckCircle, CircleMinus } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { Tilt_Warp } from "next/font/google";
 import Image from "next/image";
 import React from "react";
@@ -31,6 +32,8 @@ export interface ComparisonPageProps {
 }
 
 export function ComparisonPage({ competitorName, sections, comparisonContent }: ComparisonPageProps) {
+  const t = useExtracted();
+
   const renderFeatureValue = (value: string | boolean) => {
     if (typeof value === "boolean") {
       return value ? (
@@ -54,10 +57,10 @@ export function ComparisonPage({ competitorName, sections, comparisonContent }: 
             tilt_wrap.className
           )}
         >
-          Rybbit vs. {competitorName}
+          {t("Rybbit vs {competitor}", { competitor: competitorName })}
         </h1>
         <h2 className="relative z-10 text-base md:text-xl pt-4 md:pt-6 px-4 tracking-tight max-w-4xl text-center text-neutral-600 dark:text-neutral-300 font-light">
-          Compare the key features of Rybbit and {competitorName}.
+          {t("Compare the key features of Rybbit and {competitor}.", { competitor: competitorName })}
         </h2>
 
         <div className="relative z-10 flex flex-col items-center my-8 md:my-10">
@@ -68,7 +71,7 @@ export function ComparisonPage({ competitorName, sections, comparisonContent }: 
               eventProps={{ location: "hero", button_text: "Track your site" }}
               className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-3 rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer"
             >
-              Track your site
+              {t("Track your site")}
             </TrackedButton>
             <TrackedButton
               href="https://demo.rybbit.com/1"
@@ -78,12 +81,12 @@ export function ComparisonPage({ competitorName, sections, comparisonContent }: 
               eventProps={{ location: "hero", button_text: "Live demo" }}
               className="w-full sm:w-auto bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white font-medium px-5 py-3 rounded-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-opacity-50 cursor-pointer"
             >
-              Live demo
+              {t("Live demo")}
             </TrackedButton>
           </div>
           <p className="text-neutral-500 dark:text-neutral-400 text-xs md:text-sm flex items-center justify-center gap-2 mt-6">
             <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />
-            30 day money-back guarantee. No credit card required.
+            {t("30 day money-back guarantee. No credit card required.")}
           </p>
         </div>
       </div>
@@ -91,7 +94,7 @@ export function ComparisonPage({ competitorName, sections, comparisonContent }: 
       {/* <div className="relative w-full max-w-[1300px] mb-10 px-4">
         <div className="absolute top-0 left-0 w-[550px] h-[550px] bg-emerald-500/40 rounded-full blur-[80px] opacity-70"></div>
         <div className="absolute top-20 left-20 w-[400px] h-[400px] bg-emerald-600/30 rounded-full blur-[70px] opacity-50"></div>
-        
+
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500/40 rounded-full blur-[80px] opacity-60"></div>
         <div className="absolute bottom-40 right-20 w-[350px] h-[350px] bg-indigo-500/30 rounded-full blur-[75px] opacity-50"></div>
 
@@ -118,7 +121,7 @@ export function ComparisonPage({ competitorName, sections, comparisonContent }: 
 
       <div className="w-full max-w-5xl mx-auto mt-12 px-4 z-10">
         <h2 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-6 text-left">
-          Why choose Rybbit over {competitorName}?
+          {t("Why choose Rybbit over {competitor}?", { competitor: competitorName })}
         </h2>
       </div>
       {/* Comparison Table */}

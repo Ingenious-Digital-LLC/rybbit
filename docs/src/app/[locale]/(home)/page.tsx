@@ -24,6 +24,7 @@ import { TerminalIcon } from "@/components/ui/terminal";
 import { UsersIcon } from "@/components/ui/users";
 import { ZapIcon } from "@/components/ui/zap";
 import { cn } from "@/lib/utils";
+import { useExtracted } from "next-intl";
 import { Tilt_Warp } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -107,90 +108,92 @@ export const metadata = createMetadata({
   },
 });
 
-const features = [
-  {
-    icon: ZapIcon,
-    title: "Setup in minutes",
-    description: "Add one line of code and start seeing real-time data instantly.",
-  },
-  {
-    icon: ActivityIcon,
-    title: "Realtime data",
-    description: "See what's happening on your site right now.",
-  },
-  {
-    icon: PlayIcon,
-    title: "Session replay",
-    description: "Watch real user sessions to spot usability issues.",
-  },
-  {
-    icon: ArrowDownIcon,
-    title: "Funnels",
-    description: "Visualize conversion paths and find where visitors drop off.",
-  },
-  {
-    icon: RouteIcon,
-    title: "User journeys",
-    description: "Map how users navigate from landing to conversion.",
-  },
-  {
-    icon: GaugeIcon,
-    title: "Web vitals",
-    description: "Monitor Core Web Vitals for fast user experiences.",
-  },
-  {
-    icon: LayersIcon,
-    title: "Custom events",
-    description: "Track sign-ups, purchases, and any user interaction.",
-  },
-  {
-    icon: BotIcon,
-    title: "Bot blocking",
-    description: "Automatically filter out bots to keep data clean.",
-  },
-  {
-    icon: BanIcon,
-    title: "No cookies",
-    description: "Zero cookies, zero banners. Cleaner visitor experiences.",
-  },
-  {
-    icon: ShieldCheckIcon,
-    title: "GDPR & CCPA",
-    description: "Privacy-first design means you're compliant out of the box.",
-  },
-  {
-    icon: EarthIcon,
-    title: "Globe views",
-    description: "Watch traffic flow with stunning 3D globe visualizations.",
-  },
-  {
-    icon: TerminalIcon,
-    title: "Open source",
-    description: "100% open source. Self-host or use our cloud.",
-  },
-  {
-    icon: LinkIcon,
-    title: "API",
-    description: "Full API access to build custom integrations.",
-  },
-  {
-    icon: DownloadIcon,
-    title: "Data export",
-    description: "Export your raw data anytime. No lock-in.",
-  },
-  {
-    icon: BellIcon,
-    title: "Email reports",
-    description: "Automated reports delivered to your inbox.",
-  },
-  {
-    icon: UsersIcon,
-    title: "Organizations",
-    description: "Manage sites and team access in one place.",
-  },
-];
-
 export default function HomePage() {
+  const t = useExtracted();
+
+  const features = [
+    {
+      icon: ZapIcon,
+      title: t("Setup in minutes"),
+      description: t("Add one line of code and start seeing real-time data instantly."),
+    },
+    {
+      icon: ActivityIcon,
+      title: t("Realtime data"),
+      description: t("See what's happening on your site right now."),
+    },
+    {
+      icon: PlayIcon,
+      title: t("Session replay"),
+      description: t("Watch real user sessions to spot usability issues."),
+    },
+    {
+      icon: ArrowDownIcon,
+      title: t("Funnels"),
+      description: t("Visualize conversion paths and find where visitors drop off."),
+    },
+    {
+      icon: RouteIcon,
+      title: t("User journeys"),
+      description: t("Map how users navigate from landing to conversion."),
+    },
+    {
+      icon: GaugeIcon,
+      title: t("Web vitals"),
+      description: t("Monitor Core Web Vitals for fast user experiences."),
+    },
+    {
+      icon: LayersIcon,
+      title: t("Custom events"),
+      description: t("Track sign-ups, purchases, and any user interaction."),
+    },
+    {
+      icon: BotIcon,
+      title: t("Bot blocking"),
+      description: t("Automatically filter out bots to keep data clean."),
+    },
+    {
+      icon: BanIcon,
+      title: t("No cookies"),
+      description: t("Zero cookies, zero banners. Cleaner visitor experiences."),
+    },
+    {
+      icon: ShieldCheckIcon,
+      title: t("GDPR & CCPA"),
+      description: t("Privacy-first design means you're compliant out of the box."),
+    },
+    {
+      icon: EarthIcon,
+      title: t("Globe views"),
+      description: t("Watch traffic flow with stunning 3D globe visualizations."),
+    },
+    {
+      icon: TerminalIcon,
+      title: t("Open source"),
+      description: t("100% open source. Self-host or use our cloud."),
+    },
+    {
+      icon: LinkIcon,
+      title: t("API"),
+      description: t("Full API access to build custom integrations."),
+    },
+    {
+      icon: DownloadIcon,
+      title: t("Data export"),
+      description: t("Export your raw data anytime. No lock-in."),
+    },
+    {
+      icon: BellIcon,
+      title: t("Email reports"),
+      description: t("Automated reports delivered to your inbox."),
+    },
+    {
+      icon: UsersIcon,
+      title: t("Organizations"),
+      description: t("Manage sites and team access in one place."),
+    },
+  ];
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
@@ -203,11 +206,10 @@ export default function HomePage() {
             tilt_wrap.className
           )}
         >
-          The Modern Google Analytics Replacement
+          {t("The Modern Google Analytics Replacement")}
         </h1>
         <h2 className="text-base md:text-xl pt-4 md:pt-6 px-4 tracking-tight max-w-4xl text-center text-neutral-600 dark:text-neutral-300 font-light">
-          Rybbit is powerful, lightweight, and super easy to use analytics. Cookieless and GDPR compliant. Hosted on EU
-          infrastructure in Germany{" "}
+          {t("Rybbit is powerful, lightweight, and super easy to use analytics. Cookieless and GDPR compliant. Hosted on EU infrastructure in Germany")}{" "}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -233,7 +235,7 @@ export default function HomePage() {
               eventProps={{ location: "hero", button_text: "get started" }}
               className="w-full whitespace-nowrap sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer"
             >
-              Get started
+              {t("Get started")}
             </TrackedButton>
             <TrackedButton
               href="https://demo.rybbit.com/81"
@@ -243,12 +245,12 @@ export default function HomePage() {
               eventProps={{ location: "hero", button_text: "Live demo" }}
               className="w-full whitespace-nowrap sm:w-auto bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white font-medium px-6 py-3 rounded-lg transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-opacity-50 cursor-pointer"
             >
-              Live demo
+              {t("Live demo")}
             </TrackedButton>
           </div>
           <p className="text-neutral-500 dark:text-neutral-400 text-xs md:text-sm flex items-center justify-center gap-2 mt-6">
             <CircleCheckIcon size={16} className="text-neutral-500 dark:text-neutral-400" />
-            30 day money-back guarantee. No credit card required.
+            {t("30 day money-back guarantee. No credit card required.")}
           </p>
         </div>
         <div className="relative w-full max-w-[1300px] mb-10">
@@ -287,7 +289,7 @@ export default function HomePage() {
           <div className="max-w-[1200px] mx-auto px-4">
             <div className="text-center mb-10 md:mb-12">
               <p className="text-neutral-500 dark:text-neutral-400 text-sm uppercase tracking-wider font-medium">
-                Trusted by 4,000+ organizations worldwide
+                {t("Trusted by 4,000+ organizations worldwide")}
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
@@ -382,10 +384,10 @@ export default function HomePage() {
         </section>
         <section className="py-14 md:py-20 w-full max-w-[1200px] px-4">
           <div className="text-center mb-10 md:mb-12">
-            <SectionBadge className="mb-4">Why Rybbit</SectionBadge>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Everything you need</h2>
+            <SectionBadge className="mb-4">{t("Why Rybbit")}</SectionBadge>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{t("Everything you need")}</h2>
             <p className="mt-4 text-base md:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto font-light">
-              Powerful analytics without the complexity. Privacy-friendly tools that just work.
+              {t("Powerful analytics without the complexity. Privacy-friendly tools that just work.")}
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
@@ -411,10 +413,10 @@ export default function HomePage() {
 
         <section className="py-14 md:py-20 w-full max-w-[1200px] px-4">
           <div className="text-center mb-10 md:mb-16">
-            <SectionBadge className="mb-4">Analytics Reimagined</SectionBadge>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">See it in action</h2>
+            <SectionBadge className="mb-4">{t("Analytics Reimagined")}</SectionBadge>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{t("See it in action")}</h2>
             <p className="mt-4 text-base md:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto font-light">
-              Powerful tools designed for clarity, not complexity.
+              {t("Powerful tools designed for clarity, not complexity.")}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
@@ -444,10 +446,10 @@ export default function HomePage() {
           <div className="max-w-[1200px] mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 md:gap-16">
               <div className="md:sticky md:top-24 md:self-start">
-                <SectionBadge className="mb-4">Seamless Integration</SectionBadge>
-                <h2 className="text-3xl md:text-4xl font-bold">Works with all your favorite platforms</h2>
+                <SectionBadge className="mb-4">{t("Seamless Integration")}</SectionBadge>
+                <h2 className="text-3xl md:text-4xl font-bold">{t("Works with all your favorite platforms")}</h2>
                 <p className="mt-4 text-neutral-600 dark:text-neutral-300 font-light">
-                  Integrate Rybbit with any platform in minutes
+                  {t("Integrate Rybbit with any platform in minutes")}
                 </p>
               </div>
               <IntegrationsGrid />
@@ -458,10 +460,10 @@ export default function HomePage() {
         <section className="py-10 md:py-16 w-full overflow-hidden">
           <div className="max-w-[1200px] mx-auto px-4">
             <div className="text-center mb-10 md:mb-16">
-              <SectionBadge className="mb-4">User Testimonials</SectionBadge>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">People love Rybbit</h2>
+              <SectionBadge className="mb-4">{t("User Testimonials")}</SectionBadge>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{t("People love Rybbit")}</h2>
               <p className="mt-4 text-base md:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto font-light">
-                See what others think about Rybbit Analytics
+                {t("See what others think about Rybbit Analytics")}
               </p>
             </div>
             <div className="relative bg-neutral-100/50 dark:bg-neutral-800/20 backdrop-blur-sm border border-neutral-300/50 dark:border-neutral-800/50 rounded-3xl overflow-hidden">
@@ -509,9 +511,9 @@ export default function HomePage() {
           <div className="max-w-[1200px] mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 md:gap-16">
               <div className="md:sticky md:top-24 md:self-start">
-                <h2 className="text-3xl md:text-4xl font-bold">Frequently Asked Questions</h2>
+                <h2 className="text-3xl md:text-4xl font-bold">{t("Frequently Asked Questions")}</h2>
                 <p className="mt-4 text-neutral-600 dark:text-neutral-300 font-light">
-                  Everything you need to know about Rybbit Analytics
+                  {t("Everything you need to know about Rybbit Analytics")}
                 </p>
               </div>
               <FAQAccordion />
