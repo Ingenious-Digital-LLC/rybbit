@@ -68,7 +68,7 @@ export function HeroSection({
               eventProps={{ location: "hero", button_text: "get started" }}
               className="w-full whitespace-nowrap sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer"
             >
-              {t("Start free trial")}
+              {t("Start for $0")}
             </TrackedButton>
             <TrackedButton
               href="https://demo.rybbit.com/81"

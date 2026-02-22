@@ -342,7 +342,7 @@ export default function FeaturesPage() {
                 eventProps={{ location: "features_hero", button_text: "Get started for free" }}
                 className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg shadow-lg shadow-emerald-900/20 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-opacity-50 cursor-pointer"
               >
-                {t("Start free trial")}
+                {t("Start for $0")}
               </TrackedButton>
               <TrackedButton
                 href="https://demo.rybbit.com/1"
