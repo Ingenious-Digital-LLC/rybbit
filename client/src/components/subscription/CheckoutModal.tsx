@@ -16,9 +16,9 @@ export function CheckoutModal({ clientSecret, open, onOpenChange }: CheckoutModa
   if (!clientSecret) return null;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[1200px] py-8 px-0 overflow-hidden">
+      <DialogContent className="max-w-[1200px] py-8 px-0 overflow-hidden bg-[#1a1a1a]">
         <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
-          <EmbeddedCheckout className="bg-red-500" />
+          <EmbeddedCheckout />
         </EmbeddedCheckoutProvider>
       </DialogContent>
     </Dialog>
