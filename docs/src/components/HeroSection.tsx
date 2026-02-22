@@ -81,10 +81,10 @@ export function HeroSection({
               {t("Live demo")}
             </TrackedButton>
           </div>
-          <p className="text-neutral-500 dark:text-neutral-400 text-xs md:text-sm flex items-center justify-center gap-2 mt-6">
+          {/* <p className="text-neutral-500 dark:text-neutral-400 text-xs md:text-sm flex items-center justify-center gap-2 mt-6">
             <CircleCheckIcon size={16} className="text-neutral-500 dark:text-neutral-400" />
             {t("7-day free trial.")}
-          </p>
+          </p> */}
         </div>
         <div className="relative w-full max-w-[1300px] mb-10">
           {/* Background gradients - overlapping circles for organic feel */}

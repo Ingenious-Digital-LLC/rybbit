@@ -83,7 +83,7 @@ export function CTASection({
             </div>
 
             <p className="text-neutral-500 text-sm">
-              {t("7-day free trial.")}
+              {t("7-day free trial")}
             </p>
           </div>
         </div>

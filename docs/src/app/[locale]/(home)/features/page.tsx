@@ -357,7 +357,7 @@ export default function FeaturesPage() {
             </div>
             <p className="text-neutral-500 dark:text-neutral-400 text-sm flex items-center justify-center gap-2 mt-6">
               <CheckCircle className="w-4 h-4" />
-              {t("7-day free trial.")}
+              {t("7-day free trial")}
             </p>
           </div>
         </div>
