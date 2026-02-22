@@ -2,7 +2,8 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useExtracted } from "next-intl";
-import { commonTimezones, usePlaygroundStore } from "../hooks/usePlaygroundStore";
+import { usePlaygroundStore } from "../hooks/usePlaygroundStore";
+import { timezones } from "@/lib/dateTimeUtils";
 
 export function TimezoneSelect() {
   const t = useExtracted();
@@ -16,7 +17,7 @@ export function TimezoneSelect() {
           <SelectValue placeholder={t("Select timezone")} />
         </SelectTrigger>
         <SelectContent>
-          {commonTimezones.map(tz => (
+          {timezones.map(tz => (
             <SelectItem key={tz.value} value={tz.value} className="text-xs">
               {tz.label}
             </SelectItem>
