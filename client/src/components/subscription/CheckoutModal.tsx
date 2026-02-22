@@ -17,7 +17,7 @@ export function CheckoutModal({ clientSecret, open, onOpenChange }: CheckoutModa
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[1000px] py-8 px-0 overflow-hidden bg-[#1a1a1a] dark:bg-[#1a1a1a] border-neutral-800 dark:border-neutral-800">
-        <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
+        <EmbeddedCheckoutProvider key={clientSecret} stripe={stripePromise} options={{ clientSecret }}>
           <EmbeddedCheckout />
         </EmbeddedCheckoutProvider>
       </DialogContent>
