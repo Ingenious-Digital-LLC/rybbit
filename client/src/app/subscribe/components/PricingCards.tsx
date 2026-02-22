@@ -19,6 +19,7 @@ import {
   formatEventTier
 } from "./utils";
 
+import { CheckoutModal } from "@/components/subscription/CheckoutModal";
 import { useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
 
@@ -31,6 +32,8 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isAnnual, setIsAnnual] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showTestPlan, setShowTestPlan] = useState(false);
+  const [checkoutClientSecret, setCheckoutClientSecret] = useState<string | null>(null);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const { data: activeOrg } = authClient.useActiveOrganization();
 
   useEffect(() => {
@@ -74,12 +77,10 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
 
     setIsLoading(true);
     try {
-      // Use NEXT_PUBLIC_BACKEND_URL if available, otherwise use relative path for same-origin requests
       const baseUrl = window.location.origin;
-      const successUrl = siteId
+      const returnUrl = siteId
         ? `${baseUrl}/${siteId}?session_id={CHECKOUT_SESSION_ID}`
         : `${baseUrl}/settings/organization/subscription?session_id={CHECKOUT_SESSION_ID}`;
-      const cancelUrl = `${baseUrl}/subscribe${siteId ? `?siteId=${siteId}` : ""}`;
 
       const response = await fetch(`${BACKEND_URL}/stripe/create-checkout-session`, {
         method: "POST",
@@ -89,8 +90,7 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
         credentials: "include", // Send cookies
         body: JSON.stringify({
           priceId: selectedTierPrice.priceId,
-          successUrl: successUrl,
-          cancelUrl: cancelUrl,
+          returnUrl,
           organizationId: activeOrg.id,
           referral: window.Rewardful?.referral || undefined,
         }),
@@ -103,11 +103,13 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
         throw new Error(data.error || t("Failed to create checkout session."));
       }
 
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl; // Redirect to Stripe checkout
+      if (data.clientSecret) {
+        setCheckoutClientSecret(data.clientSecret);
+        setCheckoutOpen(true);
       } else {
-        throw new Error(t("Checkout URL not received."));
+        throw new Error(t("Checkout session not received."));
       }
+      setIsLoading(false);
     } catch (error: any) {
       toast.error(t("Subscription failed: {message}", { message: error.message }));
       setIsLoading(false); // Stop loading on error
@@ -127,10 +129,9 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
     setIsLoading(true);
     try {
       const baseUrl = window.location.origin;
-      const successUrl = siteId
+      const returnUrl = siteId
         ? `${baseUrl}/${siteId}?session_id={CHECKOUT_SESSION_ID}`
         : `${baseUrl}/settings/organization/subscription?session_id={CHECKOUT_SESSION_ID}`;
-      const cancelUrl = `${baseUrl}/subscribe${siteId ? `?siteId=${siteId}` : ""}`;
 
       const response = await fetch(`${BACKEND_URL}/stripe/create-checkout-session`, {
         method: "POST",
@@ -138,8 +139,7 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
         credentials: "include",
         body: JSON.stringify({
           priceId: "price_1SzT8pDFVprnAny2EdkqxRAZ",
-          successUrl,
-          cancelUrl,
+          returnUrl,
           organizationId: activeOrg.id,
           referral: window.Rewardful?.referral || undefined,
         }),
@@ -151,11 +151,13 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
         throw new Error(data.error || t("Failed to create checkout session."));
       }
 
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
+      if (data.clientSecret) {
+        setCheckoutClientSecret(data.clientSecret);
+        setCheckoutOpen(true);
       } else {
-        throw new Error(t("Checkout URL not received."));
+        throw new Error(t("Checkout session not received."));
       }
+      setIsLoading(false);
     } catch (error: any) {
       toast.error(t("Subscription failed: {message}", { message: error.message }));
       setIsLoading(false);
@@ -178,6 +180,12 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
   const isCustomTier = eventLimit === "Custom";
 
   return (
+    <>
+    <CheckoutModal
+      clientSecret={checkoutClientSecret}
+      open={checkoutOpen}
+      onOpenChange={setCheckoutOpen}
+    />
     <div className="max-w-[1300px] mx-auto">
       {/* Shared controls section */}
       <div className="max-w-xl mx-auto mb-8">
@@ -316,5 +324,6 @@ export function PricingCards({ isLoggedIn }: { isLoggedIn: boolean }) {
         />
       </div>
     </div>
+    </>
   );
 }
