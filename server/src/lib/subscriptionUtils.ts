@@ -52,11 +52,24 @@ export interface OverrideSubscriptionInfo {
   cancelAtPeriodEnd: false;
 }
 
+export interface CustomPlanSubscriptionInfo {
+  source: "custom";
+  planName: "custom";
+  eventLimit: number;
+  memberLimit: number | null; // null = unlimited
+  siteLimit: number | null; // null = unlimited
+  periodStart: string;
+  status: "active";
+  interval: "lifetime";
+  cancelAtPeriodEnd: false;
+}
+
 export type SubscriptionInfo =
   | AppSumoSubscriptionInfo
   | StripeSubscriptionInfo
   | FreeSubscriptionInfo
-  | OverrideSubscriptionInfo;
+  | OverrideSubscriptionInfo
+  | CustomPlanSubscriptionInfo;
 
 /**
  * Gets the first day of the current month in YYYY-MM-DD format
@@ -254,15 +267,57 @@ export async function getStripeSubscription(stripeCustomerId: string | null): Pr
 }
 
 /**
+ * Gets custom plan subscription info for an organization
+ * @returns Custom plan subscription info or null if no custom plan set
+ */
+export async function getCustomPlanSubscription(organizationId: string): Promise<CustomPlanSubscriptionInfo | null> {
+  try {
+    const orgResult = await db
+      .select({ customPlan: organization.customPlan })
+      .from(organization)
+      .where(eq(organization.id, organizationId))
+      .limit(1);
+
+    const org = orgResult[0];
+    if (!org?.customPlan) {
+      return null;
+    }
+
+    const cp = org.customPlan;
+
+    return {
+      source: "custom",
+      planName: "custom",
+      eventLimit: cp.events,
+      memberLimit: cp.members ?? null,
+      siteLimit: cp.websites ?? null,
+      periodStart: getStartOfMonth(),
+      status: "active",
+      interval: "lifetime",
+      cancelAtPeriodEnd: false,
+    };
+  } catch (error) {
+    console.error("Error checking custom plan:", error);
+    return null;
+  }
+}
+
+/**
  * Gets the best subscription for an organization
- * Priority: Override > AppSumo/Stripe (highest limit) > Free
+ * Priority: CustomPlan > Override > AppSumo/Stripe (highest limit) > Free
  * @returns The active subscription, or free tier if none found
  */
 export async function getBestSubscription(
   organizationId: string,
   stripeCustomerId: string | null
 ): Promise<SubscriptionInfo> {
-  // Check override first - always wins
+  // Check custom plan first - highest priority
+  const customSub = await getCustomPlanSubscription(organizationId);
+  if (customSub) {
+    return customSub;
+  }
+
+  // Check override next
   const overrideSub = await getOverrideSubscription(organizationId);
   if (overrideSub) {
     return overrideSub;
