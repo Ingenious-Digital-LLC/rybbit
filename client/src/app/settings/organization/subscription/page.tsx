@@ -9,6 +9,7 @@ import { ExpiredTrialPlan } from "../../../../components/subscription/ExpiredTri
 import { useSetPageTitle } from "../../../../hooks/useSetPageTitle";
 import { FreePlan } from "../../../../components/subscription/FreePlan";
 import { OverridePlan } from "../../../../components/subscription/OverridePlan";
+import { CustomPlan } from "../../../../components/subscription/CustomPlan";
 import { Building } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { authClient } from "@/lib/auth";
@@ -68,6 +69,10 @@ export default function OrganizationSubscriptionPage() {
     // Check if user is on free plan
     if (activeSubscription.status === "free") {
       return <FreePlan />;
+    }
+
+    if (activeSubscription.planName === "custom") {
+      return <CustomPlan />;
     }
 
     if (activeSubscription.planName.startsWith("appsumo")) {
