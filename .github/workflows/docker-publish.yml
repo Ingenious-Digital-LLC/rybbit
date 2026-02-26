@@ -268,21 +268,22 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_OWNER: ${{ github.repository_owner }}
+          IMAGE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && 'latest' || 'edge' }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: GH_TOKEN,REPO_OWNER
+          envs: GH_TOKEN,REPO_OWNER,IMAGE_TAG
           script: |
             OWNER=$(echo "$REPO_OWNER" | tr '[:upper:]' '[:lower:]')
 
             # Auth with GHCR using workflow token
             echo "$GH_TOKEN" | docker login ghcr.io -u "$REPO_OWNER" --password-stdin
 
-            # Pull latest images
-            docker pull ghcr.io/${OWNER}/rybbit-client:latest
-            docker pull ghcr.io/${OWNER}/rybbit-backend:latest
+            # Pull images with the correct tag
+            docker pull ghcr.io/${OWNER}/rybbit-client:${IMAGE_TAG}
+            docker pull ghcr.io/${OWNER}/rybbit-backend:${IMAGE_TAG}
 
             # Update running services (--with-registry-auth passes GHCR creds to swarm)
-            docker service update --with-registry-auth --image ghcr.io/${OWNER}/rybbit-client:latest rybbit-analytics_client
-            docker service update --with-registry-auth --image ghcr.io/${OWNER}/rybbit-backend:latest rybbit-analytics_backend
+            docker service update --with-registry-auth --image ghcr.io/${OWNER}/rybbit-client:${IMAGE_TAG} rybbit-analytics_client
+            docker service update --with-registry-auth --image ghcr.io/${OWNER}/rybbit-backend:${IMAGE_TAG} rybbit-analytics_backend
