@@ -283,6 +283,6 @@ jobs:
             docker pull ghcr.io/${OWNER}/rybbit-client:latest
             docker pull ghcr.io/${OWNER}/rybbit-backend:latest
 
-            # Update running services
-            docker service update --image ghcr.io/${OWNER}/rybbit-client:latest rybbit-analytics_client
-            docker service update --image ghcr.io/${OWNER}/rybbit-backend:latest rybbit-analytics_backend
+            # Update running services (--with-registry-auth passes GHCR creds to swarm)
+            docker service update --with-registry-auth --image ghcr.io/${OWNER}/rybbit-client:latest rybbit-analytics_client
+            docker service update --with-registry-auth --image ghcr.io/${OWNER}/rybbit-backend:latest rybbit-analytics_backend
