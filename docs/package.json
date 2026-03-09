@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "country-flag-icons": "^1.5.21",
+    "embla-carousel-react": "^8.6.0",
     "fumadocs-core": "16.0.3",
     "fumadocs-mdx": "13.0.2",
     "fumadocs-ui": "16.0.3",
