@@ -5,7 +5,6 @@ import { useAdminOrganizations } from "@/api/admin/hooks/useAdminOrganizations";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateTime } from "luxon";
-import { SearchInput } from "../shared/SearchInput";
 import { ErrorAlert } from "../shared/ErrorAlert";
 import { AdminLayout } from "../shared/AdminLayout";
 import { GrowthChart } from "../shared/GrowthChart";
@@ -131,12 +130,9 @@ export function Organizations() {
         </TabsContent>
       </Tabs>
       <div className="space-y-2">
-        <SearchInput
-          placeholder={t("Search by name, slug, domain, or member email...")}
-          value={searchQuery}
-          onChange={setSearchQuery}
-        />
         <OrganizationFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           showZeroEvents={showZeroEvents}
           setShowZeroEvents={setShowZeroEvents}
           showOnlyOverLimit={showOnlyOverLimit}

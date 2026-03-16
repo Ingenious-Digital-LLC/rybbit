@@ -91,9 +91,11 @@ import {
 import {
   createCheckoutSession,
   createPortalSession,
+  getInvoices,
   getSubscription,
   handleWebhook,
   previewSubscriptionUpdate,
+  submitCancellationFeedback,
   updateSubscription,
 } from "./api/stripe/index.js";
 import {
@@ -308,7 +310,7 @@ async function organizationsRoutes(fastify: FastifyInstance) {
   fastify.get("/organizations/:organizationId/sites", orgMember, getSitesFromOrg);
   fastify.post("/organizations/:organizationId/sites", orgAdminParams, addSite);
   fastify.get("/organizations/:organizationId/members", orgMember, listOrganizationMembers);
-  fastify.post("/organizations/:organizationId/members", orgMember, addUserToOrganization);
+  fastify.post("/organizations/:organizationId/members", authOnly, addUserToOrganization);
 
   // Member site access management (admin/owner only)
   fastify.put("/organizations/:organizationId/members/:memberId/sites", orgAdminParams, updateMemberSiteAccess);
@@ -354,6 +356,8 @@ async function stripeAdminRoutes(fastify: FastifyInstance) {
     fastify.post("/stripe/preview-subscription-update", authOnly, previewSubscriptionUpdate);
     fastify.post("/stripe/update-subscription", authOnly, updateSubscription);
     fastify.get("/stripe/subscription", authOnly, getSubscription);
+    fastify.get("/stripe/invoices", authOnly, getInvoices);
+    fastify.post("/stripe/cancellation-feedback", authOnly, submitCancellationFeedback);
     fastify.post("/stripe/webhook", { config: { rawBody: true } }, handleWebhook); // Public - Stripe webhook
 
     // Admin Routes

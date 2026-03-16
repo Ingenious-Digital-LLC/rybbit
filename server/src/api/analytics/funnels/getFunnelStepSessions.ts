@@ -2,7 +2,7 @@ import { FilterParams } from "@rybbit/shared";
 import { FastifyReply, FastifyRequest } from "fastify";
 import SqlString from "sqlstring";
 import { clickhouse } from "../../../db/clickhouse/clickhouse.js";
-import { getTimeStatement, patternToRegex, processResults } from "../utils/utils.js";
+import { enrichWithTraits, getTimeStatement, patternToRegex, processResults } from "../utils/utils.js";
 import { GetSessionsResponse } from "../sessions/getSessions.js";
 import { getFilterStatement } from "../utils/getFilterStatement.js";
 
@@ -203,6 +203,7 @@ export async function getFunnelStepSessions(req: FastifyRequest<GetFunnelStepSes
       SELECT
         e.session_id,
         e.user_id,
+        argMax(e.identified_user_id, e.timestamp) AS identified_user_id,
         argMax(e.country, e.timestamp) AS country,
         argMax(e.region, e.timestamp) AS region,
         argMax(e.city, e.timestamp) AS city,
@@ -262,8 +263,9 @@ export async function getFunnelStepSessions(req: FastifyRequest<GetFunnelStepSes
       },
     });
 
-    const data = await processResults<GetSessionsResponse[number]>(result);
-    return res.send({ data });
+    const data = await processResults<Omit<GetSessionsResponse[number], "traits">>(result);
+    const dataWithTraits = await enrichWithTraits(data, Number(siteId));
+    return res.send({ data: dataWithTraits });
   } catch (error) {
     console.error("Error fetching funnel step sessions:", error);
     return res.status(500).send({ error: "Failed to fetch funnel step sessions" });

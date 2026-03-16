@@ -11,6 +11,8 @@ import { formatDate } from "../../../lib/subscription/planUtils";
 import { useStripeSubscription } from "../../../lib/subscription/useStripeSubscription";
 import { UsageChart } from "../../UsageChart";
 import { authClient } from "@/lib/auth";
+import { InvoicesCard } from "../components/InvoicesCard";
+import { CancellationDialog } from "./CancellationDialog";
 import { PlanDialog } from "./PlanDialog";
 
 export function PaidPlan() {
@@ -22,6 +24,7 @@ export function PaidPlan() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [showPlanDialog, setShowPlanDialog] = useState(false);
+  const [showCancellationDialog, setShowCancellationDialog] = useState(false);
 
   const isTrial = !!activeSubscription?.isTrial;
   const trialDaysRemaining = activeSubscription?.trialDaysRemaining || 0;
@@ -87,8 +90,7 @@ export function PaidPlan() {
   };
 
   const handleChangePlan = () => setShowPlanDialog(true);
-  const handleViewSubscription = () => createPortalSession();
-  const handleCancelSubscription = () => createPortalSession("subscription_cancel");
+  const handleCancelSubscription = () => setShowCancellationDialog(true);
 
   const getFormattedPrice = () => {
     if (!currentPlanDetails) return "$0/month";
@@ -124,6 +126,16 @@ export function PaidPlan() {
         currentPlanName={activeSubscription?.planName}
         hasActiveSubscription={!!activeSubscription}
       />
+      {activeSubscription && organizationId && (
+        <CancellationDialog
+          open={showCancellationDialog}
+          onOpenChange={setShowCancellationDialog}
+          subscription={activeSubscription}
+          organizationId={organizationId}
+          onProceedToStripe={() => createPortalSession("subscription_cancel")}
+          onChangePlan={handleChangePlan}
+        />
+      )}
       <Card>
         <CardContent>
           <div className="space-y-6 mt-3 p-2">
@@ -143,9 +155,6 @@ export function PaidPlan() {
               <div className="space-x-2">
                 <Button variant="success" onClick={handleChangePlan}>
                   Change Plan
-                </Button>
-                <Button variant="outline" onClick={handleViewSubscription} disabled={isProcessing}>
-                  View Details
                 </Button>
               </div>
             </div>
@@ -218,6 +227,7 @@ export function PaidPlan() {
           </div>
         </CardContent>
       </Card>
+      <InvoicesCard />
     </div>
   );
 }

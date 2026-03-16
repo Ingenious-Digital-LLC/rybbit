@@ -607,6 +607,21 @@ export const userAliases = pgTable(
   ]
 );
 
+// Cancellation feedback for churn reduction
+export const cancellationFeedback = pgTable("cancellation_feedback", {
+  id: serial("id").primaryKey().notNull(),
+  organizationId: text("organization_id").notNull(),
+  userId: text("user_id").notNull(),
+  reason: text("reason").notNull(),
+  reasonDetails: text("reason_details"),
+  retentionOfferShown: text("retention_offer_shown"),
+  retentionOfferAccepted: boolean("retention_offer_accepted").default(false),
+  outcome: text("outcome").notNull(),
+  planNameAtCancellation: text("plan_name_at_cancellation"),
+  monthlyEventCountAtCancellation: integer("monthly_event_count_at_cancellation"),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+});
+
 export const importPlatforms = ["umami", "simple_analytics"] as const;
 
 export const importPlatformEnum = pgEnum("import_platform_enum", importPlatforms);
