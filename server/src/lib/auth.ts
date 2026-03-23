@@ -1,9 +1,11 @@
 import { betterAuth } from "better-auth";
 import { APIError, createAuthMiddleware } from "better-auth/api";
-import { admin, captcha, emailOTP, organization, apiKey } from "better-auth/plugins";
+import { admin, captcha, emailOTP, organization } from "better-auth/plugins";
 import dotenv from "dotenv";
 import { and, asc, eq } from "drizzle-orm";
 import pg from "pg";
+import { dash } from "@better-auth/infra";
+import { apiKey } from "@better-auth/api-key"
 
 import { db } from "../db/postgres/postgres.js";
 import * as schema from "../db/postgres/schema.js";
@@ -17,6 +19,7 @@ dotenv.config();
 const pluginList = [
   admin(),
   apiKey(),
+  dash(),
   organization({
     allowUserToCreateOrganization: true,
     creatorRole: "owner",
@@ -66,16 +69,17 @@ const pluginList = [
   // Add Cloudflare Turnstile captcha (cloud only)
   ...(IS_CLOUD && process.env.TURNSTILE_SECRET_KEY && process.env.NODE_ENV === "production"
     ? [
-        captcha({
-          provider: "cloudflare-turnstile",
-          secretKey: process.env.TURNSTILE_SECRET_KEY,
-        }),
-      ]
+      captcha({
+        provider: "cloudflare-turnstile",
+        secretKey: process.env.TURNSTILE_SECRET_KEY,
+      }),
+    ]
     : []),
 ];
 
 export const auth = betterAuth({
   basePath: "/api/auth",
+  appName: "Rybbit",
   database: new pg.Pool({
     host: process.env.POSTGRES_HOST || "postgres",
     port: parseInt(process.env.POSTGRES_PORT || "5432", 10),

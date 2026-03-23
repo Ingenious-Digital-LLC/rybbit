@@ -137,7 +137,8 @@ export async function getFunnelStepSessions(req: FastifyRequest<GetFunnelStepSes
         type,
         props,
         hostname,
-        url_parameters
+        url_parameters,
+        tag
       FROM events
       WHERE
         site_id = {siteId:Int32}
@@ -236,7 +237,8 @@ export async function getFunnelStepSessions(req: FastifyRequest<GetFunnelStepSes
         countIf(e.type = 'outbound') AS outbound,
         argMax(e.ip, e.timestamp) AS ip,
         argMax(e.lat, e.timestamp) AS lat,
-        argMax(e.lon, e.timestamp) AS lon
+        argMax(e.lon, e.timestamp) AS lon,
+        argMax(e.tag, e.timestamp) AS tag
       FROM events e
       INNER JOIN TargetSessions ts ON e.session_id = ts.session_id
       WHERE
@@ -259,7 +261,7 @@ export async function getFunnelStepSessions(req: FastifyRequest<GetFunnelStepSes
       query_params: {
         siteId: Number(siteId),
         limit: limit || 25,
-        offset: (page - 1) * (limit || 25),
+        offset: ((page || 1) - 1) * (limit || 25),
       },
     });
 

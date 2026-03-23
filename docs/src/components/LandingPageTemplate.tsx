@@ -262,15 +262,13 @@ export function LandingPageTemplate({
               />
             </div>
             <div className="flex items-center justify-center">
-              <Link href="https://dpm.lol" target="_blank">
-                <Image
-                  src="/logos/dpm.webp"
-                  alt="DPM.lol"
-                  width={120}
-                  height={40}
-                  className="opacity-40 hover:opacity-70 dark:opacity-60 dark:hover:opacity-100 transition-opacity grayscale invert dark:invert-0"
-                />
-              </Link>
+              <Image
+                src="/logos/dpm.webp"
+                alt="DPM.lol"
+                width={120}
+                height={40}
+                className="opacity-40 hover:opacity-70 dark:opacity-60 dark:hover:opacity-100 transition-opacity grayscale invert dark:invert-0"
+              />
             </div>
           </div>
         </div>
