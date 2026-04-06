@@ -1,3 +1,4 @@
+import { BackgroundGrid } from "@/components/BackgroundGrid";
 import { CTASection } from "@/components/CTASection";
 import { FAQAccordion } from "@/components/FAQAccordion";
 import { HeroSection } from "@/components/HeroSection";
@@ -185,6 +186,7 @@ export function LandingPageTemplate({
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <BackgroundGrid />
       <HeroSection title={title} subtitle={subtitle} showEUFlag={showEUFlag} />
 
       {/* Logo Section */}
