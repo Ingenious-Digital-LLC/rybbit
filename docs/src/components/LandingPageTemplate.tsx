@@ -358,7 +358,6 @@ export function LandingPageTemplate({
                 <TweetCard id="2000974573005889706" />
                 <TweetCard id="1927817460993884321" />
                 <TweetCard id="1977471983278535071" />
-                <TweetCard id="1958789741635141673" />
               </Marquee>
 
               {/* Column 2 - hidden on mobile */}
