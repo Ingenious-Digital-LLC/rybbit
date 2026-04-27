@@ -11,7 +11,14 @@ import { db } from "../db/postgres/postgres.js";
 import * as schema from "../db/postgres/schema.js";
 import { invitation, member, memberSiteAccess, user } from "../db/postgres/schema.js";
 import { API_RATE_LIMIT_WINDOW, DISABLE_SIGNUP, IS_CLOUD, STANDARD_API_RATE_LIMIT } from "./const.js";
-import { addContactToAudience, sendInvitationEmail, sendOtpEmail, sendWelcomeEmail } from "./email/email.js";
+import {
+  addContactToAudience,
+  sendChangeEmailVerification,
+  sendEmailVerificationLink,
+  sendInvitationEmail,
+  sendOtpEmail,
+  sendWelcomeEmail,
+} from "./email/email.js";
 import { onboardingTipsService } from "../services/onboardingTips/onboardingTipsService.js";
 
 dotenv.config();
@@ -27,7 +34,7 @@ const pluginList = [
             maxRequests: STANDARD_API_RATE_LIMIT,
           },
         }
-      : {}),
+      : { rateLimit: { maxRequests: 10000, timeWindow: 86400000 } }),
   }),
   dash(),
   organization({
@@ -106,6 +113,18 @@ export const auth = betterAuth({
     requireEmailVerification: false,
     disableSignUp: DISABLE_SIGNUP,
   },
+  emailVerification: {
+    sendVerificationEmail: async ({
+      user,
+      url,
+    }: {
+      user: { email: string };
+      url: string;
+      token: string;
+    }) => {
+      await sendEmailVerificationLink(user.email, url);
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -135,6 +154,18 @@ export const auth = betterAuth({
     },
     changeEmail: {
       enabled: true,
+      sendChangeEmailConfirmation: async ({
+        user,
+        newEmail,
+        url,
+      }: {
+        user: { email: string };
+        newEmail: string;
+        url: string;
+        token: string;
+      }) => {
+        await sendChangeEmailVerification(user.email, newEmail, url);
+      },
     },
   },
   plugins: pluginList,
