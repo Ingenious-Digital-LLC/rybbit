@@ -25,17 +25,12 @@ import { Switch } from "@/components/ui/switch";
 import { deleteSite, updateSiteConfig, SiteResponse } from "@/api/admin/endpoints";
 import { useGetSitesFromOrg } from "@/api/admin/hooks/useSites";
 import { normalizeDomain } from "@/lib/utils";
-import { IPExclusionManager } from "./IPExclusionManager";
-import { CountryExclusionManager } from "./CountryExclusionManager";
-import { GSCManager } from "./GSCManager";
-import { useStripeSubscription } from "../../lib/subscription/useStripeSubscription";
-import { Badge } from "../ui/badge";
-import { IS_CLOUD } from "../../lib/const";
 
-interface SiteConfigurationProps {
+interface GeneralTabProps {
   siteMetadata: SiteResponse;
   disabled?: boolean;
   onClose?: () => void;
+  onPublicChange?: (checked: boolean) => void;
 }
 
 interface ToggleConfig {
@@ -50,7 +45,7 @@ interface ToggleConfig {
   badge?: ReactNode;
 }
 
-export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: SiteConfigurationProps) {
+export function GeneralTab({ siteMetadata, disabled = false, onClose, onPublicChange }: GeneralTabProps) {
   const t = useExtracted();
   const { refetch } = useGetSitesFromOrg(siteMetadata?.organizationId ?? "");
   const router = useRouter();
@@ -61,27 +56,15 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
   const [isChangingDomain, setIsChangingDomain] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Track all toggle states and loading states in single objects
   const [toggleStates, setToggleStates] = useState({
     public: siteMetadata.public || false,
     saltUserIds: siteMetadata.saltUserIds || false,
     blockBots: siteMetadata.blockBots || false,
-    sessionReplay: siteMetadata.sessionReplay || false,
-    webVitals: siteMetadata.webVitals || false,
-    trackErrors: siteMetadata.trackErrors || false,
-    trackOutbound: siteMetadata.trackOutbound ?? true,
-    trackUrlParams: siteMetadata.trackUrlParams ?? true,
-    trackInitialPageView: siteMetadata.trackInitialPageView ?? true,
-    trackSpaNavigation: siteMetadata.trackSpaNavigation ?? true,
     trackIp: siteMetadata.trackIp ?? false,
-    trackButtonClicks: siteMetadata.trackButtonClicks ?? false,
-    trackCopy: siteMetadata.trackCopy ?? false,
-    trackFormInteractions: siteMetadata.trackFormInteractions ?? false,
   });
 
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
 
-  // Generic toggle handler
   const handleToggle = useCallback(
     async (
       key: keyof typeof toggleStates,
@@ -92,6 +75,9 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
       try {
         await updateSiteConfig(siteMetadata.siteId, { [key]: checked });
         setToggleStates(prev => ({ ...prev, [key]: checked }));
+        if (key === "public") {
+          onPublicChange?.(checked);
+        }
         const message = successMessage
           ? checked
             ? successMessage.enabled
@@ -107,7 +93,7 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
         setLoadingStates(prev => ({ ...prev, [key]: false }));
       }
     },
-    [siteMetadata.siteId, refetch]
+    [siteMetadata.siteId, refetch, onPublicChange]
   );
 
   const handleNameChange = async () => {
@@ -167,7 +153,6 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
     }
   };
 
-  // Configuration for privacy & security toggles
   const privacyToggles: ToggleConfig[] = [
     {
       id: "public",
@@ -207,177 +192,15 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
     },
   ];
 
-  const { data: subscription, isLoading: isSubscriptionLoading } = useStripeSubscription();
-
-  const sessionReplayDisabled = (!subscription?.planName.includes("pro") || (!!subscription?.isTrial && (subscription?.eventLimit ?? 0) >= 500_000)) && IS_CLOUD;
-  const standardFeaturesDisabled = !subscription?.planName.includes("standard") && !subscription?.planName.includes("pro") && !subscription?.planName.includes("appsumo") && IS_CLOUD;
-
-  // Configuration for analytics feature toggles
-  const analyticsToggles: ToggleConfig[] = [
-    ...(!subscription?.planName?.startsWith("appsumo") && !isSubscriptionLoading
-      ? [
-        {
-          id: "sessionReplay",
-          label: t("Session Replay"),
-          description: t("Record and replay user sessions to understand user behavior"),
-          value: toggleStates.sessionReplay,
-          key: "sessionReplay",
-          enabledMessage: t("Session replay enabled"),
-          disabledMessage: t("Session replay disabled"),
-          disabled: sessionReplayDisabled,
-          badge: <Badge variant="success">Pro</Badge>,
-        } as ToggleConfig,
-      ]
-      : []),
-    ...(IS_CLOUD
-      ? [
-        {
-          id: "webVitals",
-          label: t("Web Vitals"),
-          description: t("Track Core Web Vitals metrics (LCP, CLS, INP, FCP, TTFB)"),
-          value: toggleStates.webVitals,
-          key: "webVitals" as keyof SiteResponse,
-          enabledMessage: t("Web Vitals enabled"),
-          disabledMessage: t("Web Vitals disabled"),
-          disabled: standardFeaturesDisabled,
-          badge: <Badge variant="success">Standard</Badge>,
-        } as ToggleConfig,
-      ]
-      : []),
-    {
-      id: "trackSpaNavigation",
-      label: t("SPA Navigation"),
-      description: t("Automatically track navigation in single-page applications"),
-      value: toggleStates.trackSpaNavigation,
-      key: "trackSpaNavigation",
-      enabledMessage: t("SPA navigation tracking enabled"),
-      disabledMessage: t("SPA navigation tracking disabled"),
-    },
-    {
-      id: "trackUrlParams",
-      label: t("URL Parameters"),
-      description: t("Include query string parameters in page tracking"),
-      value: toggleStates.trackUrlParams,
-      key: "trackUrlParams",
-      enabledMessage: t("URL parameters tracking enabled"),
-      disabledMessage: t("URL parameters tracking disabled"),
-    },
-    {
-      id: "trackInitialPageView",
-      label: t("Initial Page View"),
-      description: t("Automatically track the first page view when the script loads"),
-      value: toggleStates.trackInitialPageView,
-      key: "trackInitialPageView",
-      enabledMessage: t("Initial page view tracking enabled"),
-      disabledMessage: t("Initial page view tracking disabled"),
-    },
-  ];
-
-  const autoCaptureToggles: ToggleConfig[] = [
-    {
-      id: "trackOutbound",
-      label: t("Outbound Links"),
-      description: t("Track when users click on external links"),
-      value: toggleStates.trackOutbound,
-      key: "trackOutbound",
-      enabledMessage: t("Outbound tracking enabled"),
-      disabledMessage: t("Outbound tracking disabled"),
-    },
-    {
-      id: "trackErrors",
-      label: t("Error Tracking"),
-      description: t("Capture JavaScript errors and exceptions from your site"),
-      value: toggleStates.trackErrors,
-      key: "trackErrors",
-      enabledMessage: t("Error tracking enabled"),
-      disabledMessage: t("Error tracking disabled"),
-      disabled: standardFeaturesDisabled,
-      badge: <Badge variant="success">Standard</Badge>,
-    },
-    {
-      id: "trackButtonClicks",
-      label: t("Button Clicks"),
-      description: t("Automatically track clicks on all buttons"),
-      value: toggleStates.trackButtonClicks,
-      key: "trackButtonClicks",
-      enabledMessage: t("Button click tracking enabled"),
-      disabledMessage: t("Button click tracking disabled"),
-      disabled: standardFeaturesDisabled,
-      badge: <Badge variant="success">Standard</Badge>,
-    },
-    {
-      id: "trackCopy",
-      label: t("Copy Events"),
-      description: t("Track when users copy text from your site"),
-      value: toggleStates.trackCopy,
-      key: "trackCopy",
-      enabledMessage: t("Copy tracking enabled"),
-      disabledMessage: t("Copy tracking disabled"),
-      disabled: standardFeaturesDisabled,
-      badge: <Badge variant="success">Standard</Badge>,
-    },
-    {
-      id: "trackFormInteractions",
-      label: t("Form Interactions"),
-      description: t("Automatically track form submissions and input/select changes"),
-      value: toggleStates.trackFormInteractions,
-      key: "trackFormInteractions",
-      enabledMessage: t("Form interaction tracking enabled"),
-      disabledMessage: t("Form interaction tracking disabled"),
-      disabled: standardFeaturesDisabled,
-      badge: <Badge variant="success">Standard</Badge>,
-    },
-  ];
-
-  const renderToggleSection = (toggles: ToggleConfig[], title?: string) => (
-    <>
-      {title && <h4 className="text-sm font-semibold text-foreground">{title}</h4>}
-      {toggles.map(toggle => (
-        <div key={toggle.id} className="flex items-center justify-between">
-          <div>
-            <Label htmlFor={toggle.id} className="text-sm font-medium text-foreground flex items-center gap-2">
-              {toggle.label} {toggle.badge && IS_CLOUD && toggle.badge}
-            </Label>
-            <p className="text-xs text-muted-foreground mt-1">{toggle.description}</p>
-          </div>
-          <Switch
-            id={toggle.id}
-            checked={toggle.value}
-            disabled={loadingStates[toggle.key] || disabled || toggle.disabled}
-            onCheckedChange={checked =>
-              handleToggle(
-                toggle.key as keyof typeof toggleStates,
-                checked,
-                toggle.enabledMessage && toggle.disabledMessage
-                  ? { enabled: toggle.enabledMessage, disabled: toggle.disabledMessage }
-                  : undefined
-              )
-            }
-          />
-        </div>
-      ))}
-    </>
-  );
-
   return (
-    <div className="pt-4 pb-6 space-y-6 max-h-[70vh] overflow-y-auto">
-      <div className="space-y-4">{renderToggleSection(privacyToggles, t("Privacy & Security"))}</div>
-      <div className="space-y-4">{renderToggleSection(analyticsToggles, t("Analytics Features"))}</div>
-      <div className="space-y-4">{renderToggleSection(autoCaptureToggles, t("Auto Capture"))}</div>
-      <IPExclusionManager siteId={siteMetadata.siteId} disabled={disabled} />
-      <CountryExclusionManager siteId={siteMetadata.siteId} disabled={disabled} />
-      {IS_CLOUD && <GSCManager disabled={disabled} />}
+    <div className="space-y-6">
       <div className="space-y-3">
         <div>
           <h4 className="text-sm font-semibold text-foreground">{t("Site Name")}</h4>
           <p className="text-xs text-muted-foreground">{t("The display name for this site")}</p>
         </div>
         <div className="flex space-x-2">
-          <Input
-            value={newName}
-            onChange={e => setNewName(e.target.value)}
-            placeholder="My Website"
-          />
+          <Input value={newName} onChange={e => setNewName(e.target.value)} placeholder="My Website" />
           <Button
             variant="outline"
             onClick={handleNameChange}
@@ -409,7 +232,34 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
         </div>
       </div>
 
-      {/* Danger Zone Section */}
+      <div className="space-y-4">
+        <h4 className="text-sm font-semibold text-foreground">{t("Privacy & Security")}</h4>
+        {privacyToggles.map(toggle => (
+          <div key={toggle.id} className="flex items-center justify-between">
+            <div>
+              <Label htmlFor={toggle.id} className="text-sm font-medium text-foreground flex items-center gap-2">
+                {toggle.label}
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">{toggle.description}</p>
+            </div>
+            <Switch
+              id={toggle.id}
+              checked={toggle.value}
+              disabled={loadingStates[toggle.key] || disabled || toggle.disabled}
+              onCheckedChange={checked =>
+                handleToggle(
+                  toggle.key as keyof typeof toggleStates,
+                  checked,
+                  toggle.enabledMessage && toggle.disabledMessage
+                    ? { enabled: toggle.enabledMessage, disabled: toggle.disabledMessage }
+                    : undefined
+                )
+              }
+            />
+          </div>
+        ))}
+      </div>
+
       <div className="space-y-3 pt-3">
         <h4 className="text-sm font-semibold text-destructive">{t("Danger Zone")}</h4>
         <AlertDialog>
@@ -423,7 +273,10 @@ export function SiteConfiguration({ siteMetadata, disabled = false, onClose }: S
             <AlertDialogHeader>
               <AlertDialogTitle>{t("Are you absolutely sure?")}</AlertDialogTitle>
               <AlertDialogDescription>
-                {t('This action cannot be undone. This will permanently delete the site "{siteName}" and all of its analytics data.', { siteName: siteMetadata.name })}
+                {t(
+                  'This action cannot be undone. This will permanently delete the site "{siteName}" and all of its analytics data.',
+                  { siteName: siteMetadata.name }
+                )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

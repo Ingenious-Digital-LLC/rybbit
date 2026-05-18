@@ -10,7 +10,6 @@ import { MainSection } from "./components/MainSection/MainSection";
 import { Countries } from "./components/sections/Countries";
 import { Devices } from "./components/sections/Devices";
 import { Events } from "./components/sections/Events";
-import { Network } from "./components/sections/Network";
 import { Pages } from "./components/sections/Pages";
 import { Referrers } from "./components/sections/Referrers";
 import { SearchConsole } from "./components/sections/SearchConsole";
@@ -51,7 +50,6 @@ function MainPageContent() {
         <LazySection><Countries /></LazySection>
         <LazySection height="483px"><Events /></LazySection>
         <LazySection><Weekdays /></LazySection>
-        {IS_CLOUD && <LazySection><Network /></LazySection>}
         {IS_CLOUD && <LazySection><SearchConsole /></LazySection>}
       </div>
     </div>

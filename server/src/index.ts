@@ -79,6 +79,7 @@ import {
   createSiteImport,
   deleteSite,
   deleteSiteImport,
+  getEmbedStats,
   getSite,
   getSiteExcludedCountries,
   getSiteExcludedIPs,
@@ -298,6 +299,7 @@ async function sitesRoutes(fastify: FastifyInstance) {
   fastify.get("/sites/:siteId/private-link-config", adminSite, getSitePrivateLinkConfig);
   fastify.post("/sites/:siteId/private-link-config", adminSite, updateSitePrivateLinkConfig);
   fastify.get("/site/tracking-config/:siteId", getTrackingConfig); // Public - used by tracking script
+  fastify.get("/sites/:siteId/embed-stats", { preHandler: [resolveSiteId] as any }, getEmbedStats); // Public - widget endpoint (handler checks site is public)
   fastify.get("/sites/:siteId/excluded-ips", authSite, getSiteExcludedIPs);
   fastify.get("/sites/:siteId/excluded-countries", authSite, getSiteExcludedCountries);
   fastify.get("/sites/:siteId/verify-script", authSite, verifyScript);
@@ -305,7 +307,11 @@ async function sitesRoutes(fastify: FastifyInstance) {
   // Site Imports
   fastify.get("/sites/:siteId/imports", adminSite, getSiteImports);
   fastify.post("/sites/:siteId/imports", adminSite, createSiteImport);
-  fastify.post("/sites/:siteId/imports/:importId/events", adminSite, batchImportEvents);
+  fastify.post(
+    "/sites/:siteId/imports/:importId/events",
+    { ...adminSite, bodyLimit: 50 * 1024 * 1024 },
+    batchImportEvents
+  );
   fastify.delete("/sites/:siteId/imports/:importId", adminSite, deleteSiteImport);
 }
 

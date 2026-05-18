@@ -68,6 +68,7 @@ export const sites = pgTable("sites", {
   createdBy: text("created_by").references(() => user.id, { onDelete: "set null" }),
   organizationId: text("organization_id").references(() => organization.id),
   public: boolean().default(false),
+  embedEnabled: boolean("embed_enabled").default(false),
   saltUserIds: boolean().default(false),
   blockBots: boolean().default(true).notNull(),
   excludedIPs: jsonb("excluded_ips").default([]), // Array of IP addresses/ranges to exclude
@@ -663,7 +664,7 @@ export const cancellationFeedback = pgTable("cancellation_feedback", {
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
 });
 
-export const importPlatforms = ["umami", "simple_analytics"] as const;
+export const importPlatforms = ["umami", "simple_analytics", "plausible"] as const;
 
 export const importPlatformEnum = pgEnum("import_platform_enum", importPlatforms);
 

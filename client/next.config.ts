@@ -4,8 +4,9 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     srcPath: "./src",
-    extract: { sourceLocale: "en" },
+    extract: true,
     messages: {
+      sourceLocale: "en",
       path: "./messages",
       format: "json",
       locales: ["en", "de", "fr", "zh", "es", "pl", "it", "ko", "pt", "ja", "cs", "uk"],

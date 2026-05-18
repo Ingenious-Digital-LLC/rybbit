@@ -106,21 +106,6 @@ class PageviewQueue {
         timezone: timezone,
         tag: pv.tag || "",
         import_id: null,
-        company: dataForIp?.company?.name || "",
-        company_domain: dataForIp?.company?.domain || "",
-        company_type: dataForIp?.company?.type || "",
-        company_abuse_score: dataForIp?.company?.abuseScore ?? null,
-        asn: dataForIp?.asn?.asn || null,
-        asn_org: dataForIp?.asn?.org || "",
-        asn_domain: dataForIp?.asn?.domain || "",
-        asn_type: dataForIp?.asn?.type || "",
-        asn_abuse_score: dataForIp?.asn?.abuseScore ?? null,
-        vpn: dataForIp?.vpn || "",
-        crawler: dataForIp?.crawler || "",
-        datacenter: dataForIp?.datacenter || "",
-        is_proxy: dataForIp?.isProxy ?? null,
-        is_tor: dataForIp?.isTor ?? null,
-        is_satellite: dataForIp?.isSatellite ?? null,
       };
     });
 
