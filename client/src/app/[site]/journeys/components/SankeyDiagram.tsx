@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useRef } from "react";
 
 const MIN_LINK_HEIGHT = 0;
-const MAX_LINK_HEIGHT = 100;
+const MAX_LINK_HEIGHT = 56;
 const MIN_NODE_HEIGHT = 2;
 
 interface Journey {
@@ -110,9 +110,9 @@ export function SankeyDiagram({ journeys, steps, maxJourneys, domain }: SankeyDi
     const width = containerWidth;
     const stepWidth = width / steps;
     const stepSpacing = stepWidth - nodeWidth;
-    const nodeGap = 20; // Gap between nodes
-    const minHeight = 200;
-    const verticalPadding = 10;
+    const nodeGap = 10;
+    const minHeight = 160;
+    const verticalPadding = 6;
 
     // Calculate the total height needed for each step column
     const stepHeights = Array.from(nodesByStep.values()).map(stepNodes => {

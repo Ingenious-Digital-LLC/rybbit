@@ -6,7 +6,6 @@ export { getEvents } from "./events/getEvents.js";
 export { getOutboundLinks } from "./events/getOutboundLinks.js";
 export { getSiteEventCount } from "./events/getSiteEventCount.js";
 
-
 // Funnels
 export { createFunnel } from "./funnels/createFunnel.js";
 export { deleteFunnel } from "./funnels/deleteFunnel.js";
@@ -19,12 +18,18 @@ export { createGoal } from "./goals/createGoal.js";
 export { deleteGoal } from "./goals/deleteGoal.js";
 export { getGoals } from "./goals/getGoals.js";
 export { getGoalSessions } from "./goals/getGoalSessions.js";
+export { getGoalTimeSeries } from "./goals/getGoalTimeSeries.js";
 export { updateGoal } from "./goals/updateGoal.js";
 
 // Performance
 export { getPerformanceByDimension } from "./performance/getPerformanceByDimension.js";
 export { getPerformanceOverview } from "./performance/getPerformanceOverview.js";
 export { getPerformanceTimeSeries } from "./performance/getPerformanceTimeSeries.js";
+
+// Bots
+export { getBotDimension } from "./bots/getBotDimension.js";
+export { getBotOverview } from "./bots/getBotOverview.js";
+export { getBotTimeSeries } from "./bots/getBotTimeSeries.js";
 
 // Export
 export { generatePdfReport } from "./generatePdfReport.js";

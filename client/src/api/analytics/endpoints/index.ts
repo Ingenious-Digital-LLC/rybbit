@@ -34,7 +34,6 @@ export type {
   SiteEventCountParams,
 } from "./events";
 
-
 // Errors endpoints
 export { fetchErrorNames, fetchErrorEvents, fetchErrorBucketed } from "./errors";
 export type {
@@ -51,12 +50,14 @@ export type {
 } from "./errors";
 
 // Goals endpoints
-export { fetchGoals, fetchGoalSessions, createGoal, updateGoal, deleteGoal } from "./goals";
+export { fetchGoals, fetchGoalTimeSeries, fetchGoalSessions, createGoal, updateGoal, deleteGoal } from "./goals";
 export type {
   Goal,
+  GoalTimeSeriesPoint,
   PaginationMeta,
   GoalsResponse,
   GoalsParams,
+  GoalTimeSeriesParams,
   GoalSessionsParams,
   CreateGoalParams,
   UpdateGoalParams,
@@ -86,6 +87,21 @@ export type {
   PerformanceByDimensionParams,
   PaginatedPerformanceResponse,
 } from "./performance";
+
+// Bots endpoints
+export { fetchBotDimension, fetchBotOverview, fetchBotTimeSeries } from "./bots";
+export type {
+  BotDimensionKey,
+  BotDimensionItem,
+  BotDimensionParams,
+  BotLayerKey,
+  BotOverviewParams,
+  BotTimeSeriesParams,
+  BotTimeSeriesPoint,
+  GetBotOverviewResponse,
+  GetBotTimeSeriesResponse,
+  PaginatedBotDimensionResponse,
+} from "./bots";
 
 // Sessions endpoints
 export { fetchSessions, fetchSession, fetchSessionLocations } from "./sessions";
