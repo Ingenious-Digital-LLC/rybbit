@@ -62,13 +62,15 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+    ports:
+      - "5432:5432"
 
   backend:
     image: ghcr.io/rybbit-io/rybbit-backend:${IMAGE_TAG:-latest}
     container_name: backend
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: ./server/Dockerfile
     ports:
       - "${HOST_BACKEND_PORT:-127.0.0.1:3001:3001}"
     environment:
@@ -86,6 +88,9 @@ services:
       - DISABLE_SIGNUP=${DISABLE_SIGNUP}
       - DISABLE_TELEMETRY=${DISABLE_TELEMETRY}
       - MAPBOX_TOKEN=${MAPBOX_TOKEN}
+      - CLUSTER_WORKERS=${CLUSTER_WORKERS:-4}
+      - DEPLOYMENT=${DEPLOYMENT}
+      - LITE_DASHBOARD=${LITE_DASHBOARD}
     depends_on:
       clickhouse:
         condition: service_healthy
@@ -104,16 +109,19 @@ services:
     container_name: client
     build:
       context: .
-      dockerfile: client/Dockerfile
+      dockerfile: ./client/Dockerfile
       args:
         NEXT_PUBLIC_BACKEND_URL: ${BASE_URL}
         NEXT_PUBLIC_DISABLE_SIGNUP: ${DISABLE_SIGNUP}
+        NEXT_PUBLIC_LITE_DASHBOARD: ${LITE_DASHBOARD}
     ports:
       - "${HOST_CLIENT_PORT:-127.0.0.1:3002:3002}"
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_BACKEND_URL=${BASE_URL}
       - NEXT_PUBLIC_DISABLE_SIGNUP=${DISABLE_SIGNUP}
+      - NEXT_PUBLIC_DEPLOYMENT=${DEPLOYMENT}
+      - NEXT_PUBLIC_LITE_DASHBOARD=${LITE_DASHBOARD}
     depends_on:
       - backend
     restart: unless-stopped

@@ -24,7 +24,8 @@
     "update:referrer-spam": "node src/services/tracker/botBlocking/update-referrer-spam.mjs",
     "knip": "knip",
     "format": "prettier --write \"src/**/*.{js,ts,json,md}\"",
-    "format:check": "prettier --check \"src/**/*.{js,ts,json,md}\""
+    "format:check": "prettier --check \"src/**/*.{js,ts,json,md}\"",
+    "backfill:lite-mvs": "tsc && node dist/scripts/backfillLiteDashboardMVs.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",
@@ -61,6 +62,7 @@
     "react-dom": "19.2.1",
     "resend": "^4.5.1",
     "rrweb": "^2.0.0-alpha.20",
+    "safe-regex2": "^5.0.0",
     "sqlstring": "2.3.3",
     "stripe": "18.1.0",
     "twilio": "^5.8.0",
