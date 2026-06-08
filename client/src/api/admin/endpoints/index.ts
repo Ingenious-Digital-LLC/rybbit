@@ -2,6 +2,7 @@
 export {
   addSite,
   deleteSite,
+  moveSite,
   updateSiteConfig,
   fetchSite,
   fetchSitesFromOrg,
@@ -30,7 +31,7 @@ export { getAdminOrganizations } from "./adminOrganizations";
 export type { AdminOrganizationData } from "./adminOrganizations";
 
 // Admin Sites endpoints
-export { getAdminSites } from "./adminSites";
+export { getAdminSites, adminMoveSite } from "./adminSites";
 export type { AdminSiteData } from "./adminSites";
 
 // Admin Service Event Count endpoints

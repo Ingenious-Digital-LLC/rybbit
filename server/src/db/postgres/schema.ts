@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import type { DashboardConfig } from "@rybbit/shared";
 import {
   boolean,
   check,
@@ -94,7 +95,11 @@ export const sites = pgTable(
   table => [check("sites_type_check", sql`${table.type} IS NULL OR ${table.type} IN ('web', 'mobile')`)]
 );
 
-// Active sessions table
+// Active sessions table.
+// DEPRECATED: session tracking moved to Redis (see services/sessions/sessionsService.ts).
+// No longer read or written by the app; kept so existing deployments stay drift-free.
+// Drop it once Redis-backed sessions are verified in production:
+//   DROP TABLE IF EXISTS active_sessions;
 export const activeSessions = pgTable("active_sessions", {
   sessionId: text("session_id").primaryKey().notNull(),
   siteId: integer("site_id"),
@@ -108,6 +113,16 @@ export const funnels = pgTable("funnels", {
   siteId: integer("site_id").references(() => sites.siteId, { onDelete: "cascade" }),
   userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
   data: jsonb(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow(),
+});
+
+export const dashboards = pgTable("dashboards", {
+  dashboardId: serial("dashboard_id").primaryKey().notNull(),
+  siteId: integer("site_id").references(() => sites.siteId, { onDelete: "cascade" }),
+  userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
+  name: text("name").notNull(),
+  config: jsonb("config").notNull().$type<DashboardConfig>().default({ cards: [] }),
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });

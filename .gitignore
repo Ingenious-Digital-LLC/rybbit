@@ -50,3 +50,7 @@ coverage/
 .agents/
 
 .deepsec/
+
+.github/
+
+.impeccable/critique

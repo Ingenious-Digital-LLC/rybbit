@@ -21,8 +21,12 @@ import {
   sendWelcomeEmail,
 } from "./email/email.js";
 import { onboardingTipsService } from "../services/onboardingTips/onboardingTipsService.js";
+import { getTrustedCorsOrigins } from "./cors.js";
+import { createServiceLogger } from "./logger/logger.js";
 
 dotenv.config();
+
+const authLogger = createServiceLogger("better-auth");
 
 const pluginList = [
   admin(),
@@ -180,6 +184,13 @@ const pluginList = [
 export const auth = betterAuth({
   basePath: "/api/auth",
   appName: "Rybbit",
+  logger: {
+    log: (level, message, ...args) => {
+      // Route better-auth's internal logs (e.g. API key rate-limit errors)
+      // through the project's pino logger instead of console.
+      authLogger[level]({ args }, message);
+    },
+  },
   database: new pg.Pool({
     host: process.env.POSTGRES_HOST || "postgres",
     port: parseInt(process.env.POSTGRES_PORT || "5432", 10),
@@ -249,7 +260,7 @@ export const auth = betterAuth({
     },
   },
   plugins: pluginList,
-  trustedOrigins: ["http://localhost:3002"],
+  trustedOrigins: getTrustedCorsOrigins(),
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production", // don't mark Secure in dev
     defaultCookieAttributes: {

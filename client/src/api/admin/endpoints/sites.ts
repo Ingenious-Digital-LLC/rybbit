@@ -106,6 +106,13 @@ export function deleteSite(siteId: number) {
   });
 }
 
+export function moveSite(siteId: number, organizationId: string) {
+  return authedFetch<{ success: boolean; organizationId: string }>(`/sites/${siteId}/move`, undefined, {
+    method: "PUT",
+    data: { organizationId },
+  });
+}
+
 // Consolidated function to update any site configuration
 export function updateSiteConfig(
   siteId: number,

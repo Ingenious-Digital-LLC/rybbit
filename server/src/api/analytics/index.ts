@@ -13,6 +13,14 @@ export { getFunnel } from "./funnels/getFunnel.js";
 export { getFunnelStepSessions } from "./funnels/getFunnelStepSessions.js";
 export { getFunnels } from "./funnels/getFunnels.js";
 
+// Dashboards
+export { createDashboard } from "./dashboards/createDashboard.js";
+export { deleteDashboard } from "./dashboards/deleteDashboard.js";
+export { getDashboard } from "./dashboards/getDashboard.js";
+export { getDashboards } from "./dashboards/getDashboards.js";
+export { updateDashboard } from "./dashboards/updateDashboard.js";
+export { runDashboardCardQuery } from "./runDashboardCardQuery.js";
+
 // Goals
 export { createGoal } from "./goals/createGoal.js";
 export { deleteGoal } from "./goals/deleteGoal.js";
@@ -38,6 +46,7 @@ export { generatePdfReport } from "./generatePdfReport.js";
 export { getErrorBucketed } from "./getErrorBucketed.js";
 export { getErrorEvents } from "./getErrorEvents.js";
 export { getErrorNames } from "./getErrorNames.js";
+export { generateCustomQuery } from "./generateCustomQuery.js";
 export { getJourneys } from "./getJourneys.js";
 export { getLiveUsercount } from "./getLiveUsercount.js";
 export { getMetric } from "./getMetric.js";
@@ -49,6 +58,7 @@ export { getOverviewBucketedLite } from "./lite/getOverviewBucketedLite.js";
 export { getMetricLite } from "./lite/getMetricLite.js";
 export { getPageTitles } from "./getPageTitles.js";
 export { getRetention } from "./getRetention.js";
+export { runCustomQuery } from "./runCustomQuery.js";
 export { getSession } from "./sessions/getSession.js";
 export { getSessionLocations } from "./sessions/getSessionLocations.js";
 export { getSessions } from "./sessions/getSessions.js";

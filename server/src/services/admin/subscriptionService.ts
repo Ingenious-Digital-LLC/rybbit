@@ -31,61 +31,63 @@ async function fetchSubscriptionsForCustomers(
     return subscriptionMap;
   }
 
-  try {
-    for (const status of ["active", "trialing"] as const) {
-    let hasMore = true;
-    let startingAfter: string | undefined;
+  const stripeClient = stripe;
 
-    while (hasMore) {
-      const subscriptions = await stripe.subscriptions.list({
-        status,
+  // Fetch subscriptions per-customer with bounded concurrency so cost scales with
+  // the number of orgs we care about rather than the entire Stripe account.
+  const customerIds = Array.from(stripeCustomerIds);
+  const CONCURRENCY = 10;
+
+  const fetchForCustomer = async (customerId: string) => {
+    try {
+      const subscriptions = await stripeClient.subscriptions.list({
+        customer: customerId,
+        status: "all",
         limit: 100,
         expand: ["data.plan.product"],
-        ...(startingAfter && { starting_after: startingAfter }),
       });
 
-      for (const subscription of subscriptions.data) {
-        const customerId = subscription.customer as string;
+      // Prefer an active/trialing subscription, matching the previous behavior.
+      const subscription =
+        subscriptions.data.find(sub => sub.status === "active" || sub.status === "trialing") ??
+        subscriptions.data[0];
 
-        if (stripeCustomerIds.has(customerId)) {
-          const subscriptionItem = subscription.items.data[0];
-          const priceId = subscriptionItem.price.id;
-
-          if (priceId) {
-            const planDetails = getStripePrices().find(plan => plan.priceId === priceId);
-
-            const subscriptionData: SubscriptionData = {
-              id: subscription.id,
-              planName: planDetails?.name || "Unknown Plan",
-              status: subscription.status,
-            };
-
-            if (includeFullDetails) {
-              subscriptionData.currentPeriodStart = new Date(subscriptionItem.current_period_start * 1000);
-              subscriptionData.currentPeriodEnd = new Date(subscriptionItem.current_period_end * 1000);
-              subscriptionData.cancelAtPeriodEnd = subscription.cancel_at_period_end;
-              subscriptionData.eventLimit = planDetails?.limits.events || 0;
-              subscriptionData.interval = subscriptionItem.price.recurring?.interval ?? "unknown";
-            }
-
-            subscriptionMap.set(customerId, subscriptionData);
-          }
-        }
+      if (!subscription) {
+        return;
       }
 
-      hasMore = subscriptions.has_more;
-      if (hasMore && subscriptions.data.length > 0) {
-        startingAfter = subscriptions.data[subscriptions.data.length - 1].id;
+      const subscriptionItem = subscription.items.data[0];
+      const priceId = subscriptionItem?.price.id;
+
+      if (!priceId) {
+        return;
       }
 
-      // Rate limiting: wait 50ms between requests (20 req/s)
-      if (hasMore) {
-        await new Promise(resolve => setTimeout(resolve, 50));
+      const planDetails = getStripePrices().find(plan => plan.priceId === priceId);
+
+      const subscriptionData: SubscriptionData = {
+        id: subscription.id,
+        planName: planDetails?.name || "Unknown Plan",
+        status: subscription.status,
+      };
+
+      if (includeFullDetails) {
+        subscriptionData.currentPeriodStart = new Date(subscriptionItem.current_period_start * 1000);
+        subscriptionData.currentPeriodEnd = new Date(subscriptionItem.current_period_end * 1000);
+        subscriptionData.cancelAtPeriodEnd = subscription.cancel_at_period_end;
+        subscriptionData.eventLimit = planDetails?.limits.events || 0;
+        subscriptionData.interval = subscriptionItem.price.recurring?.interval ?? "unknown";
       }
+
+      subscriptionMap.set(customerId, subscriptionData);
+    } catch (error) {
+      console.error(`Error fetching Stripe subscription for customer ${customerId}:`, error);
     }
-    } // end for (status)
-  } catch (error) {
-    console.error("Error fetching subscriptions from Stripe:", error);
+  };
+
+  for (let i = 0; i < customerIds.length; i += CONCURRENCY) {
+    const batch = customerIds.slice(i, i + CONCURRENCY);
+    await Promise.all(batch.map(fetchForCustomer));
   }
 
   return subscriptionMap;

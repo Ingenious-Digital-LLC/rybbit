@@ -134,8 +134,13 @@ class UsageService {
       return [Infinity, this.getStartOfMonth()];
     }
 
-    // Get the best subscription (highest event limit from AppSumo or Stripe)
-    const subscription = await getBestSubscription(orgData.id, orgData.stripeCustomerId);
+    // Get the best subscription (highest event limit from AppSumo or Stripe).
+    // throwOnStripeError ensures a transient Stripe failure surfaces as an error here
+    // instead of silently resolving to the free tier (which would wrongly flag a paying
+    // org as over-limit). The caller skips the org when this throws.
+    const subscription = await getBestSubscription(orgData.id, orgData.stripeCustomerId, {
+      throwOnStripeError: true,
+    });
 
     // Log subscription details
     if (subscription.source === "appsumo") {
@@ -241,7 +246,21 @@ class UsageService {
           const wasOverLimit = orgData.overMonthlyLimit ?? false;
           const alreadyNotifiedApproaching = orgData.approachingLimitNotifiedPeriodStart === monthStart;
 
-          const [eventLimit] = await this.getOrganizationSubscriptionInfo(orgData);
+          let eventLimit: number;
+          try {
+            [eventLimit] = await this.getOrganizationSubscriptionInfo(orgData);
+          } catch (error) {
+            // We couldn't determine this org's subscription (e.g. a Stripe rate limit).
+            // Treating that as the free tier would wrongly mark a paying org as over-limit,
+            // blocking its event ingestion and emailing its owner. Skip the org and leave
+            // its existing limit state untouched until a later run can fetch the real plan.
+            this.logger.warn(
+              `Skipping organization ${orgData.name}: could not determine subscription (${
+                (error as Error).message
+              }). Preserving previous limit state.`
+            );
+            continue;
+          }
           const isOverLimit = eventCount > eventLimit;
 
           let sendApproaching = false;

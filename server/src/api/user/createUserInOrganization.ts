@@ -48,14 +48,15 @@ export async function createUserInOrganization(
 
     // Authorization: system admin OR owner/admin of this organization
     const isAdmin = await getIsUserAdmin(request);
+    let callerMembership = null;
     if (!isAdmin) {
       if (!userId) {
         return reply.status(401).send({ error: "Unauthorized" });
       }
-      const userMembership = await db.query.member.findFirst({
+      callerMembership = await db.query.member.findFirst({
         where: and(eq(member.userId, userId), eq(member.organizationId, organizationId)),
       });
-      if (!userMembership || (userMembership.role !== "admin" && userMembership.role !== "owner")) {
+      if (!callerMembership || (callerMembership.role !== "admin" && callerMembership.role !== "owner")) {
         return reply.status(401).send({ error: "Unauthorized" });
       }
     }
@@ -69,6 +70,13 @@ export async function createUserInOrganization(
 
     if (role !== "admin" && role !== "member" && role !== "owner") {
       return reply.status(400).send({ error: "Role must be either admin, member, or owner" });
+    }
+
+    // Only an organization owner (or a system admin) may create an owner — minting
+    // an account with higher privileges than an org admin's own is a
+    // privilege-escalation path.
+    if (role === "owner" && !isAdmin && callerMembership?.role !== "owner") {
+      return reply.status(403).send({ error: "Only an organization owner can assign the owner role" });
     }
 
     if (password.length < 8) {

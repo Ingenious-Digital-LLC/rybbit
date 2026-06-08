@@ -6,6 +6,7 @@ import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest }
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import {
+  adminMoveSite,
   collectTelemetry,
   getAdminOrganizations,
   getAdminServiceEventCount,
@@ -14,17 +15,22 @@ import {
   getClickhouseQueryLog,
 } from "./api/admin/index.js";
 import {
+  createDashboard,
   createFunnel,
   createGoal,
+  deleteDashboard,
   deleteFunnel,
   deleteGoal,
   generatePdfReport,
+  getDashboard,
+  getDashboards,
   getBotDimension,
   getBotOverview,
   getBotTimeSeries,
   getErrorBucketed,
   getErrorEvents,
   getErrorNames,
+  generateCustomQuery,
   getEventBucketed,
   getEventNames,
   getEventProperties,
@@ -60,6 +66,9 @@ import {
   getUserTraitValueUsers,
   getUserTraitValues,
   getUsers,
+  runCustomQuery,
+  runDashboardCardQuery,
+  updateDashboard,
   updateGoal,
 } from "./api/analytics/index.js";
 import { getConfig, getVersion } from "./api/getConfig.js";
@@ -110,6 +119,7 @@ import {
   getSitePrivateLinkConfig,
   getSitesFromOrg,
   getTrackingConfig,
+  moveSite,
   updateSiteConfig,
   updateSitePrivateLinkConfig,
   verifyScript,
@@ -149,9 +159,9 @@ import {
 } from "./lib/auth-middleware.js";
 import { mapHeaders } from "./lib/auth-utils.js";
 import { auth } from "./lib/auth.js";
+import { createCorsOptionsDelegate, createRejectUntrustedOriginHook } from "./lib/cors.js";
 import { IS_CLOUD } from "./lib/const.js";
 import { reengagementService } from "./services/reengagement/reengagementService.js";
-import { sessionsService } from "./services/sessions/sessionsService.js";
 import { telemetryService } from "./services/telemetryService.js";
 import { handleIdentify } from "./services/tracker/identifyService.js";
 import { trackEvent } from "./services/tracker/trackEvent.js";
@@ -209,13 +219,9 @@ const server = Fastify({
 });
 
 server.register(cors, {
-  origin: (_origin, callback) => {
-    callback(null, true);
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "x-captcha-response", "x-private-key"],
-  credentials: true,
+  delegator: createCorsOptionsDelegate(),
 });
+server.addHook("onRequest", createRejectUntrustedOriginHook());
 
 // Serve static files
 server.register(fastifyStatic, {
@@ -249,10 +255,14 @@ server.register(
   { auth: auth! }
 );
 
-// Serve analytics scripts with generic names to avoid ad-blocker detection
-server.get("/api/script.js", async (_, reply) => reply.sendFile("script.js"));
-server.get("/api/replay.js", async (_, reply) => reply.sendFile("rrweb.min.js"));
-server.get("/api/metrics.js", async (_, reply) => reply.sendFile("web-vitals.iife.js"));
+// Serve analytics scripts with generic names to avoid ad-blocker detection.
+// Cache them so browsers stop revalidating on every page load — without this they
+// default to max-age=0, so each tracked page hit fires a conditional request that
+// lands on caddy and the backend. script.js gets a short TTL so tracker updates
+// still propagate quickly; the vendored libs rarely change and get a longer TTL.
+server.get("/api/script.js", async (_, reply) => reply.sendFile("script.js", { maxAge: "1h" }));
+server.get("/api/replay.js", async (_, reply) => reply.sendFile("rrweb.min.js", { maxAge: "1d" }));
+server.get("/api/metrics.js", async (_, reply) => reply.sendFile("web-vitals.iife.js", { maxAge: "1d" }));
 
 // Domain-specific route plugins
 async function analyticsRoutes(fastify: FastifyInstance) {
@@ -298,6 +308,12 @@ async function analyticsRoutes(fastify: FastifyInstance) {
   fastify.post("/sites/:siteId/goals", authSite, createGoal);
   fastify.delete("/sites/:siteId/goals/:goalId", authSite, deleteGoal);
   fastify.put("/sites/:siteId/goals/:goalId", authSite, updateGoal);
+  fastify.get("/sites/:siteId/dashboards", authSite, getDashboards);
+  fastify.get("/sites/:siteId/dashboards/:dashboardId", authSite, getDashboard);
+  fastify.post("/sites/:siteId/dashboards", authSite, createDashboard);
+  fastify.put("/sites/:siteId/dashboards/:dashboardId", authSite, updateDashboard);
+  fastify.delete("/sites/:siteId/dashboards/:dashboardId", authSite, deleteDashboard);
+  fastify.post("/sites/:siteId/dashboards/run-card", authSite, runDashboardCardQuery);
   fastify.get("/sites/:siteId/feature-flags", authSite, getFeatureFlags);
   fastify.post("/sites/:siteId/feature-flags", adminSite, createFeatureFlag);
   fastify.put("/sites/:siteId/feature-flags/:flagId", adminSite, updateFeatureFlag);
@@ -313,6 +329,8 @@ async function analyticsRoutes(fastify: FastifyInstance) {
   fastify.get("/sites/:siteId/events/properties", publicSite, getEventProperties);
   fastify.get("/sites/:siteId/events/outbound", publicSite, getOutboundLinks);
   fastify.get("/org-event-count/:organizationId", orgMember, getOrgEventCount);
+  fastify.post("/organizations/:organizationId/analytics/query", orgMember, runCustomQuery);
+  fastify.post("/organizations/:organizationId/analytics/query/generate", orgMember, generateCustomQuery);
   fastify.get("/sites/:siteId/performance/overview", publicSite, getPerformanceOverview);
   fastify.get("/sites/:siteId/performance/time-series", publicSite, getPerformanceTimeSeries);
   fastify.get("/sites/:siteId/performance/by-dimension", publicSite, getPerformanceByDimension);
@@ -334,6 +352,7 @@ async function sitesRoutes(fastify: FastifyInstance) {
   // Sites
   fastify.get("/sites/:siteId", publicSite, getSite);
   fastify.put("/sites/:siteId/config", adminSite, updateSiteConfig);
+  fastify.put("/sites/:siteId/move", adminSite, moveSite);
   fastify.delete("/sites/:siteId", adminSite, deleteSite);
   fastify.get("/sites/:siteId/private-link-config", adminSite, getSitePrivateLinkConfig);
   fastify.post("/sites/:siteId/private-link-config", adminSite, updateSitePrivateLinkConfig);
@@ -402,6 +421,7 @@ async function stripeAdminRoutes(fastify: FastifyInstance) {
   fastify.get("/admin/clickhouse-stats", adminOnly, getClickhouseStats);
   fastify.get("/admin/clickhouse-query-log", adminOnly, getClickhouseQueryLog);
   fastify.get("/admin/sites", adminOnly, getAdminSites);
+  fastify.put("/admin/sites/:siteId/move", adminOnly, adminMoveSite);
   fastify.get("/admin/organizations", adminOnly, getAdminOrganizations);
   fastify.get("/admin/service-event-count", adminOnly, getAdminServiceEventCount);
   fastify.post("/admin/telemetry", collectTelemetry); // Public - telemetry collection
@@ -455,7 +475,6 @@ const start = async () => {
     // Cron jobs should only run on the primary process (or in single-process mode)
     if (!cluster.isWorker) {
       telemetryService.startTelemetryCron();
-      sessionsService.startCleanupCron();
       usageService.startUsageCheckCron();
       if (IS_CLOUD && process.env.NODE_ENV !== "development") {
         weeklyReportService.startWeeklyReportCron();

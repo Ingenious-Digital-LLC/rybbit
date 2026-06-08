@@ -6,6 +6,7 @@ export { getSiteHasData } from "./getSiteHasData.js";
 export { getSiteIsPublic } from "./getSiteIsPublic.js";
 export { getEmbedStats } from "./getEmbedStats.js";
 export { getSitesFromOrg } from "./getSitesFromOrg.js";
+export { moveSite } from "./moveSite.js";
 export { updateSiteConfig } from "./updateSiteConfig.js";
 
 // Site Configuration

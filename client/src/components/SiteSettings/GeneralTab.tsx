@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -20,9 +21,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
-import { deleteSite, updateSiteConfig, SiteResponse } from "@/api/admin/endpoints";
+import { deleteSite, moveSite, updateSiteConfig, SiteResponse } from "@/api/admin/endpoints";
+import { useUserOrganizations } from "@/api/admin/hooks/useOrganizations";
 import { useGetSitesFromOrg } from "@/api/admin/hooks/useSites";
 import { normalizeDomain } from "@/lib/utils";
 
@@ -48,6 +57,8 @@ interface ToggleConfig {
 export function GeneralTab({ siteMetadata, disabled = false, onClose, onPublicChange }: GeneralTabProps) {
   const t = useExtracted();
   const { refetch } = useGetSitesFromOrg(siteMetadata?.organizationId ?? "");
+  const { data: userOrganizations } = useUserOrganizations();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const isMobileSite = siteMetadata.type === "mobile";
   const identifierLabel = isMobileSite ? t("App Identifier") : t("Domain");
@@ -57,6 +68,14 @@ export function GeneralTab({ siteMetadata, disabled = false, onClose, onPublicCh
   const [newDomain, setNewDomain] = useState(siteMetadata.domain);
   const [isChangingDomain, setIsChangingDomain] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [targetOrgId, setTargetOrgId] = useState("");
+  const [isMoving, setIsMoving] = useState(false);
+
+  // Organizations the user can move the site into: those they administer,
+  // excluding the site's current organization.
+  const moveTargets = (userOrganizations ?? []).filter(
+    org => (org.role === "admin" || org.role === "owner") && org.id !== siteMetadata.organizationId
+  );
 
   const [toggleStates, setToggleStates] = useState({
     public: siteMetadata.public || false,
@@ -152,6 +171,28 @@ export function GeneralTab({ siteMetadata, disabled = false, onClose, onPublicCh
       toast.error(t("Failed to delete site"));
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleMove = async () => {
+    if (!targetOrgId) {
+      return;
+    }
+
+    try {
+      setIsMoving(true);
+      await moveSite(siteMetadata.siteId, targetOrgId);
+      toast.success(t("Site moved successfully"));
+      queryClient.invalidateQueries({ queryKey: ["get-sites-from-org"] });
+      queryClient.invalidateQueries({ queryKey: ["get-site", siteMetadata.siteId] });
+      setTargetOrgId("");
+      router.refresh();
+      refetch();
+    } catch (error) {
+      console.error("Error moving site:", error);
+      toast.error(error instanceof Error ? error.message : t("Failed to move site"));
+    } finally {
+      setIsMoving(false);
     }
   };
 
@@ -266,6 +307,60 @@ export function GeneralTab({ siteMetadata, disabled = false, onClose, onPublicCh
           </div>
         ))}
       </div>
+
+      {!disabled && moveTargets.length > 0 && (
+        <div className="space-y-3">
+          <div>
+            <h4 className="text-sm font-semibold text-foreground">{t("Move to Organization")}</h4>
+            <p className="text-xs text-muted-foreground">
+              {t(
+                "Transfer this site to another organization you administer. Team and restricted member access for this site will be reset."
+              )}
+            </p>
+          </div>
+          <div className="flex space-x-2">
+            <Select value={targetOrgId} onValueChange={setTargetOrgId}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder={t("Select an organization")} />
+              </SelectTrigger>
+              <SelectContent>
+                {moveTargets.map(org => (
+                  <SelectItem key={org.id} value={org.id}>
+                    {org.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" disabled={!targetOrgId || isMoving}>
+                  {isMoving ? t("Moving...") : t("Move")}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t("Move this site?")}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t(
+                      'This will move "{siteName}" to {orgName}. Team and restricted member access for this site will be reset, and members of the current organization may lose access.',
+                      {
+                        siteName: siteMetadata.name,
+                        orgName: moveTargets.find(org => org.id === targetOrgId)?.name ?? "",
+                      }
+                    )}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleMove} disabled={isMoving}>
+                    {isMoving ? t("Moving...") : t("Yes, move site")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-3 pt-3">
         <h4 className="text-sm font-semibold text-destructive">{t("Danger Zone")}</h4>

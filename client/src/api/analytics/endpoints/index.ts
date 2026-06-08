@@ -42,6 +42,27 @@ export type {
   SiteEventCountParams,
 } from "./events";
 
+// Dashboards endpoints
+export {
+  fetchDashboards,
+  fetchDashboard,
+  createDashboard,
+  updateDashboard,
+  deleteDashboard,
+  runDashboardCard,
+} from "./dashboards";
+export type { RunDashboardCardBody } from "./dashboards";
+
+// Custom query endpoints
+export { generateCustomQuery, runCustomQuery } from "./customQuery";
+export type {
+  CustomQueryGenerationMessage,
+  CustomQueryRow,
+  GenerateCustomQueryRequest,
+  GenerateCustomQueryResponse,
+  RunCustomQueryResponse,
+} from "./customQuery";
+
 // Errors endpoints
 export { fetchErrorNames, fetchErrorEvents, fetchErrorBucketed } from "./errors";
 export type {
