@@ -112,7 +112,10 @@ import {
   getEmbedStats,
   getSite,
   getSiteExcludedCountries,
+  getSiteExcludedHostnames,
   getSiteExcludedIPs,
+  getSiteExcludedPaths,
+  getSiteExcludedUserAgents,
   getSiteHasData,
   getSiteImports,
   getSiteIsPublic,
@@ -122,7 +125,6 @@ import {
   moveSite,
   updateSiteConfig,
   updateSitePrivateLinkConfig,
-  verifyScript,
 } from "./api/sites/index.js";
 import {
   createCheckoutSession,
@@ -360,7 +362,9 @@ async function sitesRoutes(fastify: FastifyInstance) {
   fastify.get("/sites/:siteId/embed-stats", { preHandler: [resolveSiteId] as any }, getEmbedStats); // Public - widget endpoint (handler checks site is public)
   fastify.get("/sites/:siteId/excluded-ips", authSite, getSiteExcludedIPs);
   fastify.get("/sites/:siteId/excluded-countries", authSite, getSiteExcludedCountries);
-  fastify.get("/sites/:siteId/verify-script", authSite, verifyScript);
+  fastify.get("/sites/:siteId/excluded-paths", authSite, getSiteExcludedPaths);
+  fastify.get("/sites/:siteId/excluded-hostnames", authSite, getSiteExcludedHostnames);
+  fastify.get("/sites/:siteId/excluded-user-agents", authSite, getSiteExcludedUserAgents);
 
   // Site Imports
   fastify.get("/sites/:siteId/imports", adminSite, getSiteImports);
